@@ -1,6 +1,6 @@
 # Localbase <!-- omit in toc -->
 
-A Local, JavaScript, Firebase-Style Database!
+A Firebase-Style Database ... Offline!
 
 Localbase gives you an offline database with the simplicity & power of Firebase, all stored in the user's browser (in an IndexedDB database).
 
