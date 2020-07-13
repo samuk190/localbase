@@ -1,0 +1,15 @@
+{
+  "name": "localbase",
+  "version": "0.0.1",
+  "description": "A Firebase-Style Database ... Offline!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Danny Connell",
+  "license": "MIT",
+  "dependencies": {
+    "localforage": "^1.7.4",
+    "ordered-uuid": "^1.1.0"
+  }
+}
