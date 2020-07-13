@@ -11,5 +11,22 @@
   "dependencies": {
     "localforage": "^1.7.4",
     "ordered-uuid": "^1.1.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dannyconnell/localbase.git"
+  },
+  "keywords": [
+    "database",
+    "offline",
+    "firebase",
+    "firestore",
+    "indexeddb",
+    "javascript"
+  ],
+  "bugs": {
+    "url": "https://github.com/dannyconnell/localbase/issues"
+  },
+  "homepage": "https://github.com/dannyconnell/localbase#readme"
 }
