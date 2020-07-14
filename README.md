@@ -236,15 +236,21 @@ But you might want to take control of these keys. For example, you might want to
 - Specify your own key when you add a document
 - Use the key for selecting a document (when getting, updating, setting or deleting a document) instead of using some document criteria
 - Return all of the keys as well as the document fields, when getting a collection, e.g.
-```
-{
-    'key-1': {
-      { id: 1, name: 'Bill', age: 47 }
-    },
-    'key-2: {
+```javascript
+[
+  {
+    key: 'mykey-2',
+    data: {
       { id: 2, name: 'Paul', age: 34 }
     }
-}
+  },
+  {
+    key: 'mykey-1',
+    data: {
+      { id: 1, name: 'Bill', age: 47 }
+    }
+  }
+]
 ```
 
 You can do all this with Localbase:
@@ -261,7 +267,14 @@ db.collection('users').add({
 }, 'mykey-1')
 ```
 
+Which would look like this in the IndexedDB:
+
+![IndexedDB Store - Own Keys](images/indexed-db-own-keys.png)
+
 ### TODO: Get, Update, Set or Delete a Document by key (instead of by document criteria)
+
+**NOTE: This has not been added yet.**
+
 When selecting a document with the `doc` method, instead of passing in an object with a field name and value, just pass in a string (or integer) with your key:
 ```javascript
 // get document by key
@@ -287,6 +300,8 @@ db.collection('users').doc('mykey-1').delete()
 
 
 ### TODO: Get a Collection and return the keys along with the data.
+
+**NOTE: This has not been added yet.**
 
 When getting a collection, just use the `getWithKeys` method, instead of the `get` method:
 
