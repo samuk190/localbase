@@ -1,6 +1,6 @@
 "use strict"
 
-// TODO: fix not resetting (not firing reset method)
+// TODO: Improve all localForage.iterate methods by firing the final logic in the then block rather than in the iteration block
 // TODO: Get, Update, Set or Delete a Document by key (instead of by document criteria)
 
 // TODO: update - add then block response
@@ -10,6 +10,7 @@
 
 // TODO: database editor
 
+// import localForage
 import * as localForage from "localforage";
 
 // import api methods
@@ -26,7 +27,8 @@ import set from './api/actions/set'
 import deleteIt from './api/actions/delete'
 
 // import api utils
-import reset from './api-utils/reset'
+import reset from './api-utils/reset' // must be called after every action
+import selectionLevel from './api-utils/selectionLevel'
 
 // Localbase
 class Localbase {
@@ -39,7 +41,6 @@ class Localbase {
     // properties
     this.dbName = dbName
     this.collectionName = null
-    this.editType = 'db' // 'db' | 'collection' | 'doc'
     this.orderByProperty = null
     this.orderByDirection = null
     this.limitBy = null
@@ -61,6 +62,7 @@ class Localbase {
     
     // api utils
     this.reset = reset.bind(this)
+    this.selectionLevel = selectionLevel.bind(this)
   }
 }
 

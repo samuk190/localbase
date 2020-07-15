@@ -18,17 +18,20 @@ export default function add(document, keyProvided) {
 
     return localForage.setItem(key, document).then(() => {
       logger.log(`Document added to ${ this.collectionName } collection.`, { key, document })
+      this.reset()
       return {
         key, document
       }
     }).catch(err => {
       logger.error(`Could not add Document to ${ this.collectionName } collection.`)
+      this.reset()
       return this
     })
 
   }
   else {
     logger.error('Data passed to .add() must be an object. Not an array, string, number or boolean.')
+    this.reset()
     return
   }
 }

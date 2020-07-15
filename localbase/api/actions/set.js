@@ -7,5 +7,7 @@ export default function set(newDocument) {
     if (isSubset(value, this.docSelectionCriteria)) {
       localForage.setItem(key, newDocument)
     }
+  }).then(() => {
+    this.reset()
   })
 }

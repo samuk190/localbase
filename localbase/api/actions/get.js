@@ -3,7 +3,7 @@ import isSubset from '../../utils/isSubset'
 
 export default function get() {
   // get collection
-  if (this.editType == 'collection') {
+  if (this.selectionLevel() == 'collection') {
     let collection = []
     return localForage.iterate((value, key) => {
       collection.push(value)
@@ -21,11 +21,12 @@ export default function get() {
       if (this.limitBy) {
         collection = collection.splice(0,this.limitBy)
       }
+      this.reset()
       return collection
     })
   }
   // get document
-  else if (this.editType == 'doc') {
+  else if (this.selectionLevel() == 'doc') {
     let collection = []
     let document = {}
     return localForage.iterate((value, key) => {
@@ -35,6 +36,7 @@ export default function get() {
       }
     }).then(() => {
       document = collection[0]
+      this.reset()
       return document
     })
   }

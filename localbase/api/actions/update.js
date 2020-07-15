@@ -10,5 +10,7 @@ export default function update(docUpdates) {
       let newDocument = updateObject(value, this.docUpdates)
       localForage.setItem(key, newDocument)
     }
+  }).then(() => {
+    this.reset()
   })
 }
