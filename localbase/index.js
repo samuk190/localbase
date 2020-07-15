@@ -1,5 +1,6 @@
 "use strict"
 
+// TODO: update readme to mention multiple selections for doc.get(), doc.update(), doc.set() and doc.delete()
 // TODO: Get, Update, Set or Delete a Document by key (instead of by document criteria)
 
 // TODO: update - add then block response
