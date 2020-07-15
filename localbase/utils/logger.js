@@ -10,17 +10,21 @@ let logger = {
     error: '#ed2939'
   },
   log(message, secondary) {
-    let style = this.baseStyle + `background-color: ${ this.colors.log }`
-    if (secondary) {
-      console.log('%clocalbase', style, message, secondary)
-    }
-    else {
-      console.log('%clocalbase', style, message)
+    if (process.env.NODE_ENV == 'development') {
+      let style = this.baseStyle + `background-color: ${ this.colors.log }`
+      if (secondary) {
+        console.log('%clocalbase', style, message, secondary)
+      }
+      else {
+        console.log('%clocalbase', style, message)
+      }
     }
   },
   error(message, secondary) {
-    let style = this.baseStyle + `background-color: ${ this.colors.error }`
-    console.error('%clocalbase', style, message)
+    if (process.env.NODE_ENV == 'development') {
+      let style = this.baseStyle + `background-color: ${ this.colors.error }`
+      console.error('%clocalbase', style, message)
+    }
   }
 }
 

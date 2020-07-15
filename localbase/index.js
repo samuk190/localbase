@@ -1,6 +1,5 @@
 "use strict"
 
-// TODO: only show logs in dev mode
 // TODO: fix not resetting (not firing reset method)
 // TODO: Get, Update, Set or Delete a Document by key (instead of by document criteria)
 
