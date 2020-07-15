@@ -1,6 +1,6 @@
 import * as localForage from "localforage";
-import isSubset from '../utils/isSubset'
-import updateObject from '../utils/updateObject'
+import isSubset from '../../utils/isSubset'
+import updateObject from '../../utils/updateObject'
 
 export default function update(docUpdates) {
   this.docUpdates = docUpdates

@@ -1,5 +1,5 @@
 import * as localForage from "localforage"
-import isSubset from '../utils/isSubset'
+import isSubset from '../../utils/isSubset'
 
 export default function deleteIt() {
   console.log('delete')

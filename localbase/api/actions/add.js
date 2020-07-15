@@ -1,6 +1,6 @@
 import * as localForage from "localforage";
 let UUID = require('ordered-uuid');
-import logger from '../utils/logger'
+import logger from '../../utils/logger'
 
 export default function add(document, keyProvided) {
   if (typeof document == 'object' && document instanceof Array == false) {
