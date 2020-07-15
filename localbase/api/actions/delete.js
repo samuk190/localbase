@@ -1,25 +1,34 @@
 import * as localForage from "localforage"
 import isSubset from '../../utils/isSubset'
+import logger from "../../utils/logger";
 
 export default function deleteIt() {
   if (this.selectionLevel() == 'db') {
     indexedDB.deleteDatabase(this.dbName)
+    logger.log(`Database "${ this.dbName }" deleted.`)
     this.reset()
   }
   else if (this.selectionLevel() == 'collection') {
     localForage.dropInstance().then(() => {
-      console.log('Dropped the store of the current instance');
+      logger.log(`Collection "${ this.collectionName }" deleted.`)
       this.reset()
     });
   }
   else if (this.selectionLevel() == 'doc') {
-    console.log('delete document with criteria: ', this.docSelectionCriteria)
+    let keysForDeletion = []
     localForage.iterate((value, key) => {
-      console.log(key, value)
       if (isSubset(value, this.docSelectionCriteria)) {
-        localForage.removeItem(key)
+        keysForDeletion.push(key)
       }
     }).then(() => {
+      console.log('keysForDeletion: ', keysForDeletion)
+      if (keysForDeletion.length > 1) {
+        logger.warn(`Multiple documents (${ keysForDeletion.length }) with ${ JSON.stringify(this.docSelectionCriteria) } found.`)
+      }
+      keysForDeletion.forEach(key => {
+        localForage.removeItem(key)
+      })
+      logger.log(`${ keysForDeletion.length } Document${ keysForDeletion.length > 1 ? 's' : '' } with ${ JSON.stringify(this.docSelectionCriteria) } deleted.`)
       this.reset()
     })
   }

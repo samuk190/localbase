@@ -2,8 +2,8 @@ import * as localForage from "localforage";
 let UUID = require('ordered-uuid');
 import logger from '../../utils/logger'
 
-export default function add(document, keyProvided) {
-  if (typeof document == 'object' && document instanceof Array == false) {
+export default function add(data, keyProvided) {
+  if (typeof data == 'object' && data instanceof Array == false) {
     let key = null
 
     // if no key provided, generate random, ordered key
@@ -14,13 +14,11 @@ export default function add(document, keyProvided) {
       key = keyProvided
     }
 
-    console.log('key: ', key)
-
-    return localForage.setItem(key, document).then(() => {
-      logger.log(`Document added to ${ this.collectionName } collection.`, { key, document })
+    return localForage.setItem(key, data).then(() => {
+      logger.log(`Document added to "${ this.collectionName }" collection:`, { key, data })
       this.reset()
       return {
-        key, document
+        key, data
       }
     }).catch(err => {
       logger.error(`Could not add Document to ${ this.collectionName } collection.`)

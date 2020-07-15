@@ -1,12 +1,11 @@
 "use strict"
 
-// TODO: Improve all localForage.iterate methods by firing the final logic in the then block rather than in the iteration block
 // TODO: Get, Update, Set or Delete a Document by key (instead of by document criteria)
 
 // TODO: update - add then block response
 // TODO: set - add then block response
 // TODO: delete - add then block response
-// TODO: error handling
+// TODO: error handling / logging
 
 // TODO: database editor
 

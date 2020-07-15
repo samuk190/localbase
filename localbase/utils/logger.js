@@ -7,7 +7,8 @@ let logger = {
   `,
   colors: {
     log: '#124F5C',
-    error: '#ed2939'
+    error: '#ed2939',
+    warn: '#f39c12'
   },
   log(message, secondary) {
     if (process.env.NODE_ENV == 'development') {
@@ -24,6 +25,12 @@ let logger = {
     if (process.env.NODE_ENV == 'development') {
       let style = this.baseStyle + `background-color: ${ this.colors.error }`
       console.error('%clocalbase', style, message)
+    }
+  },  
+  warn(message, secondary) {
+    if (process.env.NODE_ENV == 'development') {
+      let style = this.baseStyle + `background-color: ${ this.colors.warn }`
+      console.warn('%clocalbase', style, message)
     }
   }
 }
