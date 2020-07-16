@@ -1,7 +1,7 @@
 "use strict"
 
+// TODO: Get a Collection and return the keys along with the data.
 // TODO: update readme to mention multiple selections for doc.get(), doc.update(), doc.set() and doc.delete()
-// TODO: Get, Update, Set or Delete a Document by key (instead of by document criteria)
 
 // TODO: update - add then block response
 // TODO: set - add then block response

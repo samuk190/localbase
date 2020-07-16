@@ -38,7 +38,7 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
   - [Delete a database](#delete-a-database)
 - [TODO: Advanced Usage with Keys](#todo-advanced-usage-with-keys)
   - [Add a document & specify your own key](#add-a-document--specify-your-own-key)
-  - [TODO: Get, Update, Set or Delete a Document by key (instead of by document criteria)](#todo-get-update-set-or-delete-a-document-by-key-instead-of-by-document-criteria)
+  - [Get, Update, Set or Delete a Document by key (instead of by document criteria)](#get-update-set-or-delete-a-document-by-key-instead-of-by-document-criteria)
   - [TODO: Get a Collection and return the keys along with the data.](#todo-get-a-collection-and-return-the-keys-along-with-the-data)
 
 
@@ -267,13 +267,21 @@ db.collection('users').add({
 }, 'mykey-1')
 ```
 
+Or, you can just use the `set` method:
+
+```javascript
+db.collection('users').doc('mykey-1').set({
+  id: 1, 
+  name: 'Bill',
+  age: 47
+})
+```
+
 Which would look like this in the IndexedDB:
 
 ![IndexedDB Store - Own Keys](images/indexed-db-own-keys.png)
 
-### TODO: Get, Update, Set or Delete a Document by key (instead of by document criteria)
-
-**NOTE: This has not been added yet.**
+### Get, Update, Set or Delete a Document by key (instead of by document criteria)
 
 When selecting a document with the `doc` method, instead of passing in an object with a field name and value, just pass in a string (or integer) with your key:
 ```javascript

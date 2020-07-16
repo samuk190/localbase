@@ -4,7 +4,7 @@ import logger from "../../utils/logger";
 
 export default function get() {
   // get collection
-  if (this.selectionLevel() == 'collection') {
+  this.getCollection = () => {
     let collection = []
     return localForage.iterate((value, key) => {
       collection.push(value)
@@ -32,19 +32,56 @@ export default function get() {
       return collection
     })
   }
+
   // get document
-  else if (this.selectionLevel() == 'doc') {
+  this.getDocument = () => {
     let collection = []
     let document = {}
-    return localForage.iterate((value, key) => {
-      if (isSubset(value, this.docSelectionCriteria)) {
-        collection.push(value)
-      }
-    }).then(() => {
-      document = collection[0]
-      logger.log(`Got Document with ${ JSON.stringify(this.docSelectionCriteria) }:`, document)
-      this.reset()
-      return document
-    })
+
+    // get document by criteria
+    this.getDocumentByCriteria = () => {
+      return localForage.iterate((value, key) => {
+        if (isSubset(value, this.docSelectionCriteria)) {
+          collection.push(value)
+        }
+      }).then(() => {
+        document = collection[0]
+        logger.log(`Got Document with ${ JSON.stringify(this.docSelectionCriteria) }:`, document)
+        this.reset()
+        return document
+      })
+    }
+
+    // get document by key
+    this.getDocumentByKey = () => {
+      return localForage.getItem(this.docSelectionCriteria).then((value) => {
+        document = value
+        if (document) {
+          logger.log(`Got Document with key ${ JSON.stringify(this.docSelectionCriteria) }:`, document)
+        }
+        else {
+          logger.error(`Could not get Document with Key: ${ JSON.stringify(this.docSelectionCriteria)}`)
+        }
+        this.reset()
+        return document
+      }).catch(err => {
+        logger.error(`Could not get Document with Key: ${ JSON.stringify(this.docSelectionCriteria)}`)
+        this.reset()
+      });
+    }
+
+    if (typeof this.docSelectionCriteria == 'object') {
+      return this.getDocumentByCriteria()
+    }
+    else {
+      return this.getDocumentByKey()
+    }
+  }
+
+  if (this.selectionLevel() == 'collection') {
+    return this.getCollection()
+  }
+  else if (this.selectionLevel() == 'doc') {
+    return this.getDocument()
   }
 }
