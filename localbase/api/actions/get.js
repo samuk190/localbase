@@ -2,20 +2,37 @@ import * as localForage from "localforage";
 import isSubset from '../../utils/isSubset'
 import logger from "../../utils/logger";
 
-export default function get() {
+export default function get(options = { keys: false }) {
   // get collection
   this.getCollection = () => {
     let collection = []
     return localForage.iterate((value, key) => {
-      collection.push(value)
+      let collectionItem = {}
+      if (!options.keys) {
+        collectionItem = value
+      }
+      else {
+        collectionItem = {
+          key: key,
+          data: value
+        }
+      }
+      collection.push(collectionItem)
     }).then(() => {
       let logMessage = `Got "${ this.collectionName }" collection`
       // orderBy
       if (this.orderByProperty) {
-          logMessage += `, ordered by "${ this.orderByProperty }"`
+        logMessage += `, ordered by "${ this.orderByProperty }"`
+        if (!options.keys) {
           collection.sort((a, b) => {
-          return a[this.orderByProperty].toString().localeCompare(b[this.orderByProperty].toString())
-        })
+            return a[this.orderByProperty].toString().localeCompare(b[this.orderByProperty].toString())
+          })
+        }
+        else {
+          collection.sort((a, b) => {
+            return a.data[this.orderByProperty].toString().localeCompare(b.data[this.orderByProperty].toString())
+          })
+        }
       }
       if (this.orderByDirection == 'desc') {
         logMessage += ` (descending)`

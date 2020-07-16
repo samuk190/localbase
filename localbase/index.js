@@ -1,6 +1,5 @@
 "use strict"
 
-// TODO: Get a Collection and return the keys along with the data.
 // TODO: update readme to mention multiple selections for doc.get(), doc.update(), doc.set() and doc.delete()
 
 // TODO: update - add then block response

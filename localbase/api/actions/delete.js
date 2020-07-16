@@ -24,7 +24,6 @@ export default function deleteIt() {
 
     // delete document by criteria
     this.deleteDocumentByCriteria = () => {
-      console.log('deleteDocumentByCriteria')
       let keysForDeletion = []
       localForage.iterate((value, key) => {
         if (isSubset(value, this.docSelectionCriteria)) {

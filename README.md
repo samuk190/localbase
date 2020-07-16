@@ -36,10 +36,10 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
   - [Delete a document](#delete-a-document)
   - [Delete a collection](#delete-a-collection)
   - [Delete a database](#delete-a-database)
-- [TODO: Advanced Usage with Keys](#todo-advanced-usage-with-keys)
+- [Advanced Usage with Keys](#advanced-usage-with-keys)
   - [Add a document & specify your own key](#add-a-document--specify-your-own-key)
   - [Get, Update, Set or Delete a Document by key (instead of by document criteria)](#get-update-set-or-delete-a-document-by-key-instead-of-by-document-criteria)
-  - [TODO: Get a Collection and return the keys along with the data.](#todo-get-a-collection-and-return-the-keys-along-with-the-data)
+  - [Get a Collection and return the keys along with the data.](#get-a-collection-and-return-the-keys-along-with-the-data)
 
 
 ## Getting Started
@@ -224,7 +224,7 @@ Delete a database and all collections contained in it.
 db.delete()
 ```
 
-## TODO: Advanced Usage with Keys
+## Advanced Usage with Keys
 
 Your documents are stored in an IndexedDB store with keys:
 
@@ -307,14 +307,12 @@ db.collection('users').doc('mykey-1').delete()
 ```
 
 
-### TODO: Get a Collection and return the keys along with the data.
+### Get a Collection and return the keys along with the data.
 
-**NOTE: This has not been added yet.**
-
-When getting a collection, just use the `getWithKeys` method, instead of the `get` method:
+When getting a collection, just pass `{ keys: true }` into the `get` method:
 
 ```javascript
-db.collection('users').orderBy('name', 'desc').getWithKeys().then(users => {
+db.collection('users').orderBy('name', 'desc').get({ keys: true }).then(users => {
   console.log('users: ', users)
 })
 
