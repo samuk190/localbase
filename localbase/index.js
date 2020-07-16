@@ -1,7 +1,5 @@
 "use strict"
 
-// TODO: update readme to mention multiple selections for doc.get(), doc.update(), doc.set() and doc.delete()
-
 // TODO: update - add then block response
 // TODO: set - add then block response
 // TODO: delete - add then block response

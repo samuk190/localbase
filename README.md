@@ -111,6 +111,8 @@ db.collection('users').doc({ id: 1 }).update({
 //  ]
 ```
 
+**Note:** if more than one document is matched by your criteria e.g `.doc({ gender: 'male' })` then **all** matched documents will be updated. 
+
 ### Set a document (overwrite)
 
 Overwrite an existing document. This will completely overwrite the selected document, so all required fields should be passed into the `set` method.
@@ -127,6 +129,8 @@ db.collection('users').doc({ id: 2 }).set({
 //    { id: 4, name: 'Pauline', age: 27 }
 //  ]
 ```
+
+**Note:** if more than one document is matched by your criteria e.g `.doc({ gender: 'male' })` then **all** matched documents will be overwritten. 
 
 ## Getting Data
 
@@ -211,6 +215,8 @@ db.collection('users').doc({ id: 1 }).delete()
 //    { id: 2, name: 'Paul', age: 34 }
 //  ]
 ```
+
+**Note:** if more than one document is matched by your criteria e.g `.doc({ gender: 'male' })` then **all** matched documents will be deleted. 
 
 ### Delete a collection
 Delete a collection and all documents contained in it.
