@@ -5,11 +5,12 @@ import updateObject from '../../utils/updateObject'
 
 export default function update(docUpdates) {
   this.docUpdates = docUpdates
+  let collectionName = this.collectionName
 
   // update document by criteria
   this.updateDocumentByCriteria = () => {
     let docsToUpdate = []
-    localForage.iterate((value, key) => {
+    return localForage.iterate((value, key) => {
       if (isSubset(value, this.docSelectionCriteria)) {
         let newDocument = updateObject(value, this.docUpdates)
         docsToUpdate.push({ key, newDocument })
@@ -19,11 +20,18 @@ export default function update(docUpdates) {
       if (docsToUpdate.length > 1) {
         logger.warn(`Multiple documents (${ docsToUpdate.length }) with ${ JSON.stringify(this.docSelectionCriteria) } found for updating.`)
       }
-      docsToUpdate.forEach(docToUpdate => {
-        localForage.setItem(docToUpdate.key, docToUpdate.newDocument)
-        logger.log(`Document in "${ this.collectionName }" collection with ${ JSON.stringify(this.docSelectionCriteria) } updated to:`, docToUpdate.newDocument)
+      docsToUpdate.forEach((docToUpdate, index) => {
+        console.log('index: ', index)
+        return localForage.setItem(docToUpdate.key, docToUpdate.newDocument).then(value => {
+          logger.log(`Document in "${ this.collectionName }" collection with ${ JSON.stringify(this.docSelectionCriteria) } updated to:`, docToUpdate.newDocument)
+          if (index == docsToUpdate.length - 1) {
+            this.reset()
+            return
+          }
+        }).catch(err => {
+          return `Error: Could not update ${ docsToUpdate.length } Documents in ${ collectionName } Collection.`
+        })
       })
-      this.reset()
     })
   }
 
