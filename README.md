@@ -40,6 +40,7 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
   - [Add a document & specify your own key](#add-a-document--specify-your-own-key)
   - [Get, Update, Set or Delete a Document by key (instead of by document criteria)](#get-update-set-or-delete-a-document-by-key-instead-of-by-document-criteria)
   - [Get a Collection and return the keys along with the data.](#get-a-collection-and-return-the-keys-along-with-the-data)
+- [Localbase Playground](#localbase-playground)
 
 
 ## Getting Started
@@ -337,3 +338,15 @@ db.collection('users').orderBy('name', 'desc').get({ keys: true }).then(users =>
 //    }
 //  ]
 ```
+
+## Localbase Playground
+
+Localbase Playground is an app for playing around with Localbase and all the available methods.
+
+It contains a bunch of different code snippets (for adding, updating, setting and getting) data to/from a Localbase database.
+
+You can launch these code snippets (and edit them if you like) in the browser and observe the result in the IndexedDB database and in the console.
+
+![IndexedDB Store - Own Keys](images/localbase-playground.png)
+
+[Localbase Playground and launch instructions](localbase-playground)

@@ -4,6 +4,7 @@
 // TODO: set - add then block response
 // TODO: delete - add then block response
 // TODO: error handling / logging
+// TODO: option to disable localbase logs in development
 
 // TODO: database editor
 
