@@ -1,6 +1,6 @@
 "use strict"
 
-// TODO: update - add then block response
+// TODO: update - add then block response [need to do updateDocumentByKey]
 // TODO: set - add then block response
 // TODO: delete - add then block response
 // TODO: error handling / logging
