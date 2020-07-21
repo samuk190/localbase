@@ -1,9 +1,7 @@
 "use strict"
 
-// TODO: update - move success & error functions into global functions that can be used by all api actions
-
-// TODO: set - add then block response
-// TODO: delete - add then block response
+// TODO: set - add promises & success & error calls
+// TODO: delete - add promises & success & error calls
 // TODO: error handling / logging
 // TODO: option to disable localbase logs in development
 
@@ -28,6 +26,8 @@ import deleteIt from './api/actions/delete'
 // import api utils
 import reset from './api-utils/reset' // must be called after every action
 import selectionLevel from './api-utils/selectionLevel'
+import success from './api-utils/success'
+import error from './api-utils/error'
 
 // Localbase
 class Localbase {
@@ -62,6 +62,8 @@ class Localbase {
     // api utils
     this.reset = reset.bind(this)
     this.selectionLevel = selectionLevel.bind(this)
+    this.success = success.bind(this)
+    this.error = error.bind(this)
   }
 }
 

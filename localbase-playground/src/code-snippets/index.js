@@ -206,6 +206,46 @@ db.collection('users')
   .delete()`
       }
     ]
-  }
+  },
+  
+  {
+    sectionTitle: 'Promises',
+    codeSnippets: [
+      {
+        id: 13,
+        title: 'Add Document then do something',
+        code: 
+`db.collection('users')
+  .add({
+    id: 1,
+    name: 'Bill',
+    age: 47
+  }, 'mykey-1')
+  .then(response => {
+    console.log('Add successful, now do something.')
+  })
+  .catch(error => {
+    console.log('There was an error, do something else.')
+  })`
+      },
+      {
+        id: 14,
+        title: 'Update Document then do something',
+        code: 
+`db.collection('users')
+  .doc({ id: 1 })
+  .update({
+    name: 'William'
+  })
+  .then(response => {
+    console.log('Update successful, now do something.')
+  })
+  .catch(error => {
+    console.log('There was an error, do something else.')
+  })`
+      },
+    ]
+  },
+
 ]
 export default codeSnippetSections
