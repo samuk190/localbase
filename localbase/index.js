@@ -1,6 +1,7 @@
 "use strict"
 
-// TODO: update - add then block response [need to do updateDocumentByKey]
+// TODO: update - move success & error functions into global functions that can be used by all api actions
+
 // TODO: set - add then block response
 // TODO: delete - add then block response
 // TODO: error handling / logging

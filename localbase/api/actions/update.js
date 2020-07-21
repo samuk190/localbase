@@ -6,6 +6,7 @@ import updateObject from '../../utils/updateObject'
 export default async function update(docUpdates) {
   this.docUpdates = docUpdates
   let collectionName = this.collectionName
+  let docSelectionCriteria = this.docSelectionCriteria
 
   return new Promise((resolve, reject) => {
 
@@ -28,16 +29,16 @@ export default async function update(docUpdates) {
           localForage.setItem(docToUpdate.key, docToUpdate.newDocument).then(value => {
 
             if (index === (docsToUpdate.length - 1)) {
-              logger.log(`${ docsToUpdate.length } Document${ docsToUpdate.length > 1 ? 's' : '' } in "${ this.collectionName }" collection with ${ JSON.stringify(this.docSelectionCriteria) } updated with:`, docUpdates)
-              resolve(`Success: ${ docsToUpdate.length } Document${ docsToUpdate.length > 1 ? 's' : '' } in "${ this.collectionName }" collection with ${ JSON.stringify(this.docSelectionCriteria) } updated with: ${ JSON.stringify(docUpdates) }`)
-              this.reset()
-              return
+              this.success(
+                `${ docsToUpdate.length } Document${ docsToUpdate.length > 1 ? 's' : '' } in "${ collectionName }" collection with ${ JSON.stringify(docSelectionCriteria) } updated with:`,
+                docUpdates
+              )
             }
 
           }).catch(err => {
-            // return `Error: Could not update ${ docsToUpdate.length } Documents in ${ collectionName } Collection.`
-            reject(`Error: Could not update ${ docsToUpdate.length } Documents in ${ collectionName } Collection.`)
-            
+            this.error(
+              `Could not update ${ docsToUpdate.length } Documents in ${ collectionName } Collection.`
+            )
           })
         })
       })
@@ -46,23 +47,39 @@ export default async function update(docUpdates) {
     // update document by key
     this.updateDocumentByKey = () => {
       let newDocument = {}
-      localForage.getItem(this.docSelectionCriteria).then(value => {
-        newDocument = updateObject(value, this.docUpdates)
-        localForage.setItem(this.docSelectionCriteria, newDocument)
-        logger.log(`Document in "${ this.collectionName }" collection with key ${ JSON.stringify(this.docSelectionCriteria) } updated to:`, newDocument)
-        resolve('Done by key!')
+      localForage.getItem(docSelectionCriteria).then(value => {
+        newDocument = updateObject(value, docUpdates)
+        localForage.setItem(docSelectionCriteria, newDocument)
+        this.success(
+          `Document in "${ collectionName }" collection with key ${ JSON.stringify(docSelectionCriteria) } updated to:`,
+          newDocument
+        )
       }).catch(err => {
-        logger.error(`Document in "${ this.collectionName }" collection with key ${ JSON.stringify(this.docSelectionCriteria) } could not be updated.`);
-        reject(`Document in "${ this.collectionName }" collection with key ${ JSON.stringify(this.docSelectionCriteria) } could not be updated.`)
+        this.error(
+          `Document in "${ collectionName }" collection with key ${ JSON.stringify(docSelectionCriteria) } could not be updated.`
+        )
       })
+    }
+
+    // success
+    this.success = (message, data) => {
+      this.reset()
+      logger.log(message, data)
+      return resolve(`Success: ${ message } ${ JSON.stringify(data) }`)
+    }
+
+    // error
+    this.error = (message) => {
+      this.reset()
+      logger.error(message)
+      return reject(`Error: ${ message }`)
     }
   
     if (!docUpdates) {
-      logger.error('Error: No update object provided.')
-      return reject('Error: No update object provided.')
+      this.error('No update object provided.')
     }
 
-    if (typeof this.docSelectionCriteria == 'object') {
+    else if (typeof docSelectionCriteria == 'object') {
       this.updateDocumentByCriteria()
     }
     else {
