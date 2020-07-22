@@ -1,8 +1,10 @@
 "use strict"
 
-// TODO: set - add promises & success & error calls
 // TODO: delete - add promises & success & error calls
 // TODO: error handling / logging
+
+// TODO: update - do I need to put the class properties into variables at the top? if not, remove
+
 // TODO: option to disable localbase logs in development
 
 // TODO: database editor

@@ -251,6 +251,27 @@ db.collection('users')
 // you can test the error by passing nothing
 // into the update() method`
       },
+      {
+        id: 15,
+        title: 'Set Document then do something',
+        code: 
+`db.collection('users')
+  .doc({ id: 1 })
+  .set({
+    id: 1, 
+    name: 'Pauline',
+    age: 27
+  })
+  .then(response => {
+    console.log('Set successful, now do something.')
+  })
+  .catch(error => {
+    console.log('There was an error, do something else.')
+  })
+
+// you can test the error by passing nothing
+// into the set() method`
+      },
     ]
   },
 
