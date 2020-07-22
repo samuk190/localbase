@@ -1,3 +1,3 @@
-import Localbase from './localbase'
+import Localbase from './localbase/localbase'
 
 export default Localbase

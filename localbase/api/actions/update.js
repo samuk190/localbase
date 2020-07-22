@@ -1,4 +1,3 @@
-import * as localForage from "localforage";
 import logger from '../../utils/logger'
 import isSubset from '../../utils/isSubset'
 import updateObject from '../../utils/updateObject'
@@ -12,7 +11,7 @@ export default function update(docUpdates) {
     // update document by criteria
     this.updateDocumentByCriteria = () => {
       let docsToUpdate = []
-      localForage.iterate((value, key) => {
+      this.lf[this.collectionName].iterate((value, key) => {
         if (isSubset(value, this.docSelectionCriteria)) {
           let newDocument = updateObject(value, docUpdates)
           docsToUpdate.push({ key, newDocument })
@@ -23,7 +22,7 @@ export default function update(docUpdates) {
         }
       }).then(() => {
         docsToUpdate.forEach((docToUpdate, index) => {
-          localForage.setItem(docToUpdate.key, docToUpdate.newDocument).then(value => {
+          this.lf[this.collectionName].setItem(docToUpdate.key, docToUpdate.newDocument).then(value => {
 
             if (index === (docsToUpdate.length - 1)) {
               resolve(
@@ -48,9 +47,9 @@ export default function update(docUpdates) {
     // update document by key
     this.updateDocumentByKey = () => {
       let newDocument = {}
-      localForage.getItem(docSelectionCriteria).then(value => {
+      this.lf[this.collectionName].getItem(docSelectionCriteria).then(value => {
         newDocument = updateObject(value, docUpdates)
-        localForage.setItem(docSelectionCriteria, newDocument)
+        this.lf[this.collectionName].setItem(docSelectionCriteria, newDocument)
         resolve(
           this.success(
             `Document in "${ collectionName }" collection with key ${ JSON.stringify(docSelectionCriteria) } updated to:`,

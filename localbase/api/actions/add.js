@@ -1,4 +1,3 @@
-import * as localForage from "localforage";
 let UUID = require('ordered-uuid');
 
 export default function add(data, keyProvided) {
@@ -14,7 +13,7 @@ export default function add(data, keyProvided) {
         key = keyProvided
       }
 
-      return localForage.setItem(key, data).then(() => {
+      return this.lf[this.collectionName].setItem(key, data).then(() => {
         resolve(
           this.success(
             `Document added to "${ this.collectionName }" collection:`,

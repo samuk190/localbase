@@ -1,4 +1,3 @@
-import * as localForage from "localforage"
 import isSubset from '../../utils/isSubset'
 import logger from "../../utils/logger";
 
@@ -27,7 +26,7 @@ export default function deleteIt() {
         )
       }
       else {
-        localForage.dropInstance().then(() => {
+        this.lf[this.collectionName].dropInstance().then(() => {
           resolve(
             this.success(
               `Collection "${ this.collectionName }" deleted.`
@@ -50,7 +49,7 @@ export default function deleteIt() {
       // delete document by criteria
       this.deleteDocumentByCriteria = () => {
         let keysForDeletion = []
-        localForage.iterate((value, key) => {
+        this.lf[this.collectionName].iterate((value, key) => {
           if (isSubset(value, this.docSelectionCriteria)) {
             keysForDeletion.push(key)
           }
@@ -60,7 +59,7 @@ export default function deleteIt() {
           }
         }).then(() => {
           keysForDeletion.forEach((key, index) => {
-            localForage.removeItem(key).then(() => {
+            this.lf[this.collectionName].removeItem(key).then(() => {
               if (index === (keysForDeletion.length - 1)) {
                 resolve(
                   this.success(
@@ -81,9 +80,9 @@ export default function deleteIt() {
 
       // delete document by key
       this.deleteDocumentByKey = () => {
-        localForage.getItem(this.docSelectionCriteria).then(value => {
+        this.lf[this.collectionName].getItem(this.docSelectionCriteria).then(value => {
           if (value) {
-            localForage.removeItem(this.docSelectionCriteria).then(() => {
+            this.lf[this.collectionName].removeItem(this.docSelectionCriteria).then(() => {
               resolve(
                 this.success(
                   `Document with key ${ JSON.stringify(this.docSelectionCriteria) } deleted.`

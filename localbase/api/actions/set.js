@@ -1,4 +1,3 @@
-import * as localForage from "localforage";
 import logger from '../../utils/logger'
 import isSubset from '../../utils/isSubset'
 
@@ -9,7 +8,7 @@ export default function set(newDocument) {
     // set document by criteria
     this.setDocumentByCriteria = () => {
       let docsToSet = []
-      localForage.iterate((value, key) => {
+      this.lf[this.collectionName].iterate((value, key) => {
         if (isSubset(value, this.docSelectionCriteria)) {
           docsToSet.push({ key, newDocument })
         }
@@ -19,7 +18,7 @@ export default function set(newDocument) {
         }
       }).then(() => {
         docsToSet.forEach((docToSet, index) => {
-          localForage.setItem(docToSet.key, docToSet.newDocument).then(value => {
+          this.lf[this.collectionName].setItem(docToSet.key, docToSet.newDocument).then(value => {
 
             if (index === (docsToSet.length - 1)) {
               resolve(
@@ -42,7 +41,7 @@ export default function set(newDocument) {
 
     // set document by key
     this.setDocumentByKey = () => {
-      localForage.setItem(this.docSelectionCriteria, newDocument).then(value => {
+      this.lf[this.collectionName].setItem(this.docSelectionCriteria, newDocument).then(value => {
         resolve(
           this.success(
             `Document in "${ this.collectionName }" collection with key ${ JSON.stringify(this.docSelectionCriteria) } set to:`,

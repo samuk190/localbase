@@ -1,9 +1,10 @@
 "use strict"
 
-// TODO: update - do I need to put the class properties into variables at the top? if not, remove
-// TODO: handle more errors
-// TODO: switching from one collection to another doesn't seem to work
+// TODO: move logger into class (so we can disable logging with config)
 // TODO: option to disable localbase logs in development
+// TODO: figure out how to make non-api methods private from users
+// TODO: add() - fix "null" appearing in logs (when adding more items) by putting stuff in variables (like on update())
+// TODO: handle more errors
 // TODO: database editor
 
 // import localForage
@@ -31,13 +32,9 @@ import error from './api-utils/error'
 // Localbase
 class Localbase {
   constructor(dbName) {
-    localForage.config({
-      driver      : localForage.INDEXEDDB,
-      name        : dbName
-    });
-
     // properties
     this.dbName = dbName
+    this.lf = {} // where we store our localForage instances
     this.collectionName = null
     this.orderByProperty = null
     this.orderByDirection = null
