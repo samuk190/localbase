@@ -272,6 +272,56 @@ db.collection('users')
 // you can test the error by passing nothing
 // into the set() method`
       },
+      {
+        id: 16,
+        title: 'Delete Document then do something',
+        code: 
+`db.collection('users')
+  .doc({ id: 1 })
+  .delete()
+  .then(response => {
+    console.log('Delete successful, now do something.')
+  })
+  .catch(error => {
+    console.log('There was an error, do something else.')
+  })
+
+  // you can test the error by passing nothing
+  // into the doc() method`
+      },
+      {
+        id: 17,
+        title: 'Delete Collection then do something',
+        code: 
+`db.collection('users')
+  .delete()
+  .then(response => {
+    console.log('Collection deleted, now do something.')
+  })
+  .catch(error => {
+    console.log('There was an error, do something else')
+  })
+  
+// you can test the error by passing nothing
+// into the collection() method`
+      },
+      {
+        id: 18,
+        title: 'Delete Database then do something',
+        code: 
+`db.delete()
+  .then(response => {
+    console.log('Database deleted, now do something.')
+  })
+  .catch(error => {
+    console.log('There was an error, do something else.')
+  })
+  
+// note: sometimes when you delete a
+// database, the change won't show up
+// in Chrome Dev tools til you reload
+// the page`
+      },
     ]
   },
 
