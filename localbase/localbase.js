@@ -7,9 +7,6 @@
 // TODO: handle more errors
 // TODO: database editor
 
-// import localForage
-import * as localForage from "localforage";
-
 // import api methods
 import collection from './api/selectors/collection'
 import doc from './api/selectors/doc'
