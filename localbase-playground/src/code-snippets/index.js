@@ -226,7 +226,11 @@ db.collection('users')
   })
   .catch(error => {
     console.log('There was an error, do something else.')
-  })`
+  })
+
+// you can test the error by passing a 
+// string, number or boolean into the 
+// .add() method, instead of an object`
       },
       {
         id: 14,
@@ -242,7 +246,10 @@ db.collection('users')
   })
   .catch(error => {
     console.log('There was an error, do something else.')
-  })`
+  })
+  
+// you can test the error by passing nothing
+// into the update() method`
       },
     ]
   },
