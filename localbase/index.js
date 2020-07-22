@@ -44,7 +44,6 @@ class Localbase {
     this.orderByDirection = null
     this.limitBy = null
     this.docSelectionCriteria = null
-    this.docUpdates = null
 
     // api
     this.collection = collection.bind(this)

@@ -4,7 +4,6 @@ import isSubset from '../../utils/isSubset'
 import updateObject from '../../utils/updateObject'
 
 export default function update(docUpdates) {
-  this.docUpdates = docUpdates
   let collectionName = this.collectionName
   let docSelectionCriteria = this.docSelectionCriteria
 
@@ -15,7 +14,7 @@ export default function update(docUpdates) {
       let docsToUpdate = []
       localForage.iterate((value, key) => {
         if (isSubset(value, this.docSelectionCriteria)) {
-          let newDocument = updateObject(value, this.docUpdates)
+          let newDocument = updateObject(value, docUpdates)
           docsToUpdate.push({ key, newDocument })
         }
       }).then(() => {
