@@ -40,6 +40,13 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
   - [Add a document & specify your own key](#add-a-document--specify-your-own-key)
   - [Get, Update, Set or Delete a Document by key (instead of by document criteria)](#get-update-set-or-delete-a-document-by-key-instead-of-by-document-criteria)
   - [Get a Collection and return the keys along with the data.](#get-a-collection-and-return-the-keys-along-with-the-data)
+- [Promises](#promises)
+  - [Add Document then do something](#add-document-then-do-something)
+  - [Update Document then do something](#update-document-then-do-something)
+  - [Set Document then do something](#set-document-then-do-something)
+  - [Delete Document then do something](#delete-document-then-do-something)
+  - [Delete Collection then do something](#delete-collection-then-do-something)
+  - [Delete Database then do something](#delete-database-then-do-something)
 - [Localbase Playground](#localbase-playground)
 
 
@@ -338,6 +345,130 @@ db.collection('users').orderBy('name', 'desc').get({ keys: true }).then(users =>
 //    }
 //  ]
 ```
+
+## Promises
+
+You can add promises to all operations and do something when it's successful, or when there's an error.
+
+### Add Document then do something
+
+```javascript
+db.collection('users')
+  .add({
+    id: 1,
+    name: 'Bill',
+    age: 47
+  }, 'mykey-1')
+  .then(response => {
+    console.log('Add successful, now do something.')
+  })
+  .catch(error => {
+    console.log('There was an error, do something else.')
+  })
+
+// you can test the error by passing a 
+// string, number or boolean into the 
+// .add() method, instead of an object
+```
+
+### Update Document then do something
+
+```javascript
+db.collection('users')
+  .doc({ id: 1 })
+  .update({
+    name: 'William'
+  })
+  .then(response => {
+    console.log('Update successful, now do something.')
+  })
+  .catch(error => {
+    console.log('There was an error, do something else.')
+  })
+  
+// you can test the error by passing nothing
+// into the update() method
+```
+
+### Set Document then do something
+
+```javascript
+db.collection('users')
+  .doc({ id: 1 })
+  .set({
+    id: 1, 
+    name: 'Pauline',
+    age: 27
+  })
+  .then(response => {
+    console.log('Set successful, now do something.')
+  })
+  .catch(error => {
+    console.log('There was an error, do something else.')
+  })
+
+// you can test the error by passing nothing
+// into the set() method
+```
+
+### Delete Document then do something
+
+```javascript
+db.collection('users')
+  .doc({ id: 1 })
+  .delete()
+  .then(response => {
+    console.log('Delete successful, now do something.')
+  })
+  .catch(error => {
+    console.log('There was an error, do something else.')
+  })
+
+  // you can test the error by passing nothing
+  // into the doc() method
+```
+
+### Delete Collection then do something
+
+```javascript
+db.collection('users')
+  .delete()
+  .then(response => {
+    console.log('Collection deleted, now do something.')
+  })
+  .catch(error => {
+    console.log('There was an error, do something else')
+  })
+  
+// you can test the error by passing nothing
+// into the collection() method
+```
+
+### Delete Database then do something
+
+```javascript
+db.delete()
+  .then(response => {
+    console.log('Database deleted, now do something.')
+  })
+  .catch(error => {
+    console.log('There was an error, do something else.')
+  })
+  
+// note: sometimes when you delete a
+// database, the change won't show up
+// in Chrome Dev tools til you reload
+// the page
+```
+
+
+
+
+
+
+
+
+
 
 ## Localbase Playground
 

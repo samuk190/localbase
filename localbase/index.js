@@ -1,6 +1,5 @@
 "use strict"
 
-// TODO: add promises to readme, then publish
 // TODO: update - do I need to put the class properties into variables at the top? if not, remove
 // TODO: handle more errors
 // TODO: switching from one collection to another doesn't seem to work
