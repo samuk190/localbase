@@ -68,10 +68,9 @@ export default function update(docUpdates) {
 
     if (!docUpdates) {
       reject(
-        this.error('No update object provided.')
+        this.error('No update object provided to update() method.')
       )
     }
-
     else if (typeof docSelectionCriteria == 'object') {
       this.updateDocumentByCriteria()
     }
