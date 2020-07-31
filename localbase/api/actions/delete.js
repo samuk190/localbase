@@ -1,5 +1,6 @@
 import isSubset from '../../utils/isSubset'
-import logger from "../../utils/logger";
+import logger from "../../utils/logger"
+import selectionLevel from '../../api-utils/selectionLevel'
 
 export default function deleteIt() {
 
@@ -122,13 +123,15 @@ export default function deleteIt() {
       }
     }
     
-    if (this.selectionLevel() == 'db') {
+    let currentSelectionLevel = selectionLevel.call(this)
+
+    if (currentSelectionLevel == 'db') {
       return this.deleteDatabase()
     }
-    else if (this.selectionLevel() == 'collection') {
+    else if (currentSelectionLevel == 'collection') {
       return this.deleteCollection()
     }
-    else if (this.selectionLevel() == 'doc') {
+    else if (currentSelectionLevel == 'doc') {
       return this.deleteDocument()
     }
 

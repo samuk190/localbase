@@ -1,8 +1,10 @@
 import isSubset from '../../utils/isSubset'
-import logger from "../../utils/logger";
-import reset from '../../api-utils/reset';
+import logger from "../../utils/logger"
+import reset from '../../api-utils/reset'
+import selectionLevel from '../../api-utils/selectionLevel'
 
 export default function get(options = { keys: false }) {
+
   // get collection
   this.getCollection = () => {
     let collection = []
@@ -95,10 +97,12 @@ export default function get(options = { keys: false }) {
     }
   }
 
-  if (this.selectionLevel() == 'collection') {
+  let currentSelectionLevel = selectionLevel.call(this)
+
+  if (currentSelectionLevel == 'collection') {
     return this.getCollection()
   }
-  else if (this.selectionLevel() == 'doc') {
+  else if (currentSelectionLevel == 'doc') {
     return this.getDocument()
   }
 }

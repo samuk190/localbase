@@ -20,7 +20,6 @@ import set from './api/actions/set'
 import deleteIt from './api/actions/delete'
 
 // import api utils
-import selectionLevel from './api-utils/selectionLevel'
 import success from './api-utils/success'
 import error from './api-utils/error'
 
@@ -59,7 +58,6 @@ class Localbase {
     this.delete = deleteIt.bind(this)
     
     // api utils
-    this.selectionLevel = selectionLevel.bind(this)
     this.success = success.bind(this)
     this.error = error.bind(this)
 
