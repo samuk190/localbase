@@ -11,8 +11,8 @@ let logger = {
     warn: '#f39c12'
   },
   log(message, secondary) {
-    if (process.env.NODE_ENV == 'development') {
-      let style = this.baseStyle + `background-color: ${ this.colors.log }`
+    if (process.env.NODE_ENV == 'development' && this.config.debug) {
+      let style = logger.baseStyle + `background-color: ${ logger.colors.log }`
       if (secondary) {
         console.log('%clocalbase', style, message, secondary)
       }
@@ -22,14 +22,14 @@ let logger = {
     }
   },
   error(message, secondary) {
-    if (process.env.NODE_ENV == 'development') {
-      let style = this.baseStyle + `background-color: ${ this.colors.error }`
+    if (process.env.NODE_ENV == 'development' && this.config.debug) {
+      let style = logger.baseStyle + `background-color: ${ logger.colors.error }`
       console.error('%clocalbase', style, message)
     }
   },  
   warn(message, secondary) {
-    if (process.env.NODE_ENV == 'development') {
-      let style = this.baseStyle + `background-color: ${ this.colors.warn }`
+    if (process.env.NODE_ENV == 'development' && this.config.debug) {
+      let style = logger.baseStyle + `background-color: ${ logger.colors.warn }`
       console.warn('%clocalbase', style, message)
     }
   }

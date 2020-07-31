@@ -55,7 +55,7 @@ export default function deleteIt() {
           }
         }).then(() => {
           if (keysForDeletion.length > 1) {
-            logger.warn(`Multiple documents (${ keysForDeletion.length }) with ${ JSON.stringify(this.docSelectionCriteria) } found.`)
+            logger.warn.call(this, `Multiple documents (${ keysForDeletion.length }) with ${ JSON.stringify(this.docSelectionCriteria) } found.`)
           }
         }).then(() => {
           keysForDeletion.forEach((key, index) => {

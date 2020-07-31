@@ -47,6 +47,8 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
   - [Delete Document then do something](#delete-document-then-do-something)
   - [Delete Collection then do something](#delete-collection-then-do-something)
   - [Delete Database then do something](#delete-database-then-do-something)
+- [Configuration](#configuration)
+  - [Disable the Gorgeous Logs](#disable-the-gorgeous-logs)
 - [Localbase Playground](#localbase-playground)
 
 
@@ -461,11 +463,25 @@ db.delete()
 // the page
 ```
 
+## Configuration
 
+### Disable the Gorgeous Logs
 
+By default, when in development, Localbase will fire out gorgeously labelled debug logs like this:
 
+![Gorgeous, Labelled Logs](images/gorgeous-logs.png)
 
+You can disable these logs by setting `db.config.debug` to `false`.
 
+It's best to do this after you initialize the database, and before you do anything else:
+```javascript
+import Localbase from 'localbase'
+let db = new Localbase('db')
+
+db.config.debug = false
+
+// now do some stuff with the motherflipping db yo
+```
 
 
 

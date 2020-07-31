@@ -14,7 +14,7 @@ export default function set(newDocument) {
         }
       }).then(() => {
         if (docsToSet.length > 1) {
-          logger.warn(`Multiple documents (${ docsToSet.length }) with ${ JSON.stringify(this.docSelectionCriteria) } found for setting.`)
+          logger.warn.call(this, `Multiple documents (${ docsToSet.length }) with ${ JSON.stringify(this.docSelectionCriteria) } found for setting.`)
         }
       }).then(() => {
         docsToSet.forEach((docToSet, index) => {

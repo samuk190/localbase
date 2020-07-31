@@ -1,8 +1,7 @@
 "use strict"
 
 // TODO: figure out how to make non-api methods private from users
-// TODO: move logger into class (so we can disable logging with config)
-// TODO: option to disable localbase logs in development
+// TODO: remove test stuff (api/test folder and stuff in localbase.js)
 // TODO: add() - fix "null" appearing in logs (when adding more items) by putting stuff in variables (like on update())
 // TODO: handle more errors
 // TODO: database editor
@@ -26,6 +25,9 @@ import selectionLevel from './api-utils/selectionLevel'
 import success from './api-utils/success'
 import error from './api-utils/error'
 
+// test
+import publicFunction from './api/test/publicFunction'
+
 // Localbase
 class Localbase {
   constructor(dbName) {
@@ -38,6 +40,11 @@ class Localbase {
     this.orderByDirection = null
     this.limitBy = null
     this.docSelectionCriteria = null
+
+    // config
+    this.config = {
+      debug: true
+    }
 
     // api
     this.collection = collection.bind(this)
@@ -57,6 +64,10 @@ class Localbase {
     this.selectionLevel = selectionLevel.bind(this)
     this.success = success.bind(this)
     this.error = error.bind(this)
+
+    ///
+    this.test = ''
+    this.publicFunction = publicFunction.bind(this)
 
   }
 }

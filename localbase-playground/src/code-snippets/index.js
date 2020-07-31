@@ -187,7 +187,7 @@ db.collection('users')
   })`
       },
       {
-        id: 17,
+        id: 16,
         title: 'Get Collection with Keys',
         code: 
 `db.collection('users')
@@ -198,7 +198,7 @@ db.collection('users')
   })`
       },
       {
-        id: 16,
+        id: 17,
         title: 'Delete Document by Key',
         code: 
 `db.collection('users')
@@ -212,7 +212,7 @@ db.collection('users')
     sectionTitle: 'Promises',
     codeSnippets: [
       {
-        id: 13,
+        id: 18,
         title: 'Add Document then do something',
         code: 
 `db.collection('users')
@@ -233,7 +233,7 @@ db.collection('users')
 // .add() method, instead of an object`
       },
       {
-        id: 14,
+        id: 19,
         title: 'Update Document then do something',
         code: 
 `db.collection('users')
@@ -252,7 +252,7 @@ db.collection('users')
 // into the update() method`
       },
       {
-        id: 15,
+        id: 20,
         title: 'Set Document then do something',
         code: 
 `db.collection('users')
@@ -273,7 +273,7 @@ db.collection('users')
 // into the set() method`
       },
       {
-        id: 16,
+        id: 21,
         title: 'Delete Document then do something',
         code: 
 `db.collection('users')
@@ -290,7 +290,7 @@ db.collection('users')
   // into the doc() method`
       },
       {
-        id: 17,
+        id: 22,
         title: 'Delete Collection then do something',
         code: 
 `db.collection('users')
@@ -306,7 +306,7 @@ db.collection('users')
 // into the collection() method`
       },
       {
-        id: 18,
+        id: 23,
         title: 'Delete Database then do something',
         code: 
 `db.delete()
@@ -322,6 +322,28 @@ db.collection('users')
 // in Chrome Dev tools til you reload
 // the page`
       },
+    ]
+  },
+
+  {
+    sectionTitle: 'Config',
+    codeSnippets: [
+      {
+        id: 24,
+        title: 'Disable Localbase debug logs',
+        code: 
+`db.config.debug = false
+
+// from now on, you won't see any localbase debug logs`
+      },
+      {
+        id: 25,
+        title: 'Enable Localbase debug logs',
+        code: 
+`db.config.debug = true
+
+// from now on, you will see localbase debug logs`
+      }
     ]
   },
 

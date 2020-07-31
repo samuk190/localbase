@@ -18,7 +18,7 @@ export default function update(docUpdates) {
         }
       }).then(() => {
         if (docsToUpdate.length > 1) {
-          logger.warn(`Multiple documents (${ docsToUpdate.length }) with ${ JSON.stringify(this.docSelectionCriteria) } found for updating.`)
+          logger.warn.call(this, `Multiple documents (${ docsToUpdate.length }) with ${ JSON.stringify(this.docSelectionCriteria) } found for updating.`)
         }
       }).then(() => {
         docsToUpdate.forEach((docToUpdate, index) => {

@@ -43,7 +43,7 @@ export default function get(options = { keys: false }) {
         collection = collection.splice(0,this.limitBy)
       }
       logMessage += `:`
-      logger.log(logMessage, collection)
+      logger.log.call(this, logMessage, collection)
       this.reset()
       return collection
     })
@@ -62,7 +62,7 @@ export default function get(options = { keys: false }) {
         }
       }).then(() => {
         document = collection[0]
-        logger.log(`Got Document with ${ JSON.stringify(this.docSelectionCriteria) }:`, document)
+        logger.log.call(this, `Got Document with ${ JSON.stringify(this.docSelectionCriteria) }:`, document)
         this.reset()
         return document
       })
@@ -73,15 +73,15 @@ export default function get(options = { keys: false }) {
       return this.lf[this.collectionName].getItem(this.docSelectionCriteria).then((value) => {
         document = value
         if (document) {
-          logger.log(`Got Document with key ${ JSON.stringify(this.docSelectionCriteria) }:`, document)
+          logger.log.call(this, `Got Document with key ${ JSON.stringify(this.docSelectionCriteria) }:`, document)
         }
         else {
-          logger.error(`Could not get Document with Key: ${ JSON.stringify(this.docSelectionCriteria)}`)
+          logger.error.call(this, `Could not get Document with Key: ${ JSON.stringify(this.docSelectionCriteria)}`)
         }
         this.reset()
         return document
       }).catch(err => {
-        logger.error(`Could not get Document with Key: ${ JSON.stringify(this.docSelectionCriteria)}`)
+        logger.error.call(this, `Could not get Document with Key: ${ JSON.stringify(this.docSelectionCriteria)}`)
         this.reset()
       });
     }
