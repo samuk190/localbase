@@ -1,8 +1,8 @@
 "use strict"
 
+// TODO: figure out how to make non-api methods private from users
 // TODO: move logger into class (so we can disable logging with config)
 // TODO: option to disable localbase logs in development
-// TODO: figure out how to make non-api methods private from users
 // TODO: add() - fix "null" appearing in logs (when adding more items) by putting stuff in variables (like on update())
 // TODO: handle more errors
 // TODO: database editor
@@ -29,6 +29,7 @@ import error from './api-utils/error'
 // Localbase
 class Localbase {
   constructor(dbName) {
+
     // properties
     this.dbName = dbName
     this.lf = {} // where we store our localForage instances
@@ -56,6 +57,7 @@ class Localbase {
     this.selectionLevel = selectionLevel.bind(this)
     this.success = success.bind(this)
     this.error = error.bind(this)
+
   }
 }
 
