@@ -1,6 +1,6 @@
 "use strict"
 
-// TODO: figure out how to make non-api methods private from users
+// TODO: make non-api methods private from users
 // TODO: remove test stuff (api/test folder and stuff in localbase.js)
 // TODO: add() - fix "null" appearing in logs (when adding more items) by putting stuff in variables (like on update())
 // TODO: handle more errors
@@ -20,7 +20,6 @@ import set from './api/actions/set'
 import deleteIt from './api/actions/delete'
 
 // import api utils
-import reset from './api-utils/reset' // must be called after every action
 import selectionLevel from './api-utils/selectionLevel'
 import success from './api-utils/success'
 import error from './api-utils/error'
@@ -60,7 +59,6 @@ class Localbase {
     this.delete = deleteIt.bind(this)
     
     // api utils
-    this.reset = reset.bind(this)
     this.selectionLevel = selectionLevel.bind(this)
     this.success = success.bind(this)
     this.error = error.bind(this)

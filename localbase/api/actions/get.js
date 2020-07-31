@@ -1,5 +1,6 @@
 import isSubset from '../../utils/isSubset'
 import logger from "../../utils/logger";
+import reset from '../../api-utils/reset';
 
 export default function get(options = { keys: false }) {
   // get collection
@@ -44,7 +45,7 @@ export default function get(options = { keys: false }) {
       }
       logMessage += `:`
       logger.log.call(this, logMessage, collection)
-      this.reset()
+      reset.call(this)
       return collection
     })
   }
@@ -63,7 +64,7 @@ export default function get(options = { keys: false }) {
       }).then(() => {
         document = collection[0]
         logger.log.call(this, `Got Document with ${ JSON.stringify(this.docSelectionCriteria) }:`, document)
-        this.reset()
+        reset.call(this)
         return document
       })
     }
@@ -78,11 +79,11 @@ export default function get(options = { keys: false }) {
         else {
           logger.error.call(this, `Could not get Document with Key: ${ JSON.stringify(this.docSelectionCriteria)}`)
         }
-        this.reset()
+        reset.call(this)
         return document
       }).catch(err => {
         logger.error.call(this, `Could not get Document with Key: ${ JSON.stringify(this.docSelectionCriteria)}`)
-        this.reset()
+        reset.call(this)
       });
     }
 
