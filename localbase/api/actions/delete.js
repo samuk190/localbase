@@ -1,6 +1,8 @@
 import isSubset from '../../utils/isSubset'
 import logger from "../../utils/logger"
 import selectionLevel from '../../api-utils/selectionLevel'
+import success from '../../api-utils/success'
+import error from '../../api-utils/error'
 
 export default function deleteIt() {
 
@@ -10,7 +12,8 @@ export default function deleteIt() {
     this.deleteDatabase = () => {
       indexedDB.deleteDatabase(this.dbName)
       resolve(
-        this.success(
+        success.call(
+          this,
           `Database "${ this.dbName }" deleted.`
         )
       )
@@ -21,7 +24,8 @@ export default function deleteIt() {
 
       if (this.collectionName == 'undefined') {
         reject(
-          this.error(
+          error.call(
+            this,
             'No collection name passed into .collection() method.'
           )
         )
@@ -29,13 +33,15 @@ export default function deleteIt() {
       else {
         this.lf[this.collectionName].dropInstance().then(() => {
           resolve(
-            this.success(
+            success.call(
+              this,
               `Collection "${ this.collectionName }" deleted.`
             )
           )
         }).catch(error => {
           reject(
-            this.error(
+            error.call(
+              this,
               `Collection "${ this.collectionName }" could not be deleted.`
             )
           )
@@ -63,14 +69,16 @@ export default function deleteIt() {
             this.lf[this.collectionName].removeItem(key).then(() => {
               if (index === (keysForDeletion.length - 1)) {
                 resolve(
-                  this.success(
+                  success.call(
+                    this,
                     `${ keysForDeletion.length } Document${ keysForDeletion.length > 1 ? 's' : '' } with ${ JSON.stringify(this.docSelectionCriteria) } deleted.`
                   )
                 )
               }
             }).catch(err => {
               reject(
-                this.error(
+                error.call(
+                  this,
                   `Could not delete ${ keysForDeletion.length } Documents in ${ this.collectionName } Collection.`
                 )
               )
@@ -85,13 +93,15 @@ export default function deleteIt() {
           if (value) {
             this.lf[this.collectionName].removeItem(this.docSelectionCriteria).then(() => {
               resolve(
-                this.success(
+                success.call(
+                  this,
                   `Document with key ${ JSON.stringify(this.docSelectionCriteria) } deleted.`
                 )
               )
             }).catch(function(err) {
               reject(
-                this.error(
+                error.call(
+                  this,
                   `Document with key ${ JSON.stringify(this.docSelectionCriteria) } could not be deleted.`
                 )
               )
@@ -99,7 +109,8 @@ export default function deleteIt() {
           }
           else {
             reject(
-              this.error(
+              error.call(
+                this,
                 `Document with key ${ JSON.stringify(this.docSelectionCriteria) } could not be deleted.`
               )
             )
@@ -110,7 +121,8 @@ export default function deleteIt() {
 
       if (this.docSelectionCriteria === 'undefined') {
         reject(
-          this.error(
+          error.call(
+            this,
             `No criteria or key passed into doc() method.`
           )
         )

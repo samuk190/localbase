@@ -1,4 +1,6 @@
-let UUID = require('ordered-uuid');
+let UUID = require('ordered-uuid')
+import success from '../../api-utils/success'
+import error from '../../api-utils/error'
 
 export default function add(data, keyProvided) {
   return new Promise((resolve, reject) => {
@@ -15,14 +17,16 @@ export default function add(data, keyProvided) {
 
       return this.lf[this.collectionName].setItem(key, data).then(() => {
         resolve(
-          this.success(
+          success.call(
+            this,
             `Document added to "${ this.collectionName }" collection:`,
             { key, data }
           )
         )
       }).catch(err => {
         reject(
-          this.error(
+          error.call(
+            this,
             `Could not add Document to ${ this.collectionName } collection.`
           )
         )
@@ -31,7 +35,9 @@ export default function add(data, keyProvided) {
     }
     else {
       reject(
-        this.error('Data passed to .add() must be an object. Not an array, string, number or boolean.')
+        error.call(
+          this,
+          'Data passed to .add() must be an object. Not an array, string, number or boolean.')
       )
     }
   })

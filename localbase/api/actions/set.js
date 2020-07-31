@@ -1,5 +1,7 @@
 import logger from '../../utils/logger'
 import isSubset from '../../utils/isSubset'
+import success from '../../api-utils/success'
+import error from '../../api-utils/error'
 
 export default function set(newDocument) {
 
@@ -22,7 +24,8 @@ export default function set(newDocument) {
 
             if (index === (docsToSet.length - 1)) {
               resolve(
-                this.success(
+                success.call(
+                  this,
                   `${ docsToSet.length } Document${ docsToSet.length > 1 ? 's' : '' } in "${ this.collectionName }" collection with ${ JSON.stringify(this.docSelectionCriteria) } set to:`, 
                   newDocument
                 )
@@ -30,7 +33,8 @@ export default function set(newDocument) {
             }
           }).catch(err => {
             reject(
-              this.error(
+              error.call(
+                this,
                 `Could not set ${ docsToSet.length } Documents in ${ this.collectionName } Collection.`
               )
             )
@@ -43,14 +47,16 @@ export default function set(newDocument) {
     this.setDocumentByKey = () => {
       this.lf[this.collectionName].setItem(this.docSelectionCriteria, newDocument).then(value => {
         resolve(
-          this.success(
+          success.call(
+            this,
             `Document in "${ this.collectionName }" collection with key ${ JSON.stringify(this.docSelectionCriteria) } set to:`,
             newDocument
           )
         )
       }).catch(err => {
         reject(
-          this.error(
+          error.call(
+            this,
             `Document in "${ this.collectionName }" collection with key ${ JSON.stringify(this.docSelectionCriteria) } could not be set.`
           )
         )
@@ -59,7 +65,10 @@ export default function set(newDocument) {
 
     if (!newDocument) {
       reject(
-        this.error('No new document object provided to set() method.')
+        error.call(
+          this, 
+          'No new document object provided to set() method.'
+        )
       )
     }
     else if (typeof this.docSelectionCriteria == 'object') {

@@ -1,6 +1,8 @@
 import logger from '../../utils/logger'
 import isSubset from '../../utils/isSubset'
 import updateObject from '../../utils/updateObject'
+import success from '../../api-utils/success'
+import error from '../../api-utils/error'
 
 export default function update(docUpdates) {
   let collectionName = this.collectionName
@@ -26,7 +28,8 @@ export default function update(docUpdates) {
 
             if (index === (docsToUpdate.length - 1)) {
               resolve(
-                this.success(
+                success.call(
+                  this,
                   `${ docsToUpdate.length } Document${ docsToUpdate.length > 1 ? 's' : '' } in "${ collectionName }" collection with ${ JSON.stringify(docSelectionCriteria) } updated with:`,
                   docUpdates
                 )
@@ -35,7 +38,8 @@ export default function update(docUpdates) {
 
           }).catch(err => {
             reject(
-              this.error(
+              error.call(
+                this,
                 `Could not update ${ docsToUpdate.length } Documents in ${ collectionName } Collection.`
               )
             )
@@ -51,14 +55,16 @@ export default function update(docUpdates) {
         newDocument = updateObject(value, docUpdates)
         this.lf[this.collectionName].setItem(docSelectionCriteria, newDocument)
         resolve(
-          this.success(
+          success.call(
+            this,
             `Document in "${ collectionName }" collection with key ${ JSON.stringify(docSelectionCriteria) } updated to:`,
             newDocument
           )
         )
       }).catch(err => {
         reject(
-          this.error(
+          error.call(
+            this,
             `Document in "${ collectionName }" collection with key ${ JSON.stringify(docSelectionCriteria) } could not be updated.`
           )
         )
@@ -67,7 +73,10 @@ export default function update(docUpdates) {
 
     if (!docUpdates) {
       reject(
-        this.error('No update object provided to update() method.')
+        error.call(
+          this,
+          'No update object provided to update() method.'
+        )
       )
     }
     else if (typeof docSelectionCriteria == 'object') {

@@ -1,7 +1,5 @@
 "use strict"
 
-// TODO: make non-api methods private from users
-// TODO: remove test stuff (api/test folder and stuff in localbase.js)
 // TODO: add() - fix "null" appearing in logs (when adding more items) by putting stuff in variables (like on update())
 // TODO: handle more errors
 // TODO: database editor
@@ -18,13 +16,6 @@ import add from './api/actions/add'
 import update from './api/actions/update'
 import set from './api/actions/set'
 import deleteIt from './api/actions/delete'
-
-// import api utils
-import success from './api-utils/success'
-import error from './api-utils/error'
-
-// test
-import publicFunction from './api/test/publicFunction'
 
 // Localbase
 class Localbase {
@@ -56,14 +47,6 @@ class Localbase {
     this.update = update.bind(this)
     this.set = set.bind(this)
     this.delete = deleteIt.bind(this)
-    
-    // api utils
-    this.success = success.bind(this)
-    this.error = error.bind(this)
-
-    ///
-    this.test = ''
-    this.publicFunction = publicFunction.bind(this)
 
   }
 }
