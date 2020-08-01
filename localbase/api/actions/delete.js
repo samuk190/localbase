@@ -23,6 +23,7 @@ export default function deleteIt() {
 
     // delete collection
     this.deleteCollection = () => {
+      let dbName = this.dbName
       let collectionName = this.collectionName
 
       if (collectionName == 'undefined') {
@@ -35,7 +36,10 @@ export default function deleteIt() {
       }
       else {
         console.log('collectionName: ', collectionName)
-        this.lf[collectionName].dropInstance().then(() => {
+        this.lf[collectionName].dropInstance({
+          name        : dbName,
+          storeName   : collectionName
+        }).then(() => {
           resolve(
             success.call(
               this,
