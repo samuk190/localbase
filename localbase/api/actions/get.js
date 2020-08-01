@@ -7,8 +7,13 @@ export default function get(options = { keys: false }) {
 
   // get collection
   this.getCollection = () => {
+    let collectionName = this.collectionName
+    let orderByProperty = this.orderByProperty
+    let orderByDirection = this.orderByDirection
+    let limitBy = this.limitBy
+
     let collection = []
-    return this.lf[this.collectionName].iterate((value, key) => {
+    return this.lf[collectionName].iterate((value, key) => {
       let collectionItem = {}
       if (!options.keys) {
         collectionItem = value
@@ -21,29 +26,29 @@ export default function get(options = { keys: false }) {
       }
       collection.push(collectionItem)
     }).then(() => {
-      let logMessage = `Got "${ this.collectionName }" collection`
+      let logMessage = `Got "${ collectionName }" collection`
       // orderBy
-      if (this.orderByProperty) {
-        logMessage += `, ordered by "${ this.orderByProperty }"`
+      if (orderByProperty) {
+        logMessage += `, ordered by "${ orderByProperty }"`
         if (!options.keys) {
           collection.sort((a, b) => {
-            return a[this.orderByProperty].toString().localeCompare(b[this.orderByProperty].toString())
+            return a[orderByProperty].toString().localeCompare(b[orderByProperty].toString())
           })
         }
         else {
           collection.sort((a, b) => {
-            return a.data[this.orderByProperty].toString().localeCompare(b.data[this.orderByProperty].toString())
+            return a.data[orderByProperty].toString().localeCompare(b.data[orderByProperty].toString())
           })
         }
       }
-      if (this.orderByDirection == 'desc') {
+      if (orderByDirection == 'desc') {
         logMessage += ` (descending)`
         collection.reverse()
       }
       // limit
-      if (this.limitBy) {
-        logMessage += `, limited to ${ this.limitBy }`
-        collection = collection.splice(0,this.limitBy)
+      if (limitBy) {
+        logMessage += `, limited to ${ limitBy }`
+        collection = collection.splice(0,limitBy)
       }
       logMessage += `:`
       logger.log.call(this, logMessage, collection)
@@ -54,18 +59,21 @@ export default function get(options = { keys: false }) {
 
   // get document
   this.getDocument = () => {
+    let collectionName = this.collectionName
+    let docSelectionCriteria = this.docSelectionCriteria
+
     let collection = []
     let document = {}
 
     // get document by criteria
     this.getDocumentByCriteria = () => {
-      return this.lf[this.collectionName].iterate((value, key) => {
-        if (isSubset(value, this.docSelectionCriteria)) {
+      return this.lf[collectionName].iterate((value, key) => {
+        if (isSubset(value, docSelectionCriteria)) {
           collection.push(value)
         }
       }).then(() => {
         document = collection[0]
-        logger.log.call(this, `Got Document with ${ JSON.stringify(this.docSelectionCriteria) }:`, document)
+        logger.log.call(this, `Got Document with ${ JSON.stringify(docSelectionCriteria) }:`, document)
         reset.call(this)
         return document
       })
@@ -73,23 +81,23 @@ export default function get(options = { keys: false }) {
 
     // get document by key
     this.getDocumentByKey = () => {
-      return this.lf[this.collectionName].getItem(this.docSelectionCriteria).then((value) => {
+      return this.lf[collectionName].getItem(docSelectionCriteria).then((value) => {
         document = value
         if (document) {
-          logger.log.call(this, `Got Document with key ${ JSON.stringify(this.docSelectionCriteria) }:`, document)
+          logger.log.call(this, `Got Document with key ${ JSON.stringify(docSelectionCriteria) }:`, document)
         }
         else {
-          logger.error.call(this, `Could not get Document with Key: ${ JSON.stringify(this.docSelectionCriteria)}`)
+          logger.error.call(this, `Could not get Document with Key: ${ JSON.stringify(docSelectionCriteria)}`)
         }
         reset.call(this)
         return document
       }).catch(err => {
-        logger.error.call(this, `Could not get Document with Key: ${ JSON.stringify(this.docSelectionCriteria)}`)
+        logger.error.call(this, `Could not get Document with Key: ${ JSON.stringify(docSelectionCriteria)}`)
         reset.call(this)
       });
     }
 
-    if (typeof this.docSelectionCriteria == 'object') {
+    if (typeof docSelectionCriteria == 'object') {
       return this.getDocumentByCriteria()
     }
     else {
