@@ -110,7 +110,6 @@ import "prismjs"
 import "prismjs/themes/prism.css"
 import PrismEditor from 'vue-prism-editor'
 let db = new Localbase('db')
-let otherDb = new Localbase('otherDb')
 
 export default {
   name: 'PageIndex',
