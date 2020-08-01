@@ -1,8 +1,6 @@
 "use strict"
 
-// TODO: doc()>delete() - consecutive calls - only last delete successful and "document with null" seen in log
-// TODO: collection()>delete() - consecutive calls - only first delete successful and "collection null" seen in log
-// TODO: db.delete() - consecutive calls - only first db deleted
+// TODO: collection()>delete() - consecutive calls - only first delete successful
 
 // TODO: come up with a list of user errors to handle
 // TODO: database editor

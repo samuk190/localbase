@@ -10,19 +10,22 @@ export default function deleteIt() {
 
     // delete database
     this.deleteDatabase = () => {
-      indexedDB.deleteDatabase(this.dbName)
+      let dbName = this.dbName
+
+      indexedDB.deleteDatabase(dbName)
       resolve(
         success.call(
           this,
-          `Database "${ this.dbName }" deleted.`
+          `Database "${ dbName }" deleted.`
         )
       )
     }
 
     // delete collection
     this.deleteCollection = () => {
+      let collectionName = this.collectionName
 
-      if (this.collectionName == 'undefined') {
+      if (collectionName == 'undefined') {
         reject(
           error.call(
             this,
@@ -31,18 +34,19 @@ export default function deleteIt() {
         )
       }
       else {
-        this.lf[this.collectionName].dropInstance().then(() => {
+        console.log('collectionName: ', collectionName)
+        this.lf[collectionName].dropInstance().then(() => {
           resolve(
             success.call(
               this,
-              `Collection "${ this.collectionName }" deleted.`
+              `Collection "${ collectionName }" deleted.`
             )
           )
         }).catch(error => {
           reject(
             error.call(
               this,
-              `Collection "${ this.collectionName }" could not be deleted.`
+              `Collection "${ collectionName }" could not be deleted.`
             )
           )
         })
@@ -53,25 +57,28 @@ export default function deleteIt() {
     // delete document
     this.deleteDocument = () => {
 
+      let collectionName = this.collectionName
+      let docSelectionCriteria = this.docSelectionCriteria
+
       // delete document by criteria
       this.deleteDocumentByCriteria = () => {
         let keysForDeletion = []
-        this.lf[this.collectionName].iterate((value, key) => {
-          if (isSubset(value, this.docSelectionCriteria)) {
+        this.lf[collectionName].iterate((value, key) => {
+          if (isSubset(value, docSelectionCriteria)) {
             keysForDeletion.push(key)
           }
         }).then(() => {
           if (keysForDeletion.length > 1) {
-            logger.warn.call(this, `Multiple documents (${ keysForDeletion.length }) with ${ JSON.stringify(this.docSelectionCriteria) } found.`)
+            logger.warn.call(this, `Multiple documents (${ keysForDeletion.length }) with ${ JSON.stringify(docSelectionCriteria) } found.`)
           }
         }).then(() => {
           keysForDeletion.forEach((key, index) => {
-            this.lf[this.collectionName].removeItem(key).then(() => {
+            this.lf[collectionName].removeItem(key).then(() => {
               if (index === (keysForDeletion.length - 1)) {
                 resolve(
                   success.call(
                     this,
-                    `${ keysForDeletion.length } Document${ keysForDeletion.length > 1 ? 's' : '' } with ${ JSON.stringify(this.docSelectionCriteria) } deleted.`
+                    `${ keysForDeletion.length } Document${ keysForDeletion.length > 1 ? 's' : '' } with ${ JSON.stringify(docSelectionCriteria) } deleted.`
                   )
                 )
               }
@@ -79,7 +86,7 @@ export default function deleteIt() {
               reject(
                 error.call(
                   this,
-                  `Could not delete ${ keysForDeletion.length } Documents in ${ this.collectionName } Collection.`
+                  `Could not delete ${ keysForDeletion.length } Documents in ${ collectionName } Collection.`
                 )
               )
             })
@@ -89,20 +96,20 @@ export default function deleteIt() {
 
       // delete document by key
       this.deleteDocumentByKey = () => {
-        this.lf[this.collectionName].getItem(this.docSelectionCriteria).then(value => {
+        this.lf[collectionName].getItem(docSelectionCriteria).then(value => {
           if (value) {
-            this.lf[this.collectionName].removeItem(this.docSelectionCriteria).then(() => {
+            this.lf[collectionName].removeItem(docSelectionCriteria).then(() => {
               resolve(
                 success.call(
                   this,
-                  `Document with key ${ JSON.stringify(this.docSelectionCriteria) } deleted.`
+                  `Document with key ${ JSON.stringify(docSelectionCriteria) } deleted.`
                 )
               )
             }).catch(function(err) {
               reject(
                 error.call(
                   this,
-                  `Document with key ${ JSON.stringify(this.docSelectionCriteria) } could not be deleted.`
+                  `Document with key ${ JSON.stringify(docSelectionCriteria) } could not be deleted.`
                 )
               )
             });
@@ -111,7 +118,7 @@ export default function deleteIt() {
             reject(
               error.call(
                 this,
-                `Document with key ${ JSON.stringify(this.docSelectionCriteria) } could not be deleted.`
+                `Document with key ${ JSON.stringify(docSelectionCriteria) } could not be deleted.`
               )
             )
           }
@@ -119,7 +126,7 @@ export default function deleteIt() {
 
       }
 
-      if (this.docSelectionCriteria === 'undefined') {
+      if (docSelectionCriteria === 'undefined') {
         reject(
           error.call(
             this,
@@ -127,7 +134,7 @@ export default function deleteIt() {
           )
         )
       }
-      else if (typeof this.docSelectionCriteria == 'object') {
+      else if (typeof docSelectionCriteria == 'object') {
         return this.deleteDocumentByCriteria()
       }
       else {
