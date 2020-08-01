@@ -13,18 +13,18 @@ export default function update(docUpdates) {
     // update document by criteria
     this.updateDocumentByCriteria = () => {
       let docsToUpdate = []
-      this.lf[this.collectionName].iterate((value, key) => {
-        if (isSubset(value, this.docSelectionCriteria)) {
+      this.lf[collectionName].iterate((value, key) => {
+        if (isSubset(value, docSelectionCriteria)) {
           let newDocument = updateObject(value, docUpdates)
           docsToUpdate.push({ key, newDocument })
         }
       }).then(() => {
         if (docsToUpdate.length > 1) {
-          logger.warn.call(this, `Multiple documents (${ docsToUpdate.length }) with ${ JSON.stringify(this.docSelectionCriteria) } found for updating.`)
+          logger.warn.call(this, `Multiple documents (${ docsToUpdate.length }) with ${ JSON.stringify(docSelectionCriteria) } found for updating.`)
         }
       }).then(() => {
         docsToUpdate.forEach((docToUpdate, index) => {
-          this.lf[this.collectionName].setItem(docToUpdate.key, docToUpdate.newDocument).then(value => {
+          this.lf[collectionName].setItem(docToUpdate.key, docToUpdate.newDocument).then(value => {
 
             if (index === (docsToUpdate.length - 1)) {
               resolve(
@@ -51,9 +51,9 @@ export default function update(docUpdates) {
     // update document by key
     this.updateDocumentByKey = () => {
       let newDocument = {}
-      this.lf[this.collectionName].getItem(docSelectionCriteria).then(value => {
+      this.lf[collectionName].getItem(docSelectionCriteria).then(value => {
         newDocument = updateObject(value, docUpdates)
-        this.lf[this.collectionName].setItem(docSelectionCriteria, newDocument)
+        this.lf[collectionName].setItem(docSelectionCriteria, newDocument)
         resolve(
           success.call(
             this,

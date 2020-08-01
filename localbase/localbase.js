@@ -35,13 +35,15 @@ class Localbase {
       debug: true
     }
 
-    // api
+    // api - selectors
     this.collection = collection.bind(this)
     this.doc = doc.bind(this)
 
+    // api - filters
     this.orderBy = orderBy.bind(this)
     this.limit = limit.bind(this)
 
+    // api - actions
     this.get = get.bind(this)
     this.add = add.bind(this)
     this.update = update.bind(this)
