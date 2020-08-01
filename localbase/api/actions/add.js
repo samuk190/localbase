@@ -3,6 +3,8 @@ import success from '../../api-utils/success'
 import error from '../../api-utils/error'
 
 export default function add(data, keyProvided) {
+  let collectionName = this.collectionName
+
   return new Promise((resolve, reject) => {
     if (typeof data == 'object' && data instanceof Array == false) {
       let key = null
@@ -15,11 +17,11 @@ export default function add(data, keyProvided) {
         key = keyProvided
       }
 
-      return this.lf[this.collectionName].setItem(key, data).then(() => {
+      return this.lf[collectionName].setItem(key, data).then(() => {
         resolve(
           success.call(
             this,
-            `Document added to "${ this.collectionName }" collection:`,
+            `Document added to "${ collectionName }" collection:`,
             { key, data }
           )
         )
@@ -27,7 +29,7 @@ export default function add(data, keyProvided) {
         reject(
           error.call(
             this,
-            `Could not add Document to ${ this.collectionName } collection.`
+            `Could not add Document to ${ collectionName } collection.`
           )
         )
       })

@@ -1,6 +1,5 @@
 "use strict"
 
-// TODO: add() - fix "null" appearing in logs (when adding more items) by putting stuff in variables (like on update())
 // TODO: handle more errors
 // TODO: database editor
 
