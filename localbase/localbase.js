@@ -1,6 +1,7 @@
 "use strict"
 
 // TODO: come up with a list of user errors to handle
+// TODO: add async/await to readme and localbase playground
 // TODO: database editor
 
 // import api methods
