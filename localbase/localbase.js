@@ -1,7 +1,5 @@
 "use strict"
 
-// TODO: collection()>delete() - consecutive calls - only first delete successful
-
 // TODO: come up with a list of user errors to handle
 // TODO: database editor
 
@@ -30,6 +28,12 @@ class Localbase {
     this.orderByDirection = null
     this.limitBy = null
     this.docSelectionCriteria = null
+
+    // queues
+    this.deleteCollectionQueue = {
+      queue: [],
+      running: false
+    }
 
     // config
     this.config = {

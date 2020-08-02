@@ -35,25 +35,52 @@ export default function deleteIt() {
         )
       }
       else {
-        console.log('collectionName: ', collectionName)
-        this.lf[collectionName].dropInstance({
-          name        : dbName,
-          storeName   : collectionName
-        }).then(() => {
-          resolve(
-            success.call(
-              this,
-              `Collection "${ collectionName }" deleted.`
-            )
-          )
-        }).catch(error => {
-          reject(
-            error.call(
-              this,
-              `Collection "${ collectionName }" could not be deleted.`
-            )
-          )
-        })
+        // we can only delete one collection at a time, which is why we need a queue
+
+        this.addToDeleteCollectionQueue = (collectionName) => {
+          this.deleteCollectionQueue.queue.push(collectionName)
+          this.runDeleteCollectionQueue()
+        }
+
+        this.runDeleteCollectionQueue = () => {
+          if (this.deleteCollectionQueue.running == false) {
+            this.deleteCollectionQueue.running = true
+            this.deleteNextCollectionFromQueue()
+          }
+        }
+
+        this.deleteNextCollectionFromQueue = () => {
+          if (this.deleteCollectionQueue.queue.length) {
+            let collectionToDelete = this.deleteCollectionQueue.queue[0]
+            this.deleteCollectionQueue.queue.shift()
+
+            this.lf[collectionToDelete].dropInstance({
+              name        : dbName,
+              storeName   : collectionToDelete
+            }).then(() => {
+              // resolve(
+                success.call(
+                  this,
+                  `Collection "${ collectionToDelete }" deleted.`
+                )
+                this.deleteNextCollectionFromQueue()
+              // )
+            }).catch(error => {
+              reject(
+                error.call(
+                  this,
+                  `Collection "${ collectionToDelete }" could not be deleted.`
+                )
+              )
+            })
+          }
+          else {
+            this.deleteCollectionQueue.running = false
+          }
+        }
+
+        this.addToDeleteCollectionQueue(collectionName)
+
       }
 
     }
