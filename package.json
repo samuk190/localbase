@@ -1,6 +1,6 @@
 {
   "name": "localbase",
-  "version": "0.6.6",
+  "version": "0.6.7",
   "description": "A Firebase-Style Database ... Offline!",
   "main": "index.js",
   "scripts": {

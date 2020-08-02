@@ -58,13 +58,13 @@ export default function deleteIt() {
               name        : dbName,
               storeName   : collectionToDelete
             }).then(() => {
-              // resolve(
+              this.deleteNextCollectionFromQueue()
+              resolve(
                 success.call(
                   this,
                   `Collection "${ collectionToDelete }" deleted.`
                 )
-                this.deleteNextCollectionFromQueue()
-              // )
+              )
             }).catch(error => {
               reject(
                 error.call(
