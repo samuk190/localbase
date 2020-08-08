@@ -24,7 +24,15 @@
   get()
     - no collection specified
     - wrong type in collection()
-    .. add more
+    - wrong type in get()
+    - invalid criteria / type in doc()
+  delete() 
+    - no collection / invalid type in collection()
+    - collection doesn't exist
+    - invalid document criteria / type
+    - document doesn't exist
+  general
+    - methods in wrong order
 */
 // TODO: database editor
 
