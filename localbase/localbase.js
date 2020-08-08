@@ -1,6 +1,31 @@
 "use strict"
 
 // TODO: come up with a list of user errors to handle
+/*  
+  add()
+    - no collection specified
+    - wrong type in collection()
+    - wrong type in add()
+    - nothing specified in add()
+  update()
+    - no collection specified
+    - wrong type in collection()
+    - no doc specified
+    - wrong type in doc()
+    - wrong type in update()
+    - nothing specified in update()
+  set()
+    - no collection specified
+    - wrong type in collection()
+    - no doc specified
+    - wrong type in doc()
+    - wrong type in set()
+    - nothing specified in set()
+  get()
+    - no collection specified
+    - wrong type in collection()
+    .. add more
+*/
 // TODO: database editor
 
 // import api methods
