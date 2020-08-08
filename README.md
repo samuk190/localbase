@@ -47,6 +47,11 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
   - [Delete Document then do something](#delete-document-then-do-something)
   - [Delete Collection then do something](#delete-collection-then-do-something)
   - [Delete Database then do something](#delete-database-then-do-something)
+- [Async / Await](#async--await)
+  - [Add Documents (with Async Await)](#add-documents-with-async-await)
+  - [Update Document (with Async Await)](#update-document-with-async-await)
+  - [Set Document (with Async Await)](#set-document-with-async-await)
+  - [Get Collection & Catch Errors (with Async Await)](#get-collection--catch-errors-with-async-await)
 - [Configuration](#configuration)
   - [Disable the Gorgeous Logs](#disable-the-gorgeous-logs)
 - [Localbase Playground](#localbase-playground)
@@ -461,6 +466,79 @@ db.delete()
 // database, the change won't show up
 // in Chrome Dev tools til you reload
 // the page
+```
+
+## Async / Await
+
+You can also use Async / Await with all operations
+
+### Add Documents (with Async Await)
+
+```javascript
+async function addUsers() {
+  await db.collection('users').add({
+    id: 1,
+    name: 'Bill',
+    age: 47
+  })
+  console.log('first user added')
+  await db.collection('users').add({
+    id: 2,
+    name: 'Paul',
+    age: 34
+  })
+  console.log('second user added')
+}
+addUsers()
+```
+
+### Update Document (with Async Await)
+
+```javascript
+async function updateUser() {
+  let result = await db.collection('users')
+    .doc({ id: 1 })
+    .update({
+      name: 'William'
+    })
+  console.log(result)
+}
+updateUser()
+```
+
+### Set Document (with Async Await)
+
+```javascript
+async function setUser() {
+  let result = await db.collection('users')
+    .doc({ id: 2 })
+    .set({
+      id: 4, 
+      name: 'Pauline',
+      age: 27
+    })
+    console.log(result)
+}
+setUser()
+```
+
+### Get Collection & Catch Errors (with Async Await)
+
+```javascript
+async function getUsers() {
+  try {
+    let users = await db.collection('users')
+      .orderBy('age')
+      .get()
+    console.log('users: ', users)
+  }
+  catch(error) {
+    console.log('error: ', error)
+  }
+}
+getUsers()
+
+// test the error by passing nothing into collection()
 ```
 
 ## Configuration

@@ -326,10 +326,85 @@ db.collection('users')
   },
 
   {
-    sectionTitle: 'Config',
+    sectionTitle: 'Async / Await',
     codeSnippets: [
       {
         id: 24,
+        title: 'Add Documents (with Async Await)',
+        code:
+`async function addUsers() {
+  await db.collection('users').add({
+    id: 1,
+    name: 'Bill',
+    age: 47
+  })
+  console.log('first user added')
+  await db.collection('users').add({
+    id: 2,
+    name: 'Paul',
+    age: 34
+  })
+  console.log('second user added')
+}
+addUsers()`
+      },
+      {
+        id: 25,
+        title: 'Update Document (with Async Await)',
+        code:
+`async function updateUser() {
+  let result = await db.collection('users')
+    .doc({ id: 1 })
+    .update({
+      name: 'William'
+    })
+  console.log(result)
+}
+updateUser()`
+      },
+      {
+        id: 26,
+        title: 'Set Document (with Async Await)',
+        code:
+`async function setUser() {
+  let result = await db.collection('users')
+    .doc({ id: 2 })
+    .set({
+      id: 4, 
+      name: 'Pauline',
+      age: 27
+    })
+    console.log(result)
+}
+setUser()`
+      },
+      {
+        id: 27,
+        title: 'Get Collection & Catch Errors (with Async Await)',
+        code:
+`async function getUsers() {
+  try {
+    let users = await db.collection('users')
+      .orderBy('age')
+      .get()
+    console.log('users: ', users)
+  }
+  catch(error) {
+    console.log('error: ', error)
+  }
+}
+getUsers()
+
+// test the error by passing nothing into collection()`
+      }
+    ]
+  },
+
+  {
+    sectionTitle: 'Config',
+    codeSnippets: [
+      {
+        id: 28,
         title: 'Disable Localbase debug logs',
         code: 
 `db.config.debug = false
@@ -337,7 +412,7 @@ db.collection('users')
 // from now on, you won't see any localbase debug logs`
       },
       {
-        id: 25,
+        id: 29,
         title: 'Enable Localbase debug logs',
         code: 
 `db.config.debug = true
