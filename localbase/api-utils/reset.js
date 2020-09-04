@@ -4,4 +4,5 @@ export default function reset() {
   this.orderByDirection = null
   this.limitBy = null
   this.docSelectionCriteria = null
+  this.selectorAndFilterErrors = []
 }

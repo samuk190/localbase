@@ -2,6 +2,7 @@ import logger from '../../utils/logger'
 import isSubset from '../../utils/isSubset'
 import success from '../../api-utils/success'
 import error from '../../api-utils/error'
+import showSelectorAndFilterErrors from '../../api-utils/showSelectorAndFilterErrors'
 
 export default function set(newDocument) {
 
@@ -66,19 +67,25 @@ export default function set(newDocument) {
       })
     }
 
-    if (!newDocument) {
-      reject(
-        error.call(
-          this, 
-          'No new document object provided to set() method.'
+    if (!this.selectorAndFilterErrors.length) {
+      console.log('no errors')
+      if (!newDocument) {
+        reject(
+          error.call(
+            this, 
+            'No new document object provided to set() method.'
+          )
         )
-      )
-    }
-    else if (typeof docSelectionCriteria == 'object') {
-      return this.setDocumentByCriteria()
+      }
+      else if (typeof docSelectionCriteria == 'object') {
+        return this.setDocumentByCriteria()
+      }
+      else {
+        return this.setDocumentByKey()
+      }
     }
     else {
-      return this.setDocumentByKey()
+      showSelectorAndFilterErrors.call(this)
     }
 
   })

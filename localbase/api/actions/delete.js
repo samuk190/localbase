@@ -3,6 +3,7 @@ import logger from "../../utils/logger"
 import selectionLevel from '../../api-utils/selectionLevel'
 import success from '../../api-utils/success'
 import error from '../../api-utils/error'
+import showSelectorAndFilterErrors from '../../api-utils/showSelectorAndFilterErrors'
 
 export default function deleteIt() {
 
@@ -26,63 +27,51 @@ export default function deleteIt() {
       let dbName = this.dbName
       let collectionName = this.collectionName
 
-      if (collectionName == 'undefined') {
-        reject(
-          error.call(
-            this,
-            'No collection name passed into .collection() method.'
-          )
-        )
+      // we can only delete one collection at a time, which is why we need a queue
+
+      this.addToDeleteCollectionQueue = (collectionName) => {
+        this.deleteCollectionQueue.queue.push(collectionName)
+        this.runDeleteCollectionQueue()
       }
-      else {
-        // we can only delete one collection at a time, which is why we need a queue
 
-        this.addToDeleteCollectionQueue = (collectionName) => {
-          this.deleteCollectionQueue.queue.push(collectionName)
-          this.runDeleteCollectionQueue()
+      this.runDeleteCollectionQueue = () => {
+        if (this.deleteCollectionQueue.running == false) {
+          this.deleteCollectionQueue.running = true
+          this.deleteNextCollectionFromQueue()
         }
+      }
 
-        this.runDeleteCollectionQueue = () => {
-          if (this.deleteCollectionQueue.running == false) {
-            this.deleteCollectionQueue.running = true
+      this.deleteNextCollectionFromQueue = () => {
+        if (this.deleteCollectionQueue.queue.length) {
+          let collectionToDelete = this.deleteCollectionQueue.queue[0]
+          this.deleteCollectionQueue.queue.shift()
+
+          this.lf[collectionToDelete].dropInstance({
+            name        : dbName,
+            storeName   : collectionToDelete
+          }).then(() => {
             this.deleteNextCollectionFromQueue()
-          }
-        }
-
-        this.deleteNextCollectionFromQueue = () => {
-          if (this.deleteCollectionQueue.queue.length) {
-            let collectionToDelete = this.deleteCollectionQueue.queue[0]
-            this.deleteCollectionQueue.queue.shift()
-
-            this.lf[collectionToDelete].dropInstance({
-              name        : dbName,
-              storeName   : collectionToDelete
-            }).then(() => {
-              this.deleteNextCollectionFromQueue()
-              resolve(
-                success.call(
-                  this,
-                  `Collection "${ collectionToDelete }" deleted.`
-                )
+            resolve(
+              success.call(
+                this,
+                `Collection "${ collectionToDelete }" deleted.`
               )
-            }).catch(error => {
-              reject(
-                error.call(
-                  this,
-                  `Collection "${ collectionToDelete }" could not be deleted.`
-                )
+            )
+          }).catch(error => {
+            reject(
+              error.call(
+                this,
+                `Collection "${ collectionToDelete }" could not be deleted.`
               )
-            })
-          }
-          else {
-            this.deleteCollectionQueue.running = false
-          }
+            )
+          })
         }
-
-        this.addToDeleteCollectionQueue(collectionName)
-
+        else {
+          this.deleteCollectionQueue.running = false
+        }
       }
 
+      this.addToDeleteCollectionQueue(collectionName)
     }
 
     // delete document
@@ -173,16 +162,21 @@ export default function deleteIt() {
       }
     }
     
-    let currentSelectionLevel = selectionLevel.call(this)
-
-    if (currentSelectionLevel == 'db') {
-      return this.deleteDatabase()
+    if (!this.selectorAndFilterErrors.length) {
+      let currentSelectionLevel = selectionLevel.call(this)
+  
+      if (currentSelectionLevel == 'db') {
+        return this.deleteDatabase()
+      }
+      else if (currentSelectionLevel == 'collection') {
+        return this.deleteCollection()
+      }
+      else if (currentSelectionLevel == 'doc') {
+        return this.deleteDocument()
+      }
     }
-    else if (currentSelectionLevel == 'collection') {
-      return this.deleteCollection()
-    }
-    else if (currentSelectionLevel == 'doc') {
-      return this.deleteDocument()
+    else {
+      showSelectorAndFilterErrors.call(this)
     }
 
   })

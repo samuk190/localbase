@@ -2,6 +2,7 @@ import isSubset from '../../utils/isSubset'
 import logger from "../../utils/logger"
 import reset from '../../api-utils/reset'
 import selectionLevel from '../../api-utils/selectionLevel'
+import showSelectorAndFilterErrors from '../../api-utils/showSelectorAndFilterErrors'
 
 export default function get(options = { keys: false }) {
 
@@ -105,12 +106,19 @@ export default function get(options = { keys: false }) {
     }
   }
 
-  let currentSelectionLevel = selectionLevel.call(this)
+  if (!this.selectorAndFilterErrors.length) {
+    let currentSelectionLevel = selectionLevel.call(this)
 
-  if (currentSelectionLevel == 'collection') {
-    return this.getCollection()
+    if (currentSelectionLevel == 'collection') {
+      return this.getCollection()
+    }
+    else if (currentSelectionLevel == 'doc') {
+      return this.getDocument()
+    }
   }
-  else if (currentSelectionLevel == 'doc') {
-    return this.getDocument()
+  else {
+    showSelectorAndFilterErrors.call(this)
+    return null
   }
+
 }

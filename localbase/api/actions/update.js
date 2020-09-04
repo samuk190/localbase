@@ -3,6 +3,7 @@ import isSubset from '../../utils/isSubset'
 import updateObject from '../../utils/updateObject'
 import success from '../../api-utils/success'
 import error from '../../api-utils/error'
+import showSelectorAndFilterErrors from '../../api-utils/showSelectorAndFilterErrors'
 
 export default function update(docUpdates) {
   let collectionName = this.collectionName
@@ -71,19 +72,24 @@ export default function update(docUpdates) {
       })
     }
 
-    if (!docUpdates) {
-      reject(
-        error.call(
-          this,
-          'No update object provided to update() method.'
+    if (!this.selectorAndFilterErrors.length) {
+      if (!docUpdates) {
+        reject(
+          error.call(
+            this,
+            'No update object provided to update() method.'
+          )
         )
-      )
-    }
-    else if (typeof docSelectionCriteria == 'object') {
-      this.updateDocumentByCriteria()
+      }
+      else if (typeof docSelectionCriteria == 'object') {
+        this.updateDocumentByCriteria()
+      }
+      else {
+        this.updateDocumentByKey()
+      }
     }
     else {
-      this.updateDocumentByKey()
+      showSelectorAndFilterErrors.call(this)
     }
 
   })

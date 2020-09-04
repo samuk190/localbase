@@ -4,9 +4,9 @@
 //       and then in the actions, check for errors and reject, logging them all out
 //       REMEMBER to clear the errors array in the reset method
 /*  
-  collection()
-    - no collection specified
-    - wrong/invalid type in collection()
+  collection() ✅
+    - no collection specified ✅
+    - wrong/invalid type in collection() ✅
   doc()
     - no doc specified
     - wrong type in doc()
@@ -72,6 +72,9 @@ class Localbase {
     this.config = {
       debug: true
     }
+
+    // errors
+    this.selectorAndFilterErrors = []
 
     // api - selectors
     this.collection = collection.bind(this)
