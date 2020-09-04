@@ -566,7 +566,7 @@ db.config.debug = false
 
 ## Localbase Playground
 
-Localbase Playground is an app for playing around with Localbase and all the available methods.
+[Localbase Playground](https://github.com/dannyconnell/localbase-playground) is an app for playing around with Localbase and all the available methods.
 
 It contains a bunch of different code snippets (for adding, updating, setting and getting) data to/from a Localbase database.
 
@@ -574,4 +574,4 @@ You can launch these code snippets (and edit them if you like) in the browser an
 
 ![IndexedDB Store - Own Keys](images/localbase-playground.png)
 
-[Localbase Playground and launch instructions](localbase-playground)
+[Localbase Playground and launch instructions](https://github.com/dannyconnell/localbase-playground)
