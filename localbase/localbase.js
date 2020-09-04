@@ -1,6 +1,5 @@
 "use strict"
 
-// TODO: put localbase-playground & localbase-editor-vue in their own repos
 // TODO: create an errors array on the class - push errors into this in the various methods
 //       and then in the actions, check for errors and reject, logging them all out
 //       REMEMBER to clear the errors array in the reset method
