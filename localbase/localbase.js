@@ -14,9 +14,9 @@
     - no field specified ✅
     - first parameter not a string ✅
     - second parameter not a string == 'asc' or 'desc' ✅
-  limit()
-    - no limit specified
-    - not an integer >= 1
+  limit() ✅
+    - no limit specified ✅
+    - not an integer >= 1 ✅
   add()
     - wrong type in add()
     - nothing specified in add()
