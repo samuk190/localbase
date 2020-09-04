@@ -146,15 +146,7 @@ export default function deleteIt() {
 
       }
 
-      if (docSelectionCriteria === 'undefined') {
-        reject(
-          error.call(
-            this,
-            `No criteria or key passed into doc() method.`
-          )
-        )
-      }
-      else if (typeof docSelectionCriteria == 'object') {
+      if (typeof docSelectionCriteria == 'object') {
         return this.deleteDocumentByCriteria()
       }
       else {

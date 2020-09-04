@@ -68,7 +68,6 @@ export default function set(newDocument) {
     }
 
     if (!this.selectorAndFilterErrors.length) {
-      console.log('no errors')
       if (!newDocument) {
         reject(
           error.call(

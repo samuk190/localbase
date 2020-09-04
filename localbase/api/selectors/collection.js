@@ -23,7 +23,6 @@ export default function collection(collectionName) {
         storeName   : collectionName
       })
     }
-
     return this
   }
 

@@ -7,9 +7,9 @@
   collection() ✅
     - no collection specified ✅
     - wrong/invalid type in collection() ✅
-  doc()
-    - no doc specified
-    - wrong type in doc()
+  doc() ✅
+    - no doc specified ✅
+    - wrong type in doc() ✅
   orderBy()
     - no field specified
     - first parameter not a string
