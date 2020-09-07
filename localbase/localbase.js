@@ -25,8 +25,9 @@
     - wrong type in update() ✅
     - document doesn't exist ✅
   set()
-    - nothing specified in set()
-    - wrong type in set()
+    - nothing specified in set() ✅
+    - wrong type in set() ✅
+    - document doesn't exist ✅
   get()
     - wrong type in get()
     - document doesn't exist

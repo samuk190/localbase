@@ -19,6 +19,14 @@ export default function set(newDocument) {
           docsToSet.push({ key, newDocument })
         }
       }).then(() => {
+        if (!docsToSet.length) {
+          reject(
+            error.call(
+              this,
+              `No Documents found in ${ collectionName } Collection with criteria ${ JSON.stringify(docSelectionCriteria) }.`
+            )
+          )
+        }
         if (docsToSet.length > 1) {
           logger.warn.call(this, `Multiple documents (${ docsToSet.length }) with ${ JSON.stringify(docSelectionCriteria) } found for setting.`)
         }
@@ -67,16 +75,16 @@ export default function set(newDocument) {
       })
     }
 
+    // check for errors
+    if (!newDocument) {
+      this.userErrors.push('No new Document object provided to set() method. Use an object e.g. { id: 1, name: "Bill", age: 47 }')
+    }
+    else if (!(typeof newDocument == 'object' && newDocument instanceof Array == false)) {
+      this.userErrors.push('Data passed to .set() must be an object. Not an array, string, number or boolean.')
+    }
+
     if (!this.userErrors.length) {
-      if (!newDocument) {
-        reject(
-          error.call(
-            this, 
-            'No new document object provided to set() method.'
-          )
-        )
-      }
-      else if (typeof docSelectionCriteria == 'object') {
+      if (typeof docSelectionCriteria == 'object') {
         return this.setDocumentByCriteria()
       }
       else {
