@@ -1,5 +1,6 @@
 "use strict"
 
+// TODO: remove "this is a work in progress" from readme
 // TODO: create an errors array on the class - push errors into this in the various methods
 //       and then in the actions, check for errors and reject, logging them all out
 //       REMEMBER to clear the errors array in the reset method
@@ -24,15 +25,14 @@
     - nothing specified in update() ✅
     - wrong type in update() ✅
     - document doesn't exist ✅
-  set()
+  set() ✅
     - nothing specified in set() ✅
     - wrong type in set() ✅
     - document doesn't exist ✅
-  get()
-    - wrong type in get()
-    - document doesn't exist
+  get() ✅
+    - wrong type in get() ✅
+    - document doesn't exist ✅
   delete() 
-    - collection doesn't exist
     - document doesn't exist
 */
 

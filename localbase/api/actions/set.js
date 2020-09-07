@@ -75,7 +75,7 @@ export default function set(newDocument) {
       })
     }
 
-    // check for errors
+    // check for user errors
     if (!newDocument) {
       this.userErrors.push('No new Document object provided to set() method. Use an object e.g. { id: 1, name: "Bill", age: 47 }')
     }

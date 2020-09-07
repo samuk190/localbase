@@ -73,10 +73,15 @@ export default function get(options = { keys: false }) {
           collection.push(value)
         }
       }).then(() => {
-        document = collection[0]
-        logger.log.call(this, `Got Document with ${ JSON.stringify(docSelectionCriteria) }:`, document)
-        reset.call(this)
-        return document
+        if (!collection.length) {
+          logger.error.call(this, `Could not find Document in "${ collectionName }" collection with criteria: ${ JSON.stringify(docSelectionCriteria)}`)
+        }
+        else {
+          document = collection[0]
+          logger.log.call(this, `Got Document with ${ JSON.stringify(docSelectionCriteria) }:`, document)
+          reset.call(this)
+          return document
+        }
       })
     }
 
@@ -88,12 +93,12 @@ export default function get(options = { keys: false }) {
           logger.log.call(this, `Got Document with key ${ JSON.stringify(docSelectionCriteria) }:`, document)
         }
         else {
-          logger.error.call(this, `Could not get Document with Key: ${ JSON.stringify(docSelectionCriteria)}`)
+          logger.error.call(this, `Could not find Document in "${ collectionName }" collection with Key: ${ JSON.stringify(docSelectionCriteria)}`)
         }
         reset.call(this)
         return document
       }).catch(err => {
-        logger.error.call(this, `Could not get Document with Key: ${ JSON.stringify(docSelectionCriteria)}`)
+        logger.error.call(this, `Could not find Document in "${ collectionName }" collection with Key: ${ JSON.stringify(docSelectionCriteria)}`)
         reset.call(this)
       });
     }
@@ -103,6 +108,21 @@ export default function get(options = { keys: false }) {
     }
     else {
       return this.getDocumentByKey()
+    }
+  }
+
+  // check for user errors
+  if (!(typeof options == 'object' && options instanceof Array == false)) {
+    this.userErrors.push('Data passed to .get() must be an object. Not an array, string, number or boolean. The object must contain a "keys" property set to true or false, e.g. { keys: true }')
+  }
+  else {
+    if (!options.hasOwnProperty('keys')) {
+      this.userErrors.push('Object passed to get() method must contain a "keys" property set to boolean true or false, e.g. { keys: true }')
+    }
+    else {
+      if (typeof options.keys !== 'boolean') {
+        this.userErrors.push('Property "keys" passed into get() method must be assigned a boolean value (true or false). Not a string or integer.')
+      }
     }
   }
 
