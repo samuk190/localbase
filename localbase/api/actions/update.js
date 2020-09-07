@@ -20,6 +20,14 @@ export default function update(docUpdates) {
           docsToUpdate.push({ key, newDocument })
         }
       }).then(() => {
+        if (!docsToUpdate.length) {
+          reject(
+            error.call(
+              this,
+              `No Documents found in ${ collectionName } Collection with criteria ${ JSON.stringify(docSelectionCriteria) }.`
+            )
+          )
+        }
         if (docsToUpdate.length > 1) {
           logger.warn.call(this, `Multiple documents (${ docsToUpdate.length }) with ${ JSON.stringify(docSelectionCriteria) } found for updating.`)
         }
@@ -66,22 +74,22 @@ export default function update(docUpdates) {
         reject(
           error.call(
             this,
-            `Document in "${ collectionName }" collection with key ${ JSON.stringify(docSelectionCriteria) } could not be updated.`
+            `No Document found in "${ collectionName }" collection with key ${ JSON.stringify(docSelectionCriteria) }`
           )
         )
       })
     }
 
+    // check for user errors
+    if (!docUpdates) {
+      this.userErrors.push('No update object provided to update() method. Use an object e.g. { name: "William" }')
+    }
+    else if (!(typeof docUpdates == 'object' && docUpdates instanceof Array == false)) {
+      this.userErrors.push('Data passed to .update() must be an object. Not an array, string, number or boolean.')
+    }
+
     if (!this.userErrors.length) {
-      if (!docUpdates) {
-        reject(
-          error.call(
-            this,
-            'No update object provided to update() method.'
-          )
-        )
-      }
-      else if (typeof docSelectionCriteria == 'object') {
+      if (typeof docSelectionCriteria == 'object') {
         this.updateDocumentByCriteria()
       }
       else {

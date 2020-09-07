@@ -20,10 +20,10 @@
   add() ✅
     - nothing specified in add() ✅
     - wrong type in add() ✅
-  update()
-    - nothing specified in update()
-    - wrong type in update()
-    - document doesn't exist
+  update() ✅
+    - nothing specified in update() ✅
+    - wrong type in update() ✅
+    - document doesn't exist ✅
   set()
     - nothing specified in set()
     - wrong type in set()
