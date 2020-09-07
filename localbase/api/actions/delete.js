@@ -88,6 +88,14 @@ export default function deleteIt() {
             keysForDeletion.push(key)
           }
         }).then(() => {
+          if (!keysForDeletion.length) {
+            reject(
+              error.call(
+                this,
+                `No Documents found in "${ collectionName }" Collection with criteria ${ JSON.stringify(docSelectionCriteria) }. No documents deleted.`
+              )
+            )
+          }
           if (keysForDeletion.length > 1) {
             logger.warn.call(this, `Multiple documents (${ keysForDeletion.length }) with ${ JSON.stringify(docSelectionCriteria) } found.`)
           }
@@ -129,7 +137,7 @@ export default function deleteIt() {
               reject(
                 error.call(
                   this,
-                  `Document with key ${ JSON.stringify(docSelectionCriteria) } could not be deleted.`
+                  `No Document found in "${ collectionName }" Collection with key ${ JSON.stringify(docSelectionCriteria) }. No document was deleted.`
                 )
               )
             });
@@ -138,7 +146,7 @@ export default function deleteIt() {
             reject(
               error.call(
                 this,
-                `Document with key ${ JSON.stringify(docSelectionCriteria) } could not be deleted.`
+                `No Document found in "${ collectionName }" Collection with key ${ JSON.stringify(docSelectionCriteria) }. No document was deleted.`
               )
             )
           }

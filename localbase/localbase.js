@@ -32,8 +32,8 @@
   get() ✅
     - wrong type in get() ✅
     - document doesn't exist ✅
-  delete() 
-    - document doesn't exist
+  delete() ✅
+    - document doesn't exist ✅
 */
 
 // import api methods
