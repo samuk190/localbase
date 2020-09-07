@@ -14,7 +14,7 @@ import set from './api/actions/set'
 import deleteIt from './api/actions/delete'
 
 // Localbase
-class Localbase {
+export default class Localbase {
   constructor(dbName) {
 
     // properties
@@ -57,5 +57,3 @@ class Localbase {
 
   }
 }
-
-export default Localbase
