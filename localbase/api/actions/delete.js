@@ -3,7 +3,7 @@ import logger from "../../utils/logger"
 import selectionLevel from '../../api-utils/selectionLevel'
 import success from '../../api-utils/success'
 import error from '../../api-utils/error'
-import showSelectorAndFilterErrors from '../../api-utils/showSelectorAndFilterErrors'
+import showUserErrors from '../../api-utils/showUserErrors'
 
 export default function deleteIt() {
 
@@ -154,7 +154,7 @@ export default function deleteIt() {
       }
     }
     
-    if (!this.selectorAndFilterErrors.length) {
+    if (!this.userErrors.length) {
       let currentSelectionLevel = selectionLevel.call(this)
   
       if (currentSelectionLevel == 'db') {
@@ -168,7 +168,7 @@ export default function deleteIt() {
       }
     }
     else {
-      showSelectorAndFilterErrors.call(this)
+      showUserErrors.call(this)
     }
 
   })

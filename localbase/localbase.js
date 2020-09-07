@@ -17,19 +17,18 @@
   limit() ✅
     - no limit specified ✅
     - not an integer >= 1 ✅
-  add()
-    - wrong type in add()
-    - nothing specified in add()
+  add() ✅
+    - nothing specified in add() ✅
+    - wrong type in add() ✅
   update()
-    - wrong type in update()
     - nothing specified in update()
+    - wrong type in update()
     - document doesn't exist
   set()
-    - wrong type in set()
     - nothing specified in set()
+    - wrong type in set()
   get()
     - wrong type in get()
-    - invalid criteria / type in doc()
     - document doesn't exist
   delete() 
     - collection doesn't exist
@@ -73,8 +72,8 @@ class Localbase {
       debug: true
     }
 
-    // errors
-    this.selectorAndFilterErrors = []
+    // user errors - e.g. wrong type or no value passed to a method
+    this.userErrors = []
 
     // api - selectors
     this.collection = collection.bind(this)

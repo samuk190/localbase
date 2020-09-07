@@ -3,7 +3,7 @@ import isSubset from '../../utils/isSubset'
 import updateObject from '../../utils/updateObject'
 import success from '../../api-utils/success'
 import error from '../../api-utils/error'
-import showSelectorAndFilterErrors from '../../api-utils/showSelectorAndFilterErrors'
+import showUserErrors from '../../api-utils/showUserErrors'
 
 export default function update(docUpdates) {
   let collectionName = this.collectionName
@@ -72,7 +72,7 @@ export default function update(docUpdates) {
       })
     }
 
-    if (!this.selectorAndFilterErrors.length) {
+    if (!this.userErrors.length) {
       if (!docUpdates) {
         reject(
           error.call(
@@ -89,7 +89,7 @@ export default function update(docUpdates) {
       }
     }
     else {
-      showSelectorAndFilterErrors.call(this)
+      showUserErrors.call(this)
     }
 
   })

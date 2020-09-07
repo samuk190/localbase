@@ -2,7 +2,7 @@ import isSubset from '../../utils/isSubset'
 import logger from "../../utils/logger"
 import reset from '../../api-utils/reset'
 import selectionLevel from '../../api-utils/selectionLevel'
-import showSelectorAndFilterErrors from '../../api-utils/showSelectorAndFilterErrors'
+import showUserErrors from '../../api-utils/showUserErrors'
 
 export default function get(options = { keys: false }) {
 
@@ -106,7 +106,7 @@ export default function get(options = { keys: false }) {
     }
   }
 
-  if (!this.selectorAndFilterErrors.length) {
+  if (!this.userErrors.length) {
     let currentSelectionLevel = selectionLevel.call(this)
 
     if (currentSelectionLevel == 'collection') {
@@ -117,7 +117,7 @@ export default function get(options = { keys: false }) {
     }
   }
   else {
-    showSelectorAndFilterErrors.call(this)
+    showUserErrors.call(this)
     return null
   }
 

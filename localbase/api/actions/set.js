@@ -2,7 +2,7 @@ import logger from '../../utils/logger'
 import isSubset from '../../utils/isSubset'
 import success from '../../api-utils/success'
 import error from '../../api-utils/error'
-import showSelectorAndFilterErrors from '../../api-utils/showSelectorAndFilterErrors'
+import showUserErrors from '../../api-utils/showUserErrors'
 
 export default function set(newDocument) {
 
@@ -67,7 +67,7 @@ export default function set(newDocument) {
       })
     }
 
-    if (!this.selectorAndFilterErrors.length) {
+    if (!this.userErrors.length) {
       if (!newDocument) {
         reject(
           error.call(
@@ -84,7 +84,7 @@ export default function set(newDocument) {
       }
     }
     else {
-      showSelectorAndFilterErrors.call(this)
+      showUserErrors.call(this)
     }
 
   })

@@ -2,11 +2,11 @@ import * as localForage from "localforage";
 
 export default function collection(collectionName) {
   if (!collectionName) {
-    this.selectorAndFilterErrors.push('No collection name specified in collection() method.')
+    this.userErrors.push('No collection name specified in collection() method.')
     return this
   }
   else if (typeof collectionName !== 'string') {
-    this.selectorAndFilterErrors.push('Collection name in collection() method must be a string and not an object, number or boolean.')
+    this.userErrors.push('Collection name in collection() method must be a string and not an object, number or boolean.')
     return this
   }
   else {
