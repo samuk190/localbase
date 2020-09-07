@@ -13,8 +13,6 @@ Databases are organised into Collections and Documents (just like Firebase Cloud
 
 Localbase is built on top of [LocalForage](https://github.com/localForage/localForage).
 
-**Note:** this is very much a work in progress, but please feel free to play around with it.
-
 ## Contents <!-- omit in toc -->
 
 - [Getting Started](#getting-started)

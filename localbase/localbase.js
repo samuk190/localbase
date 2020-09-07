@@ -1,41 +1,5 @@
 "use strict"
 
-// TODO: remove "this is a work in progress" from readme
-// TODO: create an errors array on the class - push errors into this in the various methods
-//       and then in the actions, check for errors and reject, logging them all out
-//       REMEMBER to clear the errors array in the reset method
-/*  
-  collection() ✅
-    - no collection specified ✅
-    - wrong/invalid type in collection() ✅
-  doc() ✅
-    - no doc specified ✅
-    - wrong type in doc() ✅
-  orderBy() ✅
-    - no field specified ✅
-    - first parameter not a string ✅
-    - second parameter not a string == 'asc' or 'desc' ✅
-  limit() ✅
-    - no limit specified ✅
-    - not an integer >= 1 ✅
-  add() ✅
-    - nothing specified in add() ✅
-    - wrong type in add() ✅
-  update() ✅
-    - nothing specified in update() ✅
-    - wrong type in update() ✅
-    - document doesn't exist ✅
-  set() ✅
-    - nothing specified in set() ✅
-    - wrong type in set() ✅
-    - document doesn't exist ✅
-  get() ✅
-    - wrong type in get() ✅
-    - document doesn't exist ✅
-  delete() ✅
-    - document doesn't exist ✅
-*/
-
 // import api methods
 import collection from './api/selectors/collection'
 import doc from './api/selectors/doc'
