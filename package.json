@@ -1,11 +1,13 @@
 {
   "name": "localbase",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "A Firebase-Style Database ... Offline!",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "bundle": "browserify --standalone Localbase index.js -o dist/localbase.js -t babelify"
+    "bundle-dev": "browserify --standalone Localbase index.js -t babelify -t [ envify --NODE_ENV development ] > dist/localbase.dev.js",
+    "bundle-prod": "browserify -p [ tinyify --no-flat ] --standalone Localbase index.js -t babelify -t [ envify --NODE_ENV production ] > dist/localbase.min.js",
+    "bundle": "npm run bundle-dev && npm run bundle-prod",
+    "deploy": "npm run bundle && npm publish"
   },
   "author": "Danny Connell",
   "license": "MIT",
@@ -16,7 +18,10 @@
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
-    "babelify": "^10.0.0"
+    "babel-plugin-add-module-exports": "^1.0.2",
+    "babelify": "^10.0.0",
+    "envify": "^4.1.0",
+    "tinyify": "^3.0.0"
   },
   "repository": {
     "type": "git",

@@ -16,8 +16,9 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
 ## Contents <!-- omit in toc -->
 
 - [Getting Started](#getting-started)
-  - [Installation](#installation)
-  - [Initialisation](#initialisation)
+  - [Installation & Initialisation](#installation--initialisation)
+    - [With a Script Tag](#with-a-script-tag)
+    - [With NPM](#with-npm)
 - [Quick Start](#quick-start)
   - [Add a document to a collection](#add-a-document-to-a-collection)
   - [Get a collection](#get-a-collection)
@@ -57,16 +58,36 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
 
 ## Getting Started
 
-### Installation
+### Installation & Initialisation
+
+#### With a Script Tag
+```html
+<script src="https://unpkg.com/localbase/dist/localbase.dev.js"></script>
+
+<script>
+  let db = new Localbase('db')
+</script>
+```
+
+Or, use the minified, production version:
+```html
+<script src="https://unpkg.com/localbase/dist/localbase.min.js"></script>
+
+<script>
+  let db = new Localbase('db')
+</script>
+```
+
+
+#### With NPM
+
 ```
 npm install localbase --save
 ```
 
-### Initialisation
 ```javascript
 import Localbase from 'localbase'
-```
-```javascript
+
 let db = new Localbase('db')
 ```
 
