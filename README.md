@@ -19,15 +19,14 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
   - [Installation & Initialisation](#installation--initialisation)
     - [With a Script Tag](#with-a-script-tag)
     - [With NPM](#with-npm)
+- [Video Introduction](#video-introduction)
 - [Quick Start](#quick-start)
-  - [Add a document to a collection](#add-a-document-to-a-collection)
-  - [Get a collection](#get-a-collection)
 - [Adding Data](#adding-data)
-  - [Add a document to a collection](#add-a-document-to-a-collection-1)
+  - [Add a document to a collection](#add-a-document-to-a-collection)
   - [Update a document](#update-a-document)
   - [Set a document (overwrite)](#set-a-document-overwrite)
 - [Getting Data](#getting-data)
-  - [Get a collection](#get-a-collection-1)
+  - [Get a collection](#get-a-collection)
   - [Order a collection](#order-a-collection)
   - [Limit a collection](#limit-a-collection)
   - [Get a document](#get-a-document)
@@ -91,8 +90,16 @@ import Localbase from 'localbase'
 let db = new Localbase('db')
 ```
 
+## Video Introduction
+
+<a href="https://www.youtube.com/watch?v=KJnupY2HPCg" target="_blank">Watch my Video Introduction to Localbase</a>, including how to get started:
+
+<a href="https://www.youtube.com/watch?v=KJnupY2HPCg" target="_blank">
+  <img src="images/indexeddb-finally-an-easy-way-with-localbase-link.png">
+</a>
+
 ## Quick Start
-### Add a document to a collection
+
 Get started by adding a document to a collection. Just specify the collection name with the `collection` method (the collection will be created automatically) then specify the document you want to add with the `add` method: 
 ```javascript
 db.collection('users').add({
@@ -103,7 +110,6 @@ db.collection('users').add({
 ```
 Simples!
 
-### Get a collection
 Once you've added some data to a collection, you can get the whole collection with the `get` method:
 ```javascript
 db.collection('users').get().then(users => {
