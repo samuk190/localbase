@@ -948,16 +948,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = updateObject;
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 function updateObject(obj
 /*, …*/
 ) {
   for (var i = 1; i < arguments.length; i++) {
     for (var prop in arguments[i]) {
-      var val = arguments[i][prop];
-      if (_typeof(val) == "object") // this also applies to arrays or null!
-        update(obj[prop], val);else obj[prop] = val;
+      var val = arguments[i][prop]; // if (typeof val == "object") // this also applies to arrays or null!
+      //   updateObject(obj[prop], val);
+      // else
+      //    obj[prop] = val;
+
+      obj[prop] = val;
     }
   }
 
