@@ -25,6 +25,7 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
   - [Add a document to a collection](#add-a-document-to-a-collection)
   - [Update a document](#update-a-document)
   - [Set a document (overwrite)](#set-a-document-overwrite)
+  - [Set a collection (overwrite)](#set-a-collection-overwrite)
 - [Getting Data](#getting-data)
   - [Get a collection](#get-a-collection)
   - [Order a collection](#order-a-collection)
@@ -36,6 +37,7 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
   - [Delete a database](#delete-a-database)
 - [Advanced Usage with Keys](#advanced-usage-with-keys)
   - [Add a document & specify your own key](#add-a-document--specify-your-own-key)
+  - [Set a collection (overwrite) including keys](#set-a-collection-overwrite-including-keys)
   - [Get, Update, Set or Delete a Document by key (instead of by document criteria)](#get-update-set-or-delete-a-document-by-key-instead-of-by-document-criteria)
   - [Get a Collection and return the keys along with the data.](#get-a-collection-and-return-the-keys-along-with-the-data)
 - [Promises](#promises)
@@ -171,6 +173,31 @@ db.collection('users').doc({ id: 2 }).set({
 ```
 
 **Note:** if more than one document is matched by your criteria e.g `.doc({ gender: 'male' })` then **all** matched documents will be overwritten. 
+
+### Set a collection (overwrite)
+
+Overwrite an entire collection with an array of documents. This will completely overwrite the selected collection.
+
+```javascript
+db.collection('users')
+  .set([
+    {
+      id: 1,
+      name: 'Bill',
+      age: 48
+    },
+    {
+      id: 2, 
+      name: 'Paul',
+      age: 28
+    }
+  ])
+
+//  [
+//    { id: 1, name: 'Bill', age: 48 },
+//    { id: 2, name: 'Paul', age: 28 }
+//  ]
+```
 
 ## Getting Data
 
@@ -326,6 +353,28 @@ db.collection('users').doc('mykey-1').set({
 Which would look like this in the IndexedDB:
 
 ![IndexedDB Store - Own Keys](images/indexed-db-own-keys.png)
+
+### Set a collection (overwrite) including keys
+
+Overwrite an entire collection with an array of documents, and specify a key for each document. Make sure you pass in the `{ keys: true }` option. This will completely overwrite the selected collection.
+
+```javascript
+db.collection('users')
+  .set([
+    {
+      id: 1,
+      name: 'Bill',
+      age: 48,
+      _key: 'mykey-1'
+    },
+    {
+      id: 2, 
+      name: 'Paul',
+      age: 28,
+      _key: 'mykey-2'
+    }
+  ], { keys: true })
+```
 
 ### Get, Update, Set or Delete a Document by key (instead of by document criteria)
 
