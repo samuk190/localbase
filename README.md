@@ -94,6 +94,9 @@ let db = new Localbase('db')
 ```
 
 #### With NuxtJS
+```
+npm install localbase
+```
 
 ```javascript
 // plugins/localbase.js
