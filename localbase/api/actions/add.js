@@ -31,7 +31,7 @@ export default function add(data, keyProvided) {
         resolve(
           success.call(
             this,
-            `Document added to "${ collectionName }" collection:`,
+            `Document added to "${ collectionName }" collection.`,
             { key, data }
           )
         )

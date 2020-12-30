@@ -39,7 +39,7 @@ export default function update(docUpdates) {
               resolve(
                 success.call(
                   this,
-                  `${ docsToUpdate.length } Document${ docsToUpdate.length > 1 ? 's' : '' } in "${ collectionName }" collection with ${ JSON.stringify(docSelectionCriteria) } updated with:`,
+                  `${ docsToUpdate.length } Document${ docsToUpdate.length > 1 ? 's' : '' } in "${ collectionName }" collection with ${ JSON.stringify(docSelectionCriteria) } updated.`,
                   docUpdates
                 )
               )
@@ -66,7 +66,7 @@ export default function update(docUpdates) {
         resolve(
           success.call(
             this,
-            `Document in "${ collectionName }" collection with key ${ JSON.stringify(docSelectionCriteria) } updated to:`,
+            `Document in "${ collectionName }" collection with key ${ JSON.stringify(docSelectionCriteria) } updated.`,
             newDocument
           )
         )

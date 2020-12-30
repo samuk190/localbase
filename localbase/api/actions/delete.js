@@ -17,7 +17,8 @@ export default function deleteIt() {
       resolve(
         success.call(
           this,
-          `Database "${ dbName }" deleted.`
+          `Database "${ dbName }" deleted.`,
+          { database: dbName }
         )
       )
     }
@@ -54,7 +55,8 @@ export default function deleteIt() {
             resolve(
               success.call(
                 this,
-                `Collection "${ collectionToDelete }" deleted.`
+                `Collection "${ collectionToDelete }" deleted.`,
+                { collection: collectionToDelete }
               )
             )
           }).catch(error => {
@@ -106,7 +108,8 @@ export default function deleteIt() {
                 resolve(
                   success.call(
                     this,
-                    `${ keysForDeletion.length } Document${ keysForDeletion.length > 1 ? 's' : '' } with ${ JSON.stringify(docSelectionCriteria) } deleted.`
+                    `${ keysForDeletion.length } Document${ keysForDeletion.length > 1 ? 's' : '' } with ${ JSON.stringify(docSelectionCriteria) } deleted.`,
+                    { keys: keysForDeletion }
                   )
                 )
               }
@@ -130,7 +133,8 @@ export default function deleteIt() {
               resolve(
                 success.call(
                   this,
-                  `Document with key ${ JSON.stringify(docSelectionCriteria) } deleted.`
+                  `Document with key ${ JSON.stringify(docSelectionCriteria) } deleted.`,
+                  { key: docSelectionCriteria }
                 )
               )
             }).catch(function(err) {

@@ -23,7 +23,7 @@ export default function set(newDocument, options = { keys: false }) {
           resolve(
             success.call(
               this,
-              `Collection "${ collectionName }" set with ${ newDocument.length } Documents`, 
+              `Collection "${ collectionName }" set with ${ newDocument.length } Documents.`, 
               newDocument
             )
           )
@@ -54,7 +54,7 @@ export default function set(newDocument, options = { keys: false }) {
             resolve(
               success.call(
                 this,
-                `Collection "${ collectionName }" set with ${ newDocument.length } Documents`, 
+                `Collection "${ collectionName }" set with ${ newDocument.length } Documents.`, 
                 newDocument
               )
             )
@@ -100,7 +100,7 @@ export default function set(newDocument, options = { keys: false }) {
                 resolve(
                   success.call(
                     this,
-                    `${ docsToSet.length } Document${ docsToSet.length > 1 ? 's' : '' } in "${ collectionName }" collection with ${ JSON.stringify(docSelectionCriteria) } set to:`, 
+                    `${ docsToSet.length } Document${ docsToSet.length > 1 ? 's' : '' } in "${ collectionName }" collection with ${ JSON.stringify(docSelectionCriteria) } was set.`, 
                     newDocument
                   )
                 )
@@ -123,7 +123,7 @@ export default function set(newDocument, options = { keys: false }) {
           resolve(
             success.call(
               this,
-              `Document in "${ collectionName }" collection with key ${ JSON.stringify(docSelectionCriteria) } set to:`,
+              `Document in "${ collectionName }" collection with key ${ JSON.stringify(docSelectionCriteria) } was set.`,
               newDocument
             )
           )
