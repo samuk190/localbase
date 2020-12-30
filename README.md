@@ -19,6 +19,7 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
   - [Installation & Initialisation](#installation--initialisation)
     - [With a Script Tag](#with-a-script-tag)
     - [With NPM](#with-npm)
+    - [With NuxtJS](#with-nuxtjs)
 - [Video Introduction](#video-introduction)
 - [Quick Start](#quick-start)
 - [Adding Data](#adding-data)
@@ -90,6 +91,49 @@ npm install localbase --save
 import Localbase from 'localbase'
 
 let db = new Localbase('db')
+```
+
+#### With NuxtJS
+
+```javascript
+// plugins/localbase.js
+
+import Localbase from 'localbase'
+let db = new Localbase('db')
+export default (context,inject) => {
+  inject('db', db)
+}
+```
+
+```javascript
+// nuxt.config.js
+
+export default {
+  ...
+  plugins: [
+    { src: "~/plugins/localbase", mode: "client" }
+  ],
+  ...
+}
+```
+
+```html
+<!-- pages/index.vue -->
+
+<script>
+export default {
+  head: {
+    title: 'Nuxt Blog - Home'
+  },
+  mounted() {
+    this.$db.collection('users').add({
+      id: 1,
+      name: 'Bill',
+      age: 47
+    })
+  }
+}
+</script>
 ```
 
 ## Video Introduction
