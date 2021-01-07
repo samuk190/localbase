@@ -1,1 +1,1 @@
-export default function add(data: any, keyProvided: string): void ;
+export default function add(data: { [key:string]: any }, keyProvided: string): void ;
