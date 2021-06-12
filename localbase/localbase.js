@@ -4,14 +4,17 @@
 import collection from './api/selectors/collection'
 import doc from './api/selectors/doc'
 
+//filter
 import orderBy from './api/filters/orderBy'
 import limit from './api/filters/limit'
+import contains from './api/filters/contains'
 
 import get from './api/actions/get'
 import add from './api/actions/add'
 import update from './api/actions/update'
 import set from './api/actions/set'
 import deleteIt from './api/actions/delete'
+
 
 // Localbase
 export default class Localbase {
@@ -25,6 +28,9 @@ export default class Localbase {
     this.orderByDirection = null
     this.limitBy = null
     this.docSelectionCriteria = null
+
+    this.containsProperty = null
+    this.containsValue = null
 
     // queues
     this.deleteCollectionQueue = {
@@ -47,6 +53,7 @@ export default class Localbase {
     // api - filters
     this.orderBy = orderBy.bind(this)
     this.limit = limit.bind(this)
+    this.contains = contains.bind(this)
 
     // api - actions
     this.get = get.bind(this)

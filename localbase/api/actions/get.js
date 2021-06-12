@@ -12,8 +12,11 @@ export default function get(options = { keys: false }) {
     let orderByProperty = this.orderByProperty
     let orderByDirection = this.orderByDirection
     let limitBy = this.limitBy
+    let containsProperty = this.containsProperty
+    let containsValue = this.containsValue
 
     let collection = []
+    let logMessage
     return this.lf[collectionName].iterate((value, key) => {
       let collectionItem = {}
       if (!options.keys) {
@@ -25,9 +28,22 @@ export default function get(options = { keys: false }) {
           data: value
         }
       }
-      collection.push(collectionItem)
+      logMessage = `Got "${ collectionName }" collection`
+      if(containsProperty && containsValue){
+        let valor = value[containsProperty]
+        if(typeof valor === 'boolean' && typeof containsValue === 'boolean'){
+          if(valor === containsValue) collection.push(collectionItem)
+        }else if(typeof valor === 'string' && typeof containsValue === 'string'){
+          if(valor.includes(containsValue)) collection.push(collectionItem)
+        }else if(typeof valor === 'number' && typeof containsValue === 'number'){
+          if(valor === containsValue) collection.push(collectionItem)
+        }
+        logMessage += `, contains: "${ containsValue }" in "${containsProperty}"`
+      }else{
+        collection.push(collectionItem)
+      }
+
     }).then(() => {
-      let logMessage = `Got "${ collectionName }" collection`
       // orderBy
       if (orderByProperty) {
         logMessage += `, ordered by "${ orderByProperty }"`
