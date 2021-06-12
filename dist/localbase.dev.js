@@ -2073,6 +2073,8 @@ function reset() {
   this.limitBy = null;
   this.docSelectionCriteria = null;
   this.userErrors = [];
+  this.containsProperty = null;
+  this.containsValue = null;
 }
 
 module.exports = exports.default;
