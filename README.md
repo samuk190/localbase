@@ -306,6 +306,8 @@ db.collection('users').orderBy('name', 'desc').limit(1).get().then(users => {
 ```
 
 
+
+
 ### Get a document
 
 Get an individual document from a collection
@@ -660,6 +662,29 @@ async function getUsers() {
 getUsers()
 
 // test the error by passing nothing into collection()
+```
+
+### Contains a collection
+
+search by property and include the entered value
+
+```javascript
+try{
+  let users = await db.collection('users')
+            .contains('name', 'fer')
+            .get()
+
+    console.log(users)
+}catch(error) {
+    console.log('error: ', error)
+  }
+
+  //  [
+//        { id: 2, name: 'fernando', age: 34 },
+//        { id: 1, name: 'fermin', age: 47 },
+//    ... more
+//  ]
+
 ```
 
 ## Configuration
