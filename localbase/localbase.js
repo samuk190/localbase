@@ -39,6 +39,7 @@ export default class Localbase {
     }
 
     // config
+    this.MIN_DISTANCE = 3
     this.config = {
       debug: true
     }

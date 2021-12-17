@@ -4,6 +4,38 @@ import reset from '../../api-utils/reset'
 import selectionLevel from '../../api-utils/selectionLevel'
 import showUserErrors from '../../api-utils/showUserErrors'
 
+function Levenshtein(a, b) {
+  var n = a.length;
+  var m = b.length;
+
+  // matriz de cambios mínimos
+  var d = [];
+
+  // si una de las dos está vacía, la distancia
+  // es insertar todas las otras
+  if(n == 0)
+      return m;
+  if(m == 0)
+      return n;
+
+  // inicializamos el peor caso (insertar todas)
+  for(var i = 0; i <= n; i++)
+      (d[i] = [])[0] = i;
+  for(var j = 0; j <= m; j++)
+      d[0][j] = j;
+
+  // cada elemento de la matriz será la transición con menor coste
+  for(var i = 1, I = 0; i <= n; i++, I++)
+    for(var j = 1, J = 0; j <= m; j++, J++)
+        if(b[J] == a[I])
+            d[i][j] = d[I][J];
+        else
+            d[i][j] = Math.min(d[I][j], d[i][J], d[I][J]) + 1;
+
+  // el menor número de operaciones
+  return d[n][m];
+}
+
 export default function get(options = { keys: false }) {
 
   // get collection
@@ -14,6 +46,7 @@ export default function get(options = { keys: false }) {
     let limitBy = this.limitBy
     let containsProperty = this.containsProperty
     let containsValue = this.containsValue
+    const MIN_DISTANCE = this.MIN_DISTANCE || 3
 
     let collection = []
     let logMessage
@@ -31,14 +64,26 @@ export default function get(options = { keys: false }) {
       logMessage = `Got "${ collectionName }" collection`
       if(containsProperty && containsValue){
         let valor = value[containsProperty]
-        if(typeof valor === 'boolean' && typeof containsValue === 'boolean'){
-          if(valor === containsValue) collection.push(collectionItem)
-        }else if(typeof valor === 'string' && typeof containsValue === 'string'){
-          if(valor.includes(containsValue)) collection.push(collectionItem)
-        }else if(typeof valor === 'number' && typeof containsValue === 'number'){
-          if(valor === containsValue) collection.push(collectionItem)
+        try {
+          if(typeof valor === 'boolean' && typeof containsValue === 'boolean'){
+            if(valor === containsValue) collection.push(collectionItem)
+          }else if(typeof valor === 'string' && typeof containsValue === 'string'){
+            const val = String(valor).toLowerCase()
+            const cVal = String(containsValue).toLowerCase()
+            if(Levenshtein(val, cVal) <= MIN_DISTANCE || val.includes(cVal)) collection.push(collectionItem)
+            if(limitBy){
+              if(collection.length > limitBy) {
+                logMessage += `, limited to contains is ${ limitBy } `
+                return collection
+              }
+            }
+          }else if(typeof valor === 'number' && typeof containsValue === 'number'){
+            if(valor === containsValue) collection.push(collectionItem)
+          }
+          logMessage += `, contains: "${ containsValue }" in "${containsProperty}"`
+        } catch (error) {
+          this.userErrors.push(`Constain():${error.message}`)
         }
-        logMessage += `, contains: "${ containsValue }" in "${containsProperty}"`
       }else{
         collection.push(collectionItem)
       }

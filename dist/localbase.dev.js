@@ -2386,6 +2386,35 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function Levenshtein(a, b) {
+  var n = a.length;
+  var m = b.length; // matriz de cambios mínimos
+
+  var d = []; // si una de las dos está vacía, la distancia
+  // es insertar todas las otras
+
+  if (n == 0) return m;
+  if (m == 0) return n; // inicializamos el peor caso (insertar todas)
+
+  for (var i = 0; i <= n; i++) {
+    (d[i] = [])[0] = i;
+  }
+
+  for (var j = 0; j <= m; j++) {
+    d[0][j] = j;
+  } // cada elemento de la matriz será la transición con menor coste
+
+
+  for (var i = 1, I = 0; i <= n; i++, I++) {
+    for (var j = 1, J = 0; j <= m; j++, J++) {
+      if (b[J] == a[I]) d[i][j] = d[I][J];else d[i][j] = Math.min(d[I][j], d[i][J], d[I][J]) + 1;
+    }
+  } // el menor número de operaciones
+
+
+  return d[n][m];
+}
+
 function get() {
   var _this = this;
 
@@ -2401,6 +2430,7 @@ function get() {
     var limitBy = _this.limitBy;
     var containsProperty = _this.containsProperty;
     var containsValue = _this.containsValue;
+    var MIN_DISTANCE = _this.MIN_DISTANCE || 3;
     var collection = [];
     var logMessage;
     return _this.lf[collectionName].iterate(function (value, key) {
@@ -2420,15 +2450,28 @@ function get() {
       if (containsProperty && containsValue) {
         var valor = value[containsProperty];
 
-        if (typeof valor === 'boolean' && typeof containsValue === 'boolean') {
-          if (valor === containsValue) collection.push(collectionItem);
-        } else if (typeof valor === 'string' && typeof containsValue === 'string') {
-          if (valor.includes(containsValue)) collection.push(collectionItem);
-        } else if (typeof valor === 'number' && typeof containsValue === 'number') {
-          if (valor === containsValue) collection.push(collectionItem);
-        }
+        try {
+          if (typeof valor === 'boolean' && typeof containsValue === 'boolean') {
+            if (valor === containsValue) collection.push(collectionItem);
+          } else if (typeof valor === 'string' && typeof containsValue === 'string') {
+            var val = String(valor).toLowerCase();
+            var cVal = String(containsValue).toLowerCase();
+            if (Levenshtein(val, cVal) <= MIN_DISTANCE || val.includes(cVal)) collection.push(collectionItem);
 
-        logMessage += ", contains: \"".concat(containsValue, "\" in \"").concat(containsProperty, "\"");
+            if (limitBy) {
+              if (collection.length > limitBy) {
+                logMessage += ", limited to ".concat(limitBy);
+                return collection;
+              }
+            }
+          } else if (typeof valor === 'number' && typeof containsValue === 'number') {
+            if (valor === containsValue) collection.push(collectionItem);
+          }
+
+          logMessage += ", contains: \"".concat(containsValue, "\" in \"").concat(containsProperty, "\"");
+        } catch (error) {
+          _this.userErrors.push("Constain():".concat(error.message));
+        }
       } else {
         collection.push(collectionItem);
       }
@@ -2991,6 +3034,7 @@ var Localbase = function Localbase(dbName) {
     running: false
   }; // config
 
+  this.MIN_DISTANCE = 3;
   this.config = {
     debug: true
   }; // user errors - e.g. wrong type or no value passed to a method
