@@ -667,7 +667,7 @@ getUsers()
 
 ### Contains a collection
 
-search by property and include the entered value
+search by property and include the value with tolerance to misspelling
 
 ```javascript
 try{
@@ -685,13 +685,18 @@ try{
   //        { id: 2, name: 'fer', lastname:'cuevas', age: 28 },
   //        { id: 3, name: 'fermin', lastname:'castillo', age: 47 },
   //        { id: 4, name: 'fernando', lastname:'castillo', age: 34 },
+  //        { id: 4, name: 'federico', lastname:'castillo', age: 34 }, // por error de escritura se incluye
   //    ... more
   //  ]
+```
 
+search exactly by property
+
+```javascript
 /*  Exact   default = false */
 try{
   let users = await db.collection('users')
-            .contains('name', 'fer',true)
+            .contains('name', 'fer',true /* DEFAULT:false */)
             .get()
 
     console.log(users)
@@ -703,7 +708,29 @@ try{
   //        { id: 1, name: 'fer', lastname:'castillo', age: 25 },
   //        { id: 2, name: 'fer', lastname:'cuevas', age: 28 },
   //  ]
+```
 
+
+search by property and include the value without misspelling
+
+```javascript
+try{
+  let users = await db.collection('users')
+            .contains('name', 'fer', false, true /* DEFAULT: false */)
+            .get()
+
+    console.log(users)
+}catch(error) {
+    console.log('error: ', error)
+  }
+
+  //  [
+  //        { id: 1, name: 'fer', lastname:'castillo', age: 25 },
+  //        { id: 2, name: 'fer', lastname:'cuevas', age: 28 },
+  //        { id: 3, name: 'fermin', lastname:'castillo', age: 47 },
+  //        { id: 4, name: 'fernando', lastname:'castillo', age: 34 },
+  //    ... more
+  //  ]
 ```
 
 ## Configuration

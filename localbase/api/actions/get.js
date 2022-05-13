@@ -3,38 +3,7 @@ import logger from "../../utils/logger"
 import reset from '../../api-utils/reset'
 import selectionLevel from '../../api-utils/selectionLevel'
 import showUserErrors from '../../api-utils/showUserErrors'
-
-function Levenshtein(a, b) {
-  var n = a.length;
-  var m = b.length;
-
-  // matriz de cambios mínimos
-  var d = [];
-
-  // si una de las dos está vacía, la distancia
-  // es insertar todas las otras
-  if(n == 0)
-      return m;
-  if(m == 0)
-      return n;
-
-  // inicializamos el peor caso (insertar todas)
-  for(var i = 0; i <= n; i++)
-      (d[i] = [])[0] = i;
-  for(var j = 0; j <= m; j++)
-      d[0][j] = j;
-
-  // cada elemento de la matriz será la transición con menor coste
-  for(var i = 1, I = 0; i <= n; i++, I++)
-    for(var j = 1, J = 0; j <= m; j++, J++)
-        if(b[J] == a[I])
-            d[i][j] = d[I][J];
-        else
-            d[i][j] = Math.min(d[I][j], d[i][J], d[I][J]) + 1;
-
-  // el menor número de operaciones
-  return d[n][m];
-}
+import hamming from '../../utils/hammingDistance'
 
 export default function get(options = { keys: false }) {
 
@@ -47,6 +16,7 @@ export default function get(options = { keys: false }) {
     let containsProperty = this.containsProperty
     let containsValue = this.containsValue
     let containsExact = this.containsExact
+    let containsSinError = this.containsSinError
     const MIN_DISTANCE = this.MIN_DISTANCE || 3
 
     let collection = []
@@ -73,8 +43,11 @@ export default function get(options = { keys: false }) {
             const val = String(valor).toLowerCase()
             const cVal = String(containsValue).toLowerCase();
 
-            if (!containsExact) if(Levenshtein(val, cVal) <= MIN_DISTANCE || val.includes(cVal)) collection.push(collectionItem)
-            else if(val === cVal) collection.push(collectionItem);
+            if (!containsExact){
+              if(containsSinError && val.includes(cVal)){
+                collection.push(collectionItem)
+              }else if(hamming(val, cVal) <= MIN_DISTANCE || val.includes(cVal)) collection.push(collectionItem)
+            } else if(val === cVal) collection.push(collectionItem);
 
             if(limitBy){
               if(collection.length > limitBy) {
@@ -129,7 +102,7 @@ export default function get(options = { keys: false }) {
   this.getDocument = () => {
     let collectionName = this.collectionName
     let docSelectionCriteria = this.docSelectionCriteria
-    
+
     let collection = []
     let document = {}
 
