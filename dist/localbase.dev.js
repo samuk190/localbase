@@ -2058,7 +2058,7 @@ function error(message) {
 
 module.exports = exports.default;
 
-},{"../api-utils/reset":6,"../utils/logger":22}],6:[function(require,module,exports){
+},{"../api-utils/reset":6,"../utils/logger":23}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2119,7 +2119,7 @@ function showUserErrors() {
 
 module.exports = exports.default;
 
-},{"../utils/logger":22,"./reset":6}],9:[function(require,module,exports){
+},{"../utils/logger":23,"./reset":6}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2147,7 +2147,7 @@ function success(message, data) {
 
 module.exports = exports.default;
 
-},{"../api-utils/reset":6,"../utils/logger":22}],10:[function(require,module,exports){
+},{"../api-utils/reset":6,"../utils/logger":23}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2205,7 +2205,7 @@ function add(data, keyProvided) {
 
 module.exports = exports.default;
 
-},{"../../api-utils/error":5,"../../api-utils/showUserErrors":8,"../../api-utils/success":9,"ordered-uuid":25}],11:[function(require,module,exports){
+},{"../../api-utils/error":5,"../../api-utils/showUserErrors":8,"../../api-utils/success":9,"ordered-uuid":26}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2364,7 +2364,7 @@ function deleteIt() {
 
 module.exports = exports.default;
 
-},{"../../api-utils/error":5,"../../api-utils/selectionLevel":7,"../../api-utils/showUserErrors":8,"../../api-utils/success":9,"../../utils/isSubset":21,"../../utils/logger":22}],12:[function(require,module,exports){
+},{"../../api-utils/error":5,"../../api-utils/selectionLevel":7,"../../api-utils/showUserErrors":8,"../../api-utils/success":9,"../../utils/isSubset":22,"../../utils/logger":23}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2382,38 +2382,11 @@ var _selectionLevel = _interopRequireDefault(require("../../api-utils/selectionL
 
 var _showUserErrors = _interopRequireDefault(require("../../api-utils/showUserErrors"));
 
+var _hammingDistance = _interopRequireDefault(require("../../utils/hammingDistance"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function Levenshtein(a, b) {
-  var n = a.length;
-  var m = b.length; // matriz de cambios mínimos
-
-  var d = []; // si una de las dos está vacía, la distancia
-  // es insertar todas las otras
-
-  if (n == 0) return m;
-  if (m == 0) return n; // inicializamos el peor caso (insertar todas)
-
-  for (var i = 0; i <= n; i++) {
-    (d[i] = [])[0] = i;
-  }
-
-  for (var j = 0; j <= m; j++) {
-    d[0][j] = j;
-  } // cada elemento de la matriz será la transición con menor coste
-
-
-  for (var i = 1, I = 0; i <= n; i++, I++) {
-    for (var j = 1, J = 0; j <= m; j++, J++) {
-      if (b[J] == a[I]) d[i][j] = d[I][J];else d[i][j] = Math.min(d[I][j], d[i][J], d[I][J]) + 1;
-    }
-  } // el menor número de operaciones
-
-
-  return d[n][m];
-}
 
 function get() {
   var _this = this;
@@ -2431,6 +2404,7 @@ function get() {
     var containsProperty = _this.containsProperty;
     var containsValue = _this.containsValue;
     var containsExact = _this.containsExact;
+    var containsSinError = _this.containsSinError;
     var MIN_DISTANCE = _this.MIN_DISTANCE || 3;
     var collection = [];
     var logMessage;
@@ -2457,7 +2431,12 @@ function get() {
           } else if (typeof valor === 'string' && typeof containsValue === 'string') {
             var val = String(valor).toLowerCase();
             var cVal = String(containsValue).toLowerCase();
-            if (!containsExact) if (Levenshtein(val, cVal) <= MIN_DISTANCE || val.includes(cVal)) collection.push(collectionItem);else if (val === cVal) collection.push(collectionItem);
+
+            if (!containsExact) {
+              if (containsSinError && val.includes(cVal)) {
+                collection.push(collectionItem);
+              } else if ((0, _hammingDistance["default"])(val, cVal) <= MIN_DISTANCE || val.includes(cVal)) collection.push(collectionItem);
+            } else if (val === cVal) collection.push(collectionItem);
 
             if (limitBy) {
               if (collection.length > limitBy) {
@@ -2598,7 +2577,7 @@ function get() {
 
 module.exports = exports.default;
 
-},{"../../api-utils/reset":6,"../../api-utils/selectionLevel":7,"../../api-utils/showUserErrors":8,"../../utils/isSubset":21,"../../utils/logger":22}],13:[function(require,module,exports){
+},{"../../api-utils/reset":6,"../../api-utils/selectionLevel":7,"../../api-utils/showUserErrors":8,"../../utils/hammingDistance":21,"../../utils/isSubset":22,"../../utils/logger":23}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2746,7 +2725,7 @@ function set(newDocument) {
 
 module.exports = exports.default;
 
-},{"../../api-utils/error":5,"../../api-utils/selectionLevel":7,"../../api-utils/showUserErrors":8,"../../api-utils/success":9,"../../utils/isSubset":21,"../../utils/logger":22}],14:[function(require,module,exports){
+},{"../../api-utils/error":5,"../../api-utils/selectionLevel":7,"../../api-utils/showUserErrors":8,"../../api-utils/success":9,"../../utils/isSubset":22,"../../utils/logger":23}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2845,7 +2824,7 @@ function update(docUpdates) {
 
 module.exports = exports.default;
 
-},{"../../api-utils/error":5,"../../api-utils/showUserErrors":8,"../../api-utils/success":9,"../../utils/isSubset":21,"../../utils/logger":22,"../../utils/updateObject":23}],15:[function(require,module,exports){
+},{"../../api-utils/error":5,"../../api-utils/showUserErrors":8,"../../api-utils/success":9,"../../utils/isSubset":22,"../../utils/logger":23,"../../utils/updateObject":24}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2855,6 +2834,7 @@ exports["default"] = contains;
 
 function contains(property, value) {
   var exact = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var sinError = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
   if (!property || typeof property !== 'string') {
     this.userErrors.push('Propiedad no valida');
@@ -2865,6 +2845,7 @@ function contains(property, value) {
     this.containsProperty = property;
     this.containsValue = value;
     this.containsExact = exact;
+    this.containsSinError = sinError;
     return this;
   }
 }
@@ -2961,7 +2942,7 @@ function collection(collectionName) {
 
 module.exports = exports.default;
 
-},{"localforage":24}],19:[function(require,module,exports){
+},{"localforage":25}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3032,7 +3013,8 @@ var Localbase = function Localbase(dbName) {
   this.docSelectionCriteria = null;
   this.containsProperty = null;
   this.containsValue = null;
-  this.containsExact = false; // queues
+  this.containsExact = false;
+  this.containsSinError = false; // queues
 
   this.deleteCollectionQueue = {
     queue: [],
@@ -3069,6 +3051,38 @@ module.exports = exports.default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports["default"] = hamming;
+
+function hamming(a, b) {
+  var alen = a.length;
+  var blen = b.length;
+  if (alen > 100 || blen > 100) return Infinity;
+  var dist = 0;
+
+  function calculate(a, b) {
+    for (var i = 0; i < a.length; i += 1) {
+      if (a[i] !== b[i]) {
+        dist += 1;
+      }
+
+      ;
+    }
+
+    ;
+  }
+
+  if (alen == blen || alen > blen) calculate(a, b);else calculate(b, a);
+  return dist;
+}
+
+module.exports = exports.default;
+
+},{}],22:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 exports["default"] = isSubset;
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -3085,7 +3099,7 @@ function isSubset(superObj, subObj) {
 
 module.exports = exports.default;
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3127,7 +3141,7 @@ var _default = logger;
 exports["default"] = _default;
 module.exports = exports.default;
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3154,7 +3168,7 @@ function updateObject(obj
 
 module.exports = exports.default;
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 (function (global){(function (){
 /*!
     localForage -- Offline Storage, Improved
@@ -5959,7 +5973,7 @@ module.exports = localforage_js;
 });
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 (function (Buffer){(function (){
 'use strict';
 
@@ -5981,7 +5995,7 @@ module.exports = {
 };
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"buffer":2,"uuid":26}],26:[function(require,module,exports){
+},{"buffer":2,"uuid":27}],27:[function(require,module,exports){
 var v1 = require('./v1');
 var v4 = require('./v4');
 
@@ -5991,7 +6005,7 @@ uuid.v4 = v4;
 
 module.exports = uuid;
 
-},{"./v1":29,"./v4":30}],27:[function(require,module,exports){
+},{"./v1":30,"./v4":31}],28:[function(require,module,exports){
 /**
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -6019,7 +6033,7 @@ function bytesToUuid(buf, offset) {
 
 module.exports = bytesToUuid;
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 // Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
 // and inconsistent support for the `crypto` API.  We do the best we can via
@@ -6055,7 +6069,7 @@ if (getRandomValues) {
   };
 }
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -6166,7 +6180,7 @@ function v1(options, buf, offset) {
 
 module.exports = v1;
 
-},{"./lib/bytesToUuid":27,"./lib/rng":28}],30:[function(require,module,exports){
+},{"./lib/bytesToUuid":28,"./lib/rng":29}],31:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -6197,5 +6211,5 @@ function v4(options, buf, offset) {
 
 module.exports = v4;
 
-},{"./lib/bytesToUuid":27,"./lib/rng":28}]},{},[4])(4)
+},{"./lib/bytesToUuid":28,"./lib/rng":29}]},{},[4])(4)
 });
