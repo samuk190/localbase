@@ -46,6 +46,7 @@ export default function get(options = { keys: false }) {
     let limitBy = this.limitBy
     let containsProperty = this.containsProperty
     let containsValue = this.containsValue
+    let containsExact = this.containsExact
     const MIN_DISTANCE = this.MIN_DISTANCE || 3
 
     let collection = []
@@ -68,15 +69,20 @@ export default function get(options = { keys: false }) {
           if(typeof valor === 'boolean' && typeof containsValue === 'boolean'){
             if(valor === containsValue) collection.push(collectionItem)
           }else if(typeof valor === 'string' && typeof containsValue === 'string'){
+
             const val = String(valor).toLowerCase()
-            const cVal = String(containsValue).toLowerCase()
-            if(Levenshtein(val, cVal) <= MIN_DISTANCE || val.includes(cVal)) collection.push(collectionItem)
+            const cVal = String(containsValue).toLowerCase();
+
+            if (!containsExact) if(Levenshtein(val, cVal) <= MIN_DISTANCE || val.includes(cVal)) collection.push(collectionItem)
+            else if(val === cVal) collection.push(collectionItem);
+
             if(limitBy){
               if(collection.length > limitBy) {
                 logMessage += `, limited to contains is ${ limitBy } `
                 return collection
               }
             }
+
           }else if(typeof valor === 'number' && typeof containsValue === 'number'){
             if(valor === containsValue) collection.push(collectionItem)
           }
@@ -123,7 +129,7 @@ export default function get(options = { keys: false }) {
   this.getDocument = () => {
     let collectionName = this.collectionName
     let docSelectionCriteria = this.docSelectionCriteria
-
+    
     let collection = []
     let document = {}
 

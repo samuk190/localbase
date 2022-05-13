@@ -31,6 +31,7 @@ export default class Localbase {
 
     this.containsProperty = null
     this.containsValue = null
+    this.containsExact = false
 
     // queues
     this.deleteCollectionQueue = {

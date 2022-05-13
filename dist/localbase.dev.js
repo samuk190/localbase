@@ -2430,6 +2430,7 @@ function get() {
     var limitBy = _this.limitBy;
     var containsProperty = _this.containsProperty;
     var containsValue = _this.containsValue;
+    var containsExact = _this.containsExact;
     var MIN_DISTANCE = _this.MIN_DISTANCE || 3;
     var collection = [];
     var logMessage;
@@ -2456,11 +2457,11 @@ function get() {
           } else if (typeof valor === 'string' && typeof containsValue === 'string') {
             var val = String(valor).toLowerCase();
             var cVal = String(containsValue).toLowerCase();
-            if (Levenshtein(val, cVal) <= MIN_DISTANCE || val.includes(cVal)) collection.push(collectionItem);
+            if (!containsExact) if (Levenshtein(val, cVal) <= MIN_DISTANCE || val.includes(cVal)) collection.push(collectionItem);else if (val === cVal) collection.push(collectionItem);
 
             if (limitBy) {
               if (collection.length > limitBy) {
-                logMessage += ", limited to ".concat(limitBy);
+                logMessage += ", limited to contains is ".concat(limitBy, " ");
                 return collection;
               }
             }
@@ -2853,6 +2854,8 @@ Object.defineProperty(exports, "__esModule", {
 exports["default"] = contains;
 
 function contains(property, value) {
+  var exact = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
   if (!property || typeof property !== 'string') {
     this.userErrors.push('Propiedad no valida');
     return this;
@@ -2861,6 +2864,7 @@ function contains(property, value) {
   } else {
     this.containsProperty = property;
     this.containsValue = value;
+    this.containsExact = exact;
     return this;
   }
 }
@@ -3027,7 +3031,8 @@ var Localbase = function Localbase(dbName) {
   this.limitBy = null;
   this.docSelectionCriteria = null;
   this.containsProperty = null;
-  this.containsValue = null; // queues
+  this.containsValue = null;
+  this.containsExact = false; // queues
 
   this.deleteCollectionQueue = {
     queue: [],

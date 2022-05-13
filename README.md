@@ -31,6 +31,7 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
   - [Get a collection](#get-a-collection)
   - [Order a collection](#order-a-collection)
   - [Limit a collection](#limit-a-collection)
+  - [Constains a collection](#Contains-a-collection)
   - [Get a document](#get-a-document)
 - [Deleting Data](#deleting-data)
   - [Delete a document](#delete-a-document)
@@ -680,10 +681,28 @@ try{
   }
 
   //  [
-//        { id: 2, name: 'fernando', age: 34 },
-//        { id: 1, name: 'fermin', age: 47 },
-//    ... more
-//  ]
+  //        { id: 1, name: 'fer', lastname:'castillo', age: 25 },
+  //        { id: 2, name: 'fer', lastname:'cuevas', age: 28 },
+  //        { id: 3, name: 'fermin', lastname:'castillo', age: 47 },
+  //        { id: 4, name: 'fernando', lastname:'castillo', age: 34 },
+  //    ... more
+  //  ]
+
+/*  Exact   default = false */
+try{
+  let users = await db.collection('users')
+            .contains('name', 'fer',true)
+            .get()
+
+    console.log(users)
+}catch(error) {
+    console.log('error: ', error)
+  }
+
+  //  [
+  //        { id: 1, name: 'fer', lastname:'castillo', age: 25 },
+  //        { id: 2, name: 'fer', lastname:'cuevas', age: 28 },
+  //  ]
 
 ```
 
