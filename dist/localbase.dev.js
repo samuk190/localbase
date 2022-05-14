@@ -2405,7 +2405,7 @@ function get() {
     var containsValue = _this.containsValue;
     var containsExact = _this.containsExact;
     var containsSinError = _this.containsSinError;
-    var MIN_DISTANCE = _this.MIN_DISTANCE || 3;
+    var MIN_DISTANCE = _this.MIN_DISTANCE || 2;
     var collection = [];
     var logMessage;
     return _this.lf[collectionName].iterate(function (value, key) {
@@ -2431,15 +2431,19 @@ function get() {
           } else if (typeof valor === 'string' && typeof containsValue === 'string') {
             var val = String(valor).toLowerCase();
             var cVal = String(containsValue).toLowerCase();
+            console.log({
+              containsExact: containsExact,
+              containsSinError: containsSinError
+            });
 
             if (!containsExact) {
               if (containsSinError && val.includes(cVal)) {
                 collection.push(collectionItem);
-              } else if ((0, _hammingDistance["default"])(val, cVal) <= MIN_DISTANCE || val.includes(cVal)) collection.push(collectionItem);
+              } else if (val.includes(cVal) || (0, _hammingDistance["default"])(val, cVal) <= MIN_DISTANCE) collection.push(collectionItem);
             } else if (val === cVal) collection.push(collectionItem);
 
             if (limitBy) {
-              if (collection.length > limitBy) {
+              if (collection.length > limitBy + 10) {
                 logMessage += ", limited to contains is ".concat(limitBy, " ");
                 return collection;
               }
@@ -3021,7 +3025,7 @@ var Localbase = function Localbase(dbName) {
     running: false
   }; // config
 
-  this.MIN_DISTANCE = 3;
+  this.MIN_DISTANCE = 2;
   this.config = {
     debug: true
   }; // user errors - e.g. wrong type or no value passed to a method
@@ -3071,7 +3075,7 @@ function hamming(a, b) {
     ;
   }
 
-  if (alen == blen || alen > blen) calculate(a, b);else calculate(b, a);
+  if (alen == blen || alen > blen) calculate(b, a);else calculate(a, b);
   return dist;
 }
 

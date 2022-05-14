@@ -14,8 +14,8 @@ export default function hamming(a,b){
     };
   }
 
-  if(alen == blen || alen > blen ) calculate(a,b);
-  else calculate(b,a);
+  if(alen == blen || alen > blen ) calculate(b,a);
+  else calculate(a,b);
 
  return dist;
 }

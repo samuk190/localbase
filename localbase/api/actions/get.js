@@ -17,7 +17,7 @@ export default function get(options = { keys: false }) {
     let containsValue = this.containsValue
     let containsExact = this.containsExact
     let containsSinError = this.containsSinError
-    const MIN_DISTANCE = this.MIN_DISTANCE || 3
+    const MIN_DISTANCE = this.MIN_DISTANCE || 2
 
     let collection = []
     let logMessage
@@ -43,14 +43,15 @@ export default function get(options = { keys: false }) {
             const val = String(valor).toLowerCase()
             const cVal = String(containsValue).toLowerCase();
 
+            console.log({containsExact, containsSinError})
             if (!containsExact){
               if(containsSinError && val.includes(cVal)){
                 collection.push(collectionItem)
-              }else if(hamming(val, cVal) <= MIN_DISTANCE || val.includes(cVal)) collection.push(collectionItem)
+              }else if( val.includes(cVal) || hamming(val, cVal) <= MIN_DISTANCE ) collection.push(collectionItem)
             } else if(val === cVal) collection.push(collectionItem);
 
             if(limitBy){
-              if(collection.length > limitBy) {
+              if(collection.length > (limitBy + 10 )) {
                 logMessage += `, limited to contains is ${ limitBy } `
                 return collection
               }
