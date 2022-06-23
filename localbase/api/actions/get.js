@@ -43,7 +43,6 @@ export default function get(options = { keys: false }) {
             const val = String(valor).toLowerCase()
             const cVal = String(containsValue).toLowerCase();
 
-            console.log({containsExact, containsSinError})
             if (!containsExact){
               if(containsSinError && val.includes(cVal)){
                 collection.push(collectionItem)

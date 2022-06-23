@@ -2431,10 +2431,6 @@ function get() {
           } else if (typeof valor === 'string' && typeof containsValue === 'string') {
             var val = String(valor).toLowerCase();
             var cVal = String(containsValue).toLowerCase();
-            console.log({
-              containsExact: containsExact,
-              containsSinError: containsSinError
-            });
 
             if (!containsExact) {
               if (containsSinError && val.includes(cVal)) {
