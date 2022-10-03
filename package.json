@@ -1,7 +1,7 @@
 {
   "name": "localbase",
   "version": "0.7.5",
-  "description": "A Firebase-Style Database ... Offline!",
+  "description": "A Firebase-Style Database ... Offline! Maintaned by Samuk190" ,
   "main": "index.js",
   "scripts": {
     "bundle-dev": "browserify --standalone Localbase index.js -t babelify -t [ envify --NODE_ENV development ] > dist/localbase.dev.js",
@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dannyconnell/localbase.git"
+    "url": "git+https://github.com/samuk190/localbase.git"
   },
   "keywords": [
     "database",
