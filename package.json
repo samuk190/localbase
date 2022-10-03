@@ -1,6 +1,6 @@
 {
   "name": "localbase",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "description": "A Firebase-Style Database ... Offline! Maintaned by Samuk190" ,
   "main": "index.js",
   "scripts": {
