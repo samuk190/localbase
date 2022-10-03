@@ -1,6 +1,6 @@
 # Localbase <!-- omit in toc -->
 
-A Firebase-Style Database ... Offline!
+A Firebase-Style Database ... Offline! originally made by dannyconnell and maintaned by Samuk190
 
 Localbase gives you an offline database with the simplicity & power of Firebase, all stored in the user's browser (in an IndexedDB database).
 
