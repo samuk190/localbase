@@ -29,6 +29,7 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
   - [Set a collection (overwrite)](#set-a-collection-overwrite)
 - [Getting Data](#getting-data)
   - [Get a collection](#get-a-collection)
+  - [Search in collection](#search-in-collection)
   - [Order a collection](#order-a-collection)
   - [Limit a collection](#limit-a-collection)
   - [Constains a collection](#Contains-a-collection)
@@ -158,6 +159,20 @@ db.collection('users').add({
   age: 47
 })
 ```
+
+ to optimize future search in these fields
+```javascript
+const fruits = {
+  id: 1,
+  category: 'fruits',
+  name:'apple',
+  price: 1,
+  code:'1'
+}
+
+db.collection('product').add( fruits, fruits.code, ['name','category']);
+
+```
 Simples!
 
 Once you've added some data to a collection, you can get the whole collection with the `get` method:
@@ -247,20 +262,17 @@ db.collection('users')
 //  ]
 ```
 
-## Getting Data
-
-### Get a collection
+## search in collection
 
 Get all items from a collection. The collection will be returned in an array.
 
 ```javascript
-db.collection('users').get().then(users => {
+db.collection('fruits').search('ap').then(users => {
   console.log(users)
 })
 
 //  [
-//    { id: 1, name: 'Bill', age: 47 },
-//    { id: 2, name: 'Paul', age: 34 }
+//    { id: 1, category: 'fruits', name:'apple', price: 1, code:'1'},
 //  ]
 ```
 

@@ -5,37 +5,53 @@ import showUserErrors from '../../api-utils/showUserErrors'
 import { single, go, highlight } from 'fuzzysort';
 
 
-
-export default function search(query = '', opciones = { destacado:true }) {
+/**
+ * 
+ * @param {string} query  text to search within the collection
+ * @param {Array} inKeys properties of the object where to search eg: ['title','category']
+ * @param {object} options { highlights:true }
+ * @returns [...any] search results in order
+ */
+export default function search(query = '',inKeys =[], options = { highlights:true }) {
 
   if (!query) return logger.error.call(this, 'query in search is empty');
-  if (typeof opciones !== 'object') return logger.error.call(this, 'no valid opciones');
+  if (typeof options !== 'object') return logger.error.call(this, 'no valid options');
 
   this.go = async () => {
     let collectionName = this.collectionName;
-
+    let isPrepared = false
     const targets = await new Promise((res, rej) => {
       const targets = []
       this.lf[collectionName].iterate((value, key) => {
-        const si = single(query, value.___prepared___);
-        if (si) {
-          if (si.score > -200) {
-            if(opciones.destacado) {value.__destacado = highlight(si,'<strong>','</strong>');}
-            if(targets.push(value) > 100) return targets;
+        if(Array.isArray(inKeys) && inKeys.length){
+          targets.push(value);
+        }else{
+          if(!(value.___prepared___)){
+            targets.push(value);
+          }else{
+            isPrepared = true;
+            const si = single(query, value.___prepared___);
+            if (si) {
+              if (si.score > -200) {
+                if(options.highlights) {value.__highlights = highlight(si,'<strong>','</strong>');}
+                if(targets.push(value) > 100) return targets;
+              }
+            }
           }
-        }
+      }
       }).then(() => {
         res(targets)
       }).catch(e => rej(e));
     })
 
-    const options = {
+    const optionsFuzzy = {
       limit: 100, // don't return more results than you need!
       threshold: -10000, // don't return bad results
-      key: '___prepared___'
+      key: Array.isArray(inKeys) && inKeys.length ? null : isPrepared ? '___prepared___':null,
+      keys: Array.isArray(inKeys) && inKeys.length ? inKeys : null
     }
 
-    const results = go(query, targets, options);
+    const results = go(query, targets, optionsFuzzy);
     reset.call(this);
     logger.log.call(this, 'SEARCHS', results.length);
     return results.map(o => o.obj);
@@ -43,15 +59,15 @@ export default function search(query = '', opciones = { destacado:true }) {
 
   // check for user errors
   if (!(typeof options == 'object' && options instanceof Array == false)) {
-    this.userErrors.push('Data passed to .get() must be an object. Not an array, string, number or boolean. The object must contain a "keys" property set to true or false, e.g. { keys: true }')
+    this.userErrors.push('Data passed to .search() must be an object. Not an array, string, number or boolean. The object must contain a "highlights" property set to true or false, e.g. { highlights: true }')
   }
   else {
-    if (!options.hasOwnProperty('keys')) {
-      this.userErrors.push('Object passed to get() method must contain a "keys" property set to boolean true or false, e.g. { keys: true }')
+    if (!options.hasOwnProperty('highlights')) {
+      this.userErrors.push('Object passed to search() method must contain a "highlights" property set to boolean true or false, e.g. { highlights: true }')
     }
     else {
-      if (typeof options.keys !== 'boolean') {
-        this.userErrors.push('Property "keys" passed into get() method must be assigned a boolean value (true or false). Not a string or integer.')
+      if (typeof options.highlights !== 'boolean') {
+        this.userErrors.push('Property "highlights" passed into search() method must be assigned a boolean value (true or false). Not a string or integer.')
       }
     }
   }

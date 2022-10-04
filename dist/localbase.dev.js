@@ -135,6 +135,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = add;
 
+var _cuid = _interopRequireDefault(require("cuid"));
+
 var _success = _interopRequireDefault(require("../../api-utils/success"));
 
 var _error = _interopRequireDefault(require("../../api-utils/error"));
@@ -142,6 +144,8 @@ var _error = _interopRequireDefault(require("../../api-utils/error"));
 var _showUserErrors = _interopRequireDefault(require("../../api-utils/showUserErrors"));
 
 var _fuzzysort = require("fuzzysort");
+
+var _logger = _interopRequireDefault(require("../../utils/logger"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -152,8 +156,6 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-var UUID = require('cuid');
 
 var searchStringInObject = function searchStringInObject(value) {
   var keys = [];
@@ -187,11 +189,17 @@ var searchStringInObject = function searchStringInObject(value) {
   });
   return str;
 };
+/**
+ * 
+ * @param {*} data 
+ * @param {*} keyProvided 
+ * @param {*} keys 
+ * @returns 
+ */
 
-function add(data, keyProvided) {
+
+function add(data, keyProvided, keys) {
   var _this = this;
-
-  var keys = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ['nombre', 'category'];
 
   // check for user errors
   if (!data) {
@@ -207,16 +215,18 @@ function add(data, keyProvided) {
       var key = null; // if no key provided, generate random, ordered key
 
       if (!keyProvided) {
-        key = UUID.generate();
+        key = (0, _cuid["default"])();
       } else {
         key = keyProvided;
       }
 
       try {
-        if (Array.isArray(keys)) {
-          if (typeof data === 'string') data.___prepared___ = (0, _fuzzysort.prepare)(data);
+        if (Array.isArray(keys) && keys.length) {
+          _logger["default"].log.call(_this, 'optimizando para busqueda en: ', keys);
 
-          if (!Array.isArray(data) && _typeof(data) === 'object' && Object.keys(data).some(function (k) {
+          if (typeof data === 'string') {
+            data.___prepared___ = (0, _fuzzysort.prepare)(data);
+          } else if (!Array.isArray(data) && _typeof(data) === 'object' && Object.keys(data).some(function (k) {
             return keys.some(function (k2) {
               return k2 === k;
             });
@@ -244,6 +254,8 @@ function add(data, keyProvided) {
         }
       } catch (error) {
         console.trace(error);
+
+        _logger["default"].error.call(_this, error.message);
       }
 
       return _this.lf[collectionName].setItem(key, data).then( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
@@ -273,7 +285,7 @@ function add(data, keyProvided) {
 
 module.exports = exports.default;
 
-},{"../../api-utils/error":2,"../../api-utils/showUserErrors":5,"../../api-utils/success":6,"cuid":22,"fuzzysort":26}],8:[function(require,module,exports){
+},{"../../api-utils/error":2,"../../api-utils/showUserErrors":5,"../../api-utils/success":6,"../../utils/logger":20,"cuid":22,"fuzzysort":26}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -678,36 +690,54 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
+/**
+ * 
+ * @param {string} query  text to search within the collection
+ * @param {Array} inKeys properties of the object where to search eg: ['title','category']
+ * @param {object} options { highlights:true }
+ * @returns [...any] search results in order
+ */
 function search() {
   var _this = this;
 
   var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-  var opciones = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
-    destacado: true
+  var inKeys = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {
+    highlights: true
   };
   if (!query) return _logger["default"].error.call(this, 'query in search is empty');
-  if (_typeof(opciones) !== 'object') return _logger["default"].error.call(this, 'no valid opciones');
+  if (_typeof(options) !== 'object') return _logger["default"].error.call(this, 'no valid options');
   this.go = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-    var collectionName, targets, options, results;
+    var collectionName, isPrepared, targets, optionsFuzzy, results;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             collectionName = _this.collectionName;
-            _context.next = 3;
+            isPrepared = false;
+            _context.next = 4;
             return new Promise(function (res, rej) {
               var targets = [];
 
               _this.lf[collectionName].iterate(function (value, key) {
-                var si = (0, _fuzzysort.single)(query, value.___prepared___);
+                if (Array.isArray(inKeys) && inKeys.length) {
+                  targets.push(value);
+                } else {
+                  if (!value.___prepared___) {
+                    targets.push(value);
+                  } else {
+                    isPrepared = true;
+                    var si = (0, _fuzzysort.single)(query, value.___prepared___);
 
-                if (si) {
-                  if (si.score > -200) {
-                    if (opciones.destacado) {
-                      value.__destacado = (0, _fuzzysort.highlight)(si, '<strong>', '</strong>');
+                    if (si) {
+                      if (si.score > -200) {
+                        if (options.highlights) {
+                          value.__highlights = (0, _fuzzysort.highlight)(si, '<strong>', '</strong>');
+                        }
+
+                        if (targets.push(value) > 100) return targets;
+                      }
                     }
-
-                    if (targets.push(value) > 100) return targets;
                   }
                 }
               }).then(function () {
@@ -717,16 +747,17 @@ function search() {
               });
             });
 
-          case 3:
+          case 4:
             targets = _context.sent;
-            options = {
+            optionsFuzzy = {
               limit: 100,
               // don't return more results than you need!
               threshold: -10000,
               // don't return bad results
-              key: '___prepared___'
+              key: Array.isArray(inKeys) && inKeys.length ? null : isPrepared ? '___prepared___' : null,
+              keys: Array.isArray(inKeys) && inKeys.length ? inKeys : null
             };
-            results = (0, _fuzzysort.go)(query, targets, options);
+            results = (0, _fuzzysort.go)(query, targets, optionsFuzzy);
 
             _reset["default"].call(_this);
 
@@ -736,7 +767,7 @@ function search() {
               return o.obj;
             }));
 
-          case 9:
+          case 10:
           case "end":
             return _context.stop();
         }
@@ -744,14 +775,14 @@ function search() {
     }, _callee);
   })); // check for user errors
 
-  if (!((typeof options === "undefined" ? "undefined" : _typeof(options)) == 'object' && options instanceof Array == false)) {
-    this.userErrors.push('Data passed to .get() must be an object. Not an array, string, number or boolean. The object must contain a "keys" property set to true or false, e.g. { keys: true }');
+  if (!(_typeof(options) == 'object' && options instanceof Array == false)) {
+    this.userErrors.push('Data passed to .search() must be an object. Not an array, string, number or boolean. The object must contain a "highlights" property set to true or false, e.g. { highlights: true }');
   } else {
-    if (!options.hasOwnProperty('keys')) {
-      this.userErrors.push('Object passed to get() method must contain a "keys" property set to boolean true or false, e.g. { keys: true }');
+    if (!options.hasOwnProperty('highlights')) {
+      this.userErrors.push('Object passed to search() method must contain a "highlights" property set to boolean true or false, e.g. { highlights: true }');
     } else {
-      if (typeof options.keys !== 'boolean') {
-        this.userErrors.push('Property "keys" passed into get() method must be assigned a boolean value (true or false). Not a string or integer.');
+      if (typeof options.highlights !== 'boolean') {
+        this.userErrors.push('Property "highlights" passed into search() method must be assigned a boolean value (true or false). Not a string or integer.');
       }
     }
   }
