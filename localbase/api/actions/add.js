@@ -1,9 +1,24 @@
-let UUID = require('ordered-uuid')
+import cuid from 'cuid'
 import success from '../../api-utils/success'
 import error from '../../api-utils/error'
 import showUserErrors from '../../api-utils/showUserErrors'
+import { prepare } from 'fuzzysort'
 
-export default function add(data, keyProvided) {
+const searchStringInObject = (value) => {
+  let keys = []
+  Object.keys(value).forEach(async k => {
+    if (typeof value[k] === 'string' && value[k].length > 200) {
+      if (isNaN(Number(value[k]))) {
+        keys.push(k)
+      }
+    }
+  });
+  let str = ''
+  keys.forEach(k2 => str += `${value[k2]} `);
+  return str;
+}
+
+export default function add(data, keyProvided, keys= ['nombre', 'category']) {
   // check for user errors
   if (!data) {
     this.userErrors.push('No data specified in add() method. You must use an object, e.g { id: 1, name: "Bill", age: 47 }')
@@ -21,13 +36,41 @@ export default function add(data, keyProvided) {
 
       // if no key provided, generate random, ordered key
       if (!keyProvided) {
-        key = UUID.generate()
+        key = cuid();
       }
       else {
         key = keyProvided
       }
 
-      return this.lf[collectionName].setItem(key, data).then(() => {
+      try {
+      if(Array.isArray(keys)){
+          if (typeof data === 'string') data.___prepared___ = prepare(data);
+            if (!Array.isArray(data) && typeof data === 'object' && Object.keys(data).some(k => keys.some(k2 => k2 === k))) {
+              let str = ''
+              keys.forEach(k2 => str += `${data[k2]} `);
+              data.___prepared___ = prepare(str);
+            } else if (!Array.isArray(data) && typeof data === 'object') {
+              data.___prepared___ = prepare(searchStringInObject(data))
+            } else if (Array.isArray(data)) {
+              let str = ''
+              data.forEach(v => {
+                if (typeof v === 'string') {
+                  if (str.length > 500) {
+                    str += v
+                  }
+                } else if (!Array.isArray(v) && typeof v === 'object') {
+                  str += searchStringInObject(v);
+                }
+              });
+              data.___prepared___ = prepare(str);
+            }
+          }
+      } catch (error) {
+        console.trace(error)
+      }
+
+      return this.lf[collectionName].setItem(key, data).then(async () => {
+        
         resolve(
           success.call(
             this,

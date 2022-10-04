@@ -3,10 +3,9 @@ import logger from "../../utils/logger"
 import reset from '../../api-utils/reset'
 import selectionLevel from '../../api-utils/selectionLevel'
 import showUserErrors from '../../api-utils/showUserErrors'
-import hamming from '../../utils/hammingDistance'
+import { single } from 'fuzzysort'
 
 export default function get(options = { keys: false }) {
-
   // get collection
   this.getCollection = () => {
     let collectionName = this.collectionName
@@ -17,10 +16,10 @@ export default function get(options = { keys: false }) {
     let containsValue = this.containsValue
     let containsExact = this.containsExact
     let containsSinError = this.containsSinError
-    const MIN_DISTANCE = this.MIN_DISTANCE || 2
 
     let collection = []
     let logMessage
+   
     return this.lf[collectionName].iterate((value, key) => {
       let collectionItem = {}
       if (!options.keys) {
@@ -43,11 +42,15 @@ export default function get(options = { keys: false }) {
             const val = String(valor).toLowerCase()
             const cVal = String(containsValue).toLowerCase();
 
-            console.log({containsExact, containsSinError})
             if (!containsExact){
               if(containsSinError && val.includes(cVal)){
                 collection.push(collectionItem)
-              }else if( val.includes(cVal) || hamming(val, cVal) <= MIN_DISTANCE ) collection.push(collectionItem)
+              }else {
+                const search = single(cVal, val);
+                if(search){
+                  collection.push(collectionItem)
+                }
+              } 
             } else if(val === cVal) collection.push(collectionItem);
 
             if(limitBy){

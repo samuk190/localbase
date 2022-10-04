@@ -6,5 +6,5 @@ export default function reset() {
   this.docSelectionCriteria = null
   this.userErrors = []
   this.containsProperty = null
-    this.containsValue = null
+  this.containsValue = null
 }

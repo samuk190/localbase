@@ -14,6 +14,7 @@ import add from './api/actions/add'
 import update from './api/actions/update'
 import set from './api/actions/set'
 import deleteIt from './api/actions/delete'
+import search from './api/actions/search'
 
 
 // Localbase
@@ -41,7 +42,6 @@ export default class Localbase {
     }
 
     // config
-    this.MIN_DISTANCE = 2
     this.config = {
       debug: true
     }
@@ -62,8 +62,8 @@ export default class Localbase {
     this.get = get.bind(this)
     this.add = add.bind(this)
     this.update = update.bind(this)
-    this.set = set.bind(this)
-    this.delete = deleteIt.bind(this)
-
+    this.set = set.bind(this);
+    this.delete = deleteIt.bind(this);
+    this.search = search.bind(this);
   }
 }
