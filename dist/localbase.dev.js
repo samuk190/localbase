@@ -501,39 +501,43 @@ function get() {
 
       logMessage = "Got \"".concat(collectionName, "\" collection");
 
-      if (containsProperty && containsValue) {
+      if (containsProperty) {
         var valor = value[containsProperty];
 
         try {
-          if (typeof valor === 'boolean' && typeof containsValue === 'boolean') {
-            if (valor === containsValue) collection.push(collectionItem);
-          } else if (typeof valor === 'string' && typeof containsValue === 'string') {
-            var val = String(valor).toLowerCase();
-            var cVal = String(containsValue).toLowerCase();
-
-            if (!containsExact) {
-              if (containsSinError && val.includes(cVal)) {
+          if (_typeof(valor) !== undefined) {
+            if (typeof valor === 'boolean' && typeof containsValue === 'boolean') {
+              if (valor === containsValue) {
                 collection.push(collectionItem);
-              } else {
-                var search = (0, _fuzzysort.single)(cVal, val);
+              }
+            } else if (typeof valor === 'string' && typeof containsValue === 'string') {
+              var val = String(valor).toLowerCase();
+              var cVal = String(containsValue).toLowerCase();
 
-                if (search) {
+              if (!containsExact) {
+                if (containsSinError && val.includes(cVal)) {
                   collection.push(collectionItem);
+                } else {
+                  var search = (0, _fuzzysort.single)(cVal, val);
+
+                  if (search) {
+                    collection.push(collectionItem);
+                  }
+                }
+              } else if (val === cVal) collection.push(collectionItem);
+
+              if (limitBy) {
+                if (collection.length > limitBy + 10) {
+                  logMessage += ", limited to contains is ".concat(limitBy, " ");
+                  return collection;
                 }
               }
-            } else if (val === cVal) collection.push(collectionItem);
-
-            if (limitBy) {
-              if (collection.length > limitBy + 10) {
-                logMessage += ", limited to contains is ".concat(limitBy, " ");
-                return collection;
-              }
+            } else if (typeof valor === 'number' && typeof containsValue === 'number') {
+              if (valor === containsValue) collection.push(collectionItem);
             }
-          } else if (typeof valor === 'number' && typeof containsValue === 'number') {
-            if (valor === containsValue) collection.push(collectionItem);
-          }
 
-          logMessage += ", contains: \"".concat(containsValue, "\" in \"").concat(containsProperty, "\"");
+            logMessage += ", contains: \"".concat(containsValue, "\" in \"").concat(containsProperty, "\"");
+          }
         } catch (error) {
           _this.userErrors.push("Constain():".concat(error.message));
         }

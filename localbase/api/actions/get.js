@@ -32,38 +32,42 @@ export default function get(options = { keys: false }) {
         }
       }
       logMessage = `Got "${ collectionName }" collection`
-      if(containsProperty && containsValue){
+      if(containsProperty){
         let valor = value[containsProperty]
         try {
-          if(typeof valor === 'boolean' && typeof containsValue === 'boolean'){
-            if(valor === containsValue) collection.push(collectionItem)
-          }else if(typeof valor === 'string' && typeof containsValue === 'string'){
-
-            const val = String(valor).toLowerCase()
-            const cVal = String(containsValue).toLowerCase();
-
-            if (!containsExact){
-              if(containsSinError && val.includes(cVal)){
-                collection.push(collectionItem)
-              }else {
-                const search = single(cVal, val);
-                if(search){
-                  collection.push(collectionItem)
-                }
-              } 
-            } else if(val === cVal) collection.push(collectionItem);
-
-            if(limitBy){
-              if(collection.length > (limitBy + 10 )) {
-                logMessage += `, limited to contains is ${ limitBy } `
-                return collection
+          if(typeof valor !== undefined){
+            if( typeof valor === 'boolean' && typeof containsValue === 'boolean'){
+              if(valor === containsValue) {
+                collection.push(collectionItem);
               }
+            }else if(typeof valor === 'string' && typeof containsValue === 'string'){
+  
+              const val = String(valor).toLowerCase()
+              const cVal = String(containsValue).toLowerCase();
+  
+              if (!containsExact){
+                if(containsSinError && val.includes(cVal)){
+                  collection.push(collectionItem)
+                }else {
+                  const search = single(cVal, val);
+                  if(search){
+                    collection.push(collectionItem)
+                  }
+                } 
+              } else if(val === cVal) collection.push(collectionItem);
+  
+              if(limitBy){
+                if(collection.length > (limitBy + 10 )) {
+                  logMessage += `, limited to contains is ${ limitBy } `
+                  return collection
+                }
+              }
+  
+            }else if(typeof valor === 'number' && typeof containsValue === 'number'){
+              if(valor === containsValue) collection.push(collectionItem)
             }
-
-          }else if(typeof valor === 'number' && typeof containsValue === 'number'){
-            if(valor === containsValue) collection.push(collectionItem)
+            logMessage += `, contains: "${ containsValue }" in "${containsProperty}"`
           }
-          logMessage += `, contains: "${ containsValue }" in "${containsProperty}"`
         } catch (error) {
           this.userErrors.push(`Constain():${error.message}`)
         }
