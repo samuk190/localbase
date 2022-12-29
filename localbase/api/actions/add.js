@@ -1,4 +1,4 @@
-let UUID = require('ordered-uuid')
+import { generate as generateUUID } from 'ordered-uuid-v4';
 import success from '../../api-utils/success'
 import error from '../../api-utils/error'
 import showUserErrors from '../../api-utils/showUserErrors'
@@ -21,7 +21,7 @@ export default function add(data, keyProvided) {
 
       // if no key provided, generate random, ordered key
       if (!keyProvided) {
-        key = UUID.generate()
+        key = generateUUID()
       }
       else {
         key = keyProvided
