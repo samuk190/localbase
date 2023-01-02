@@ -1,23 +1,11 @@
-import cuid from 'cuid'
-import success from '../../api-utils/success'
-import error from '../../api-utils/error'
-import showUserErrors from '../../api-utils/showUserErrors'
+import { v1 } from 'uuid'
+import success from '../../api-utils/success.js'
+import error from '../../api-utils/error.js'
+import showUserErrors from '../../api-utils/showUserErrors.js'
 import { prepare } from 'fuzzysort'
-import logger from '../../utils/logger'
+import logger from '../../utils/logger.js';
+import searchStringInObject from '../../api-utils/StringInObject.js'
 
-const searchStringInObject = (value) => {
-  let keys = []
-  Object.keys(value).forEach(async k => {
-    if (typeof value[k] === 'string' && value[k].length > 200) {
-      if (isNaN(Number(value[k]))) {
-        keys.push(k)
-      }
-    }
-  });
-  let str = ''
-  keys.forEach(k2 => str += `${value[k2]} `);
-  return str;
-}
 /**
  * 
  * @param {*} data 
@@ -43,7 +31,7 @@ export default function add(data, keyProvided, keys) {
 
       // if no key provided, generate random, ordered key
       if (!keyProvided) {
-        key = cuid();
+        key = this.uid()
       }
       else {
         key = keyProvided
@@ -80,7 +68,7 @@ export default function add(data, keyProvided, keys) {
       }
 
       return this.lf[collectionName].setItem(key, data).then(async () => {
-
+        this.change(collectionName,'ADD', data, key);
         resolve(
           success.call(
             this,

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="./dist/localbase.dev.js"></script>
+</head>
+<body>
+  <script>
+  async function tested() {
+   /*  Localbase.onChange = ( movimiento ) => {
+      console.log( 'DB', movimiento )
+    }
+
+    Localbase.onChangeDoc = ( movimiento ) => {
+      console.log( 'DOCUMENT', movimiento )
+    } */
+  
+    const a = new Array(10).fill('hello')
+  
+    const db = new Localbase('example')
+  
+    //add to key provista
+    await db.collection('test').add({nombre:'CHUP',apellido:'rozas'},'1')
+    await db.collection('test').add({nombre:'CHUP'},'2')
+
+    console.log('UID: ',db.uid())
+  
+      //update to key
+      await db.collection('test').doc('1').update({nombre:'CHUP@'});
+  
+      //get to key
+      const doc = await db.collection('test').doc('1').get();
+      console.log('DOC UPDATE',{doc})
+  
+    for (let index = 0; index < a.length; index++) {
+      const element = a[index];
+      await db.collection('test').add({nombre:element+' '+index})
+    }
+    const tested2 = await db.collection('test').search('chup');
+    await db.collection('test').search('chup');
+    setTimeout(async ()=> {
+      const tested2 = await db.collection('test').search('roza');
+      console.log({tested2})
+    },1000)
+
+    setTimeout(async ()=> {
+      const tested2 = await db.collection('test').search('chup');
+      const tested3 = await db.collection('test').search('chup');
+      console.log({tested2,tested3})
+      await db.collection('test').delete();
+  
+      await db.delete();
+    },5000)
+    console.log({tested2})
+  
+   
+    
+  }
+  tested();
+  </script>
+</body>
+</html>

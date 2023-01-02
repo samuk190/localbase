@@ -1,9 +1,9 @@
-import logger from "../../utils/logger"
-import reset from '../../api-utils/reset'
-import selectionLevel from '../../api-utils/selectionLevel'
-import showUserErrors from '../../api-utils/showUserErrors'
-import { single, go, highlight } from 'fuzzysort';
-
+import logger from "../../utils/logger.js"
+import reset from '../../api-utils/reset.js'
+import selectionLevel from '../../api-utils/selectionLevel.js'
+import showUserErrors from '../../api-utils/showUserErrors.js'
+import { go, prepare } from 'fuzzysort';
+import searchStringInObject from '../../api-utils/StringInObject.js'
 
 /**
  * 
@@ -12,48 +12,51 @@ import { single, go, highlight } from 'fuzzysort';
  * @param {object} options { highlights:true }
  * @returns [...any] search results in order
  */
-export default function search(query = '',inKeys =[], options = { highlights:true }) {
+
+export default async function search(query = '',inKeys =[], options = { highlights:true }) {
 
   if (!query) return logger.error.call(this, 'query in search is empty');
   if (typeof options !== 'object') return logger.error.call(this, 'no valid options');
 
-  this.go = async () => {
+  this.buscar = async () => {
+    console.time('buscar')
     let collectionName = this.collectionName;
-    let isPrepared = false
-    const targets = await new Promise((res, rej) => {
-      const targets = []
-      this.lf[collectionName].iterate((value, key) => {
-        if(Array.isArray(inKeys) && inKeys.length){
-          targets.push(value);
-        }else{
-          if(!(value.___prepared___)){
-            targets.push(value);
-          }else{
-            isPrepared = true;
-            const si = single(query, value.___prepared___);
-            if (si) {
-              if (si.score > -200) {
-                if(options.highlights) {value.__highlights = highlight(si,'<strong>','</strong>');}
-                if(targets.push(value) > 100) return targets;
-              }
+    if(!!this.cache[collectionName] && this.time){
+      clearTimeout(this.time)
+    } else {
+      this.cache[collectionName] = []
+      console.time('cargando_cache')
+      await new Promise((res, rej) => {
+        this.lf[collectionName].iterate((value, key) => {
+            if(!(value.___prepared___)){
+              value.___prepared___ = prepare(searchStringInObject(value))
             }
-          }
-      }
-      }).then(() => {
-        res(targets)
-      }).catch(e => rej(e));
-    })
-
+            this.cache[collectionName].push(value);
+        }).then(() => {
+          res(true)
+        }).catch(e => {
+          rej(e)
+        });
+      })
+      console.timeEnd('cargando_cache')
+    }
+    
+    this.time = setTimeout(()=>{
+      delete this.cache[collectionName]
+      this.time = 0;
+    },1000 * 60 * 60 )
+    
     const optionsFuzzy = {
-      limit: 100, // don't return more results than you need!
+      limit: 50, // don't return more results than you need!
       threshold: -10000, // don't return bad results
-      key: Array.isArray(inKeys) && inKeys.length ? null : isPrepared ? '___prepared___':null,
+      key: Array.isArray(inKeys) && inKeys.length ? null : '___prepared___',
       keys: Array.isArray(inKeys) && inKeys.length ? inKeys : null
     }
 
-    const results = go(query, targets, optionsFuzzy);
-    reset.call(this);
+    const results = go(query, this.cache[collectionName], optionsFuzzy);
     logger.log.call(this, 'SEARCHS', results.length);
+    console.timeEnd('buscar')
+    reset.call(this);
     return results.map(o => o.obj);
   }
 
@@ -75,7 +78,7 @@ export default function search(query = '',inKeys =[], options = { highlights:tru
   let currentSelectionLevel = selectionLevel.call(this)
 
   if (currentSelectionLevel == 'collection') {
-    return this.go();
+    return this.buscar();
   }
   else if (currentSelectionLevel == 'doc') {
     this.userErrors.push('Function no avalible in doc')

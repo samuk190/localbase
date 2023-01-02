@@ -6,15 +6,15 @@
   "scripts": {
     "bundle-dev": "browserify --standalone Localbase index.js -t babelify -t [ envify --NODE_ENV development ] > dist/localbase.dev.js",
     "bundle-prod": "browserify -p [ tinyify --no-flat ] --standalone Localbase index.js -t babelify -t [ envify --NODE_ENV production ] > dist/localbase.min.js",
-    "bundle": "npm run bundle-dev && npm run bundle-prod",
+    "build": "npm run bundle-dev && npm run bundle-prod",
     "deploy": "npm run bundle && npm publish"
   },
   "author": "Danny Connell",
   "license": "MIT",
   "dependencies": {
-    "cuid": "^2.1.8",
     "fuzzysort": "^2.0.1",
-    "localforage": "^1.7.4"
+    "localforage": "^1.7.4",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",

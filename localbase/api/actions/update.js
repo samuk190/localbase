@@ -1,9 +1,9 @@
-import logger from '../../utils/logger'
-import isSubset from '../../utils/isSubset'
-import updateObject from '../../utils/updateObject'
-import success from '../../api-utils/success'
-import error from '../../api-utils/error'
-import showUserErrors from '../../api-utils/showUserErrors'
+import logger from '../../utils/logger.js'
+import isSubset from '../../utils/isSubset.js'
+import updateObject from '../../utils/updateObject.js'
+import success from '../../api-utils/success.js'
+import error from '../../api-utils/error.js'
+import showUserErrors from '../../api-utils/showUserErrors.js'
 
 export default function update(docUpdates) {
   let collectionName = this.collectionName
@@ -17,7 +17,7 @@ export default function update(docUpdates) {
       this.lf[collectionName].iterate((value, key) => {
         if (isSubset(value, docSelectionCriteria)) {
           let newDocument = updateObject(value, docUpdates)
-          docsToUpdate.push({ key, newDocument })
+          docsToUpdate.push({ key, newDocument, oldDocument })
         }
       }).then(() => {
         if (!docsToUpdate.length) {
@@ -34,7 +34,7 @@ export default function update(docUpdates) {
       }).then(() => {
         docsToUpdate.forEach((docToUpdate, index) => {
           this.lf[collectionName].setItem(docToUpdate.key, docToUpdate.newDocument).then(value => {
-
+            this.change(collectionName,'UPDATE',{ ...docToUpdate }, docToUpdate.key)
             if (index === (docsToUpdate.length - 1)) {
               resolve(
                 success.call(
@@ -59,15 +59,17 @@ export default function update(docUpdates) {
   
     // update document by key
     this.updateDocumentByKey = () => {
-      let newDocument = {}
+      let docToUpdate = { key: docSelectionCriteria }
       this.lf[collectionName].getItem(docSelectionCriteria).then(value => {
-        newDocument = updateObject(value, docUpdates)
-        this.lf[collectionName].setItem(docSelectionCriteria, newDocument)
+        docToUpdate = { oldDocument: value};
+        docToUpdate.newDocument = updateObject(value, docUpdates)
+        this.lf[collectionName].setItem(docSelectionCriteria, docToUpdate.newDocument)
+        this.change(collectionName,'UPDATE',docToUpdate, docToUpdate.key)
         resolve(
           success.call(
             this,
             `Document in "${ collectionName }" collection with key ${ JSON.stringify(docSelectionCriteria) } updated.`,
-            newDocument
+            docToUpdate.newDocument
           )
         )
       }).catch(err => {

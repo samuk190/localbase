@@ -1,5 +1,5 @@
-import logger from '../utils/logger'
-import reset from './reset'
+import logger from '../utils/logger.js'
+import reset from './reset.js'
 
 export default function showUserErrors() {
   for (let i = 0; i < this.userErrors.length; i++) {

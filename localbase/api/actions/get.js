@@ -1,8 +1,8 @@
-import isSubset from '../../utils/isSubset'
-import logger from "../../utils/logger"
-import reset from '../../api-utils/reset'
-import selectionLevel from '../../api-utils/selectionLevel'
-import showUserErrors from '../../api-utils/showUserErrors'
+import isSubset from '../../utils/isSubset.js'
+import logger from "../../utils/logger.js"
+import reset from '../../api-utils/reset.js'
+import selectionLevel from '../../api-utils/selectionLevel.js'
+import showUserErrors from '../../api-utils/showUserErrors.js'
 import { single } from 'fuzzysort'
 
 export default function get(options = { keys: false }) {

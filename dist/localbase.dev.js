@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
-var _localbase = _interopRequireDefault(require("./localbase/localbase"));
+var _localbase = _interopRequireDefault(require("./localbase/localbase.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -14,142 +14,15 @@ var _default = _localbase["default"];
 exports["default"] = _default;
 module.exports = exports.default;
 
-},{"./localbase/localbase":18}],2:[function(require,module,exports){
+},{"./localbase/localbase.js":20}],2:[function(require,module,exports){
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = error;
-
-var _logger = _interopRequireDefault(require("../utils/logger"));
-
-var _reset = _interopRequireDefault(require("../api-utils/reset"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-function error(message) {
-  _reset["default"].call(this);
-
-  _logger["default"].error.call(this, message);
-
-  return "Error: ".concat(message);
-}
-
-module.exports = exports.default;
-
-},{"../api-utils/reset":3,"../utils/logger":20}],3:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = reset;
-
-function reset() {
-  this.collectionName = null;
-  this.orderByProperty = null;
-  this.orderByDirection = null;
-  this.limitBy = null;
-  this.docSelectionCriteria = null;
-  this.userErrors = [];
-  this.containsProperty = null;
-  this.containsValue = null;
-}
-
-module.exports = exports.default;
-
-},{}],4:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = selectionLevel;
-
-function selectionLevel() {
-  var level;
-  if (!this.collectionName && !this.docSelectionCriteria) level = 'db';else if (this.collectionName && !this.docSelectionCriteria) level = 'collection';else if (this.collectionName && this.docSelectionCriteria) level = 'doc';
-  return level;
-}
-
-module.exports = exports.default;
-
-},{}],5:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = showUserErrors;
-
-var _logger = _interopRequireDefault(require("../utils/logger"));
-
-var _reset = _interopRequireDefault(require("./reset"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-function showUserErrors() {
-  for (var i = 0; i < this.userErrors.length; i++) {
-    _logger["default"].error.call(this, this.userErrors[i]);
-  }
-
-  _reset["default"].call(this);
-}
-
-module.exports = exports.default;
-
-},{"../utils/logger":20,"./reset":3}],6:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = success;
-
-var _logger = _interopRequireDefault(require("../utils/logger"));
-
-var _reset = _interopRequireDefault(require("../api-utils/reset"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-function success(message, data) {
-  _reset["default"].call(this);
-
-  _logger["default"].log.call(this, message, data);
-
-  return {
-    success: true,
-    message: message,
-    data: data
-  };
-}
-
-module.exports = exports.default;
-
-},{"../api-utils/reset":3,"../utils/logger":20}],7:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = add;
-
-var _cuid = _interopRequireDefault(require("cuid"));
-
-var _success = _interopRequireDefault(require("../../api-utils/success"));
-
-var _error = _interopRequireDefault(require("../../api-utils/error"));
-
-var _showUserErrors = _interopRequireDefault(require("../../api-utils/showUserErrors"));
-
-var _fuzzysort = require("fuzzysort");
-
-var _logger = _interopRequireDefault(require("../../utils/logger"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = _default;
 
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return generator._invoke = function (innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; }(innerFn, self, context), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; this._invoke = function (method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) { if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; } return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (object) { var keys = []; for (var key in object) { keys.push(key); } return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) { "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); } }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
 
@@ -157,7 +30,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-var searchStringInObject = function searchStringInObject(value) {
+function _default(value) {
   var keys = [];
   Object.keys(value).forEach( /*#__PURE__*/function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(k) {
@@ -165,7 +38,7 @@ var searchStringInObject = function searchStringInObject(value) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              if (typeof value[k] === 'string' && value[k].length > 200) {
+              if (typeof value[k] === 'string' && value[k].length < 200) {
                 if (isNaN(Number(value[k]))) {
                   keys.push(k);
                 }
@@ -187,8 +60,173 @@ var searchStringInObject = function searchStringInObject(value) {
   keys.forEach(function (k2) {
     return str += "".concat(value[k2], " ");
   });
-  return str;
-};
+  return str.trimEnd();
+}
+
+module.exports = exports.default;
+
+},{}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = error;
+
+var _logger = _interopRequireDefault(require("../utils/logger.js"));
+
+var _reset = _interopRequireDefault(require("../api-utils/reset.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function error(message) {
+  _reset["default"].call(this);
+
+  _logger["default"].error.call(this, message);
+
+  return "Error: ".concat(message);
+}
+
+module.exports = exports.default;
+
+},{"../api-utils/reset.js":4,"../utils/logger.js":22}],4:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = reset;
+
+function reset() {
+  this.collectionName = null;
+  this.orderByProperty = null;
+  this.orderByDirection = null;
+  this.limitBy = null;
+  this.docSelectionCriteria = null;
+  this.userErrors = [];
+  this.containsProperty = null;
+  this.containsValue = null;
+}
+
+module.exports = exports.default;
+
+},{}],5:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = selectionLevel;
+
+function selectionLevel() {
+  var level;
+  if (!this.collectionName && !this.docSelectionCriteria) level = 'db';else if (this.collectionName && !this.docSelectionCriteria) level = 'collection';else if (this.collectionName && this.docSelectionCriteria) level = 'doc';
+  return level;
+}
+
+module.exports = exports.default;
+
+},{}],6:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = showUserErrors;
+
+var _logger = _interopRequireDefault(require("../utils/logger.js"));
+
+var _reset = _interopRequireDefault(require("./reset.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function showUserErrors() {
+  for (var i = 0; i < this.userErrors.length; i++) {
+    _logger["default"].error.call(this, this.userErrors[i]);
+  }
+
+  _reset["default"].call(this);
+}
+
+module.exports = exports.default;
+
+},{"../utils/logger.js":22,"./reset.js":4}],7:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = success;
+
+var _logger = _interopRequireDefault(require("../utils/logger.js"));
+
+var _reset = _interopRequireDefault(require("../api-utils/reset.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function success(message, data) {
+  _reset["default"].call(this);
+
+  _logger["default"].log.call(this, message, data);
+
+  return {
+    success: true,
+    message: message,
+    data: data
+  };
+}
+
+module.exports = exports.default;
+
+},{"../api-utils/reset.js":4,"../utils/logger.js":22}],8:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = _default;
+
+var _uuid = require("uuid");
+
+function _default() {
+  var unordered = (0, _uuid.v1)();
+  return unordered.substring(14, 18) + unordered.substring(9, 13) + unordered.substring(0, 8) + unordered.substring(19, 23) + unordered.substring(24, unordered.length);
+}
+
+module.exports = exports.default;
+
+},{"uuid":26}],9:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = add;
+
+var _uuid = require("uuid");
+
+var _success = _interopRequireDefault(require("../../api-utils/success.js"));
+
+var _error = _interopRequireDefault(require("../../api-utils/error.js"));
+
+var _showUserErrors = _interopRequireDefault(require("../../api-utils/showUserErrors.js"));
+
+var _fuzzysort = require("fuzzysort");
+
+var _logger = _interopRequireDefault(require("../../utils/logger.js"));
+
+var _StringInObject = _interopRequireDefault(require("../../api-utils/StringInObject.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return generator._invoke = function (innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; }(innerFn, self, context), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; this._invoke = function (method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) { if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; } return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (object) { var keys = []; for (var key in object) { keys.push(key); } return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) { "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); } }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+
 /**
  * 
  * @param {*} data 
@@ -196,8 +234,6 @@ var searchStringInObject = function searchStringInObject(value) {
  * @param {*} keys 
  * @returns 
  */
-
-
 function add(data, keyProvided, keys) {
   var _this = this;
 
@@ -215,7 +251,7 @@ function add(data, keyProvided, keys) {
       var key = null; // if no key provided, generate random, ordered key
 
       if (!keyProvided) {
-        key = (0, _cuid["default"])();
+        key = _this.uid();
       } else {
         key = keyProvided;
       }
@@ -237,7 +273,7 @@ function add(data, keyProvided, keys) {
             });
             data.___prepared___ = (0, _fuzzysort.prepare)(str);
           } else if (!Array.isArray(data) && _typeof(data) === 'object') {
-            data.___prepared___ = (0, _fuzzysort.prepare)(searchStringInObject(data));
+            data.___prepared___ = (0, _fuzzysort.prepare)((0, _StringInObject["default"])(data));
           } else if (Array.isArray(data)) {
             var _str = '';
             data.forEach(function (v) {
@@ -246,7 +282,7 @@ function add(data, keyProvided, keys) {
                   _str += v;
                 }
               } else if (!Array.isArray(v) && _typeof(v) === 'object') {
-                _str += searchStringInObject(v);
+                _str += (0, _StringInObject["default"])(v);
               }
             });
             data.___prepared___ = (0, _fuzzysort.prepare)(_str);
@@ -258,22 +294,24 @@ function add(data, keyProvided, keys) {
         _logger["default"].error.call(_this, error.message);
       }
 
-      return _this.lf[collectionName].setItem(key, data).then( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      return _this.lf[collectionName].setItem(key, data).then( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context.prev = _context.next) {
               case 0:
+                _this.change(collectionName, 'ADD', data, key);
+
                 resolve(_success["default"].call(_this, "Document added to \"".concat(collectionName, "\" collection."), {
                   key: key,
                   data: data
                 }));
 
-              case 1:
+              case 2:
               case "end":
-                return _context2.stop();
+                return _context.stop();
             }
           }
-        }, _callee2);
+        }, _callee);
       })))["catch"](function (err) {
         reject(_error["default"].call(_this, "Could not add Document to ".concat(collectionName, " collection.")));
       });
@@ -285,7 +323,7 @@ function add(data, keyProvided, keys) {
 
 module.exports = exports.default;
 
-},{"../../api-utils/error":2,"../../api-utils/showUserErrors":5,"../../api-utils/success":6,"../../utils/logger":20,"cuid":22,"fuzzysort":26}],8:[function(require,module,exports){
+},{"../../api-utils/StringInObject.js":2,"../../api-utils/error.js":3,"../../api-utils/showUserErrors.js":6,"../../api-utils/success.js":7,"../../utils/logger.js":22,"fuzzysort":24,"uuid":26}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -293,17 +331,19 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = deleteIt;
 
-var _isSubset = _interopRequireDefault(require("../../utils/isSubset"));
+var _isSubset = _interopRequireDefault(require("../../utils/isSubset.js"));
 
-var _logger = _interopRequireDefault(require("../../utils/logger"));
+var _logger = _interopRequireDefault(require("../../utils/logger.js"));
 
-var _selectionLevel = _interopRequireDefault(require("../../api-utils/selectionLevel"));
+var _selectionLevel = _interopRequireDefault(require("../../api-utils/selectionLevel.js"));
 
-var _success = _interopRequireDefault(require("../../api-utils/success"));
+var _success = _interopRequireDefault(require("../../api-utils/success.js"));
 
-var _error = _interopRequireDefault(require("../../api-utils/error"));
+var _error = _interopRequireDefault(require("../../api-utils/error.js"));
 
-var _showUserErrors = _interopRequireDefault(require("../../api-utils/showUserErrors"));
+var _showUserErrors = _interopRequireDefault(require("../../api-utils/showUserErrors.js"));
+
+var _localbase = _interopRequireDefault(require("../../localbase.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -317,6 +357,9 @@ function deleteIt() {
     _this.deleteDatabase = function () {
       var dbName = _this.dbName;
       indexedDB.deleteDatabase(dbName);
+
+      _this.change(null, "DROP", null, null);
+
       resolve(_success["default"].call(_this, "Database \"".concat(dbName, "\" deleted."), {
         database: dbName
       }));
@@ -351,6 +394,8 @@ function deleteIt() {
             name: dbName,
             storeName: collectionToDelete
           }).then(function () {
+            _this.change(collectionToDelete, 'DROP', null, null);
+
             _this.deleteNextCollectionFromQueue();
 
             resolve(_success["default"].call(_this, "Collection \"".concat(collectionToDelete, "\" deleted."), {
@@ -391,6 +436,8 @@ function deleteIt() {
           keysForDeletion.forEach(function (key, index) {
             _this.lf[collectionName].removeItem(key).then(function () {
               if (index === keysForDeletion.length - 1) {
+                _this.change(collectionName, 'DELETE', null, key);
+
                 resolve(_success["default"].call(_this, "".concat(keysForDeletion.length, " Document").concat(keysForDeletion.length > 1 ? 's' : '', " with ").concat(JSON.stringify(docSelectionCriteria), " deleted."), {
                   keys: keysForDeletion
                 }));
@@ -407,6 +454,8 @@ function deleteIt() {
         _this.lf[collectionName].getItem(docSelectionCriteria).then(function (value) {
           if (value) {
             _this.lf[collectionName].removeItem(docSelectionCriteria).then(function () {
+              _this.change(collectionName, "DELETE", value, docSelectionCriteria);
+
               resolve(_success["default"].call(_this, "Document with key ".concat(JSON.stringify(docSelectionCriteria), " deleted."), {
                 key: docSelectionCriteria
               }));
@@ -444,7 +493,7 @@ function deleteIt() {
 
 module.exports = exports.default;
 
-},{"../../api-utils/error":2,"../../api-utils/selectionLevel":4,"../../api-utils/showUserErrors":5,"../../api-utils/success":6,"../../utils/isSubset":19,"../../utils/logger":20}],9:[function(require,module,exports){
+},{"../../api-utils/error.js":3,"../../api-utils/selectionLevel.js":5,"../../api-utils/showUserErrors.js":6,"../../api-utils/success.js":7,"../../localbase.js":20,"../../utils/isSubset.js":21,"../../utils/logger.js":22}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -452,15 +501,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = get;
 
-var _isSubset = _interopRequireDefault(require("../../utils/isSubset"));
+var _isSubset = _interopRequireDefault(require("../../utils/isSubset.js"));
 
-var _logger = _interopRequireDefault(require("../../utils/logger"));
+var _logger = _interopRequireDefault(require("../../utils/logger.js"));
 
-var _reset = _interopRequireDefault(require("../../api-utils/reset"));
+var _reset = _interopRequireDefault(require("../../api-utils/reset.js"));
 
-var _selectionLevel = _interopRequireDefault(require("../../api-utils/selectionLevel"));
+var _selectionLevel = _interopRequireDefault(require("../../api-utils/selectionLevel.js"));
 
-var _showUserErrors = _interopRequireDefault(require("../../api-utils/showUserErrors"));
+var _showUserErrors = _interopRequireDefault(require("../../api-utils/showUserErrors.js"));
 
 var _fuzzysort = require("fuzzysort");
 
@@ -666,7 +715,7 @@ function get() {
 
 module.exports = exports.default;
 
-},{"../../api-utils/reset":3,"../../api-utils/selectionLevel":4,"../../api-utils/showUserErrors":5,"../../utils/isSubset":19,"../../utils/logger":20,"fuzzysort":26}],10:[function(require,module,exports){
+},{"../../api-utils/reset.js":4,"../../api-utils/selectionLevel.js":5,"../../api-utils/showUserErrors.js":6,"../../utils/isSubset.js":21,"../../utils/logger.js":22,"fuzzysort":24}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -674,25 +723,27 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = search;
 
-var _logger = _interopRequireDefault(require("../../utils/logger"));
+var _logger = _interopRequireDefault(require("../../utils/logger.js"));
 
-var _reset = _interopRequireDefault(require("../../api-utils/reset"));
+var _reset = _interopRequireDefault(require("../../api-utils/reset.js"));
 
-var _selectionLevel = _interopRequireDefault(require("../../api-utils/selectionLevel"));
+var _selectionLevel = _interopRequireDefault(require("../../api-utils/selectionLevel.js"));
 
-var _showUserErrors = _interopRequireDefault(require("../../api-utils/showUserErrors"));
+var _showUserErrors = _interopRequireDefault(require("../../api-utils/showUserErrors.js"));
 
 var _fuzzysort = require("fuzzysort");
+
+var _StringInObject = _interopRequireDefault(require("../../api-utils/StringInObject.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return generator._invoke = function (innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; }(innerFn, self, context), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; this._invoke = function (method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) { if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; } return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (object) { var keys = []; for (var key in object) { keys.push(key); } return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) { "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); } }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
 
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 /**
  * 
@@ -702,113 +753,165 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
  * @returns [...any] search results in order
  */
 function search() {
-  var _this = this;
+  return _search.apply(this, arguments);
+}
 
-  var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-  var inKeys = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {
-    highlights: true
-  };
-  if (!query) return _logger["default"].error.call(this, 'query in search is empty');
-  if (_typeof(options) !== 'object') return _logger["default"].error.call(this, 'no valid options');
-  this.go = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-    var collectionName, isPrepared, targets, optionsFuzzy, results;
-    return _regeneratorRuntime().wrap(function _callee$(_context) {
+function _search() {
+  _search = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+    var _this = this;
+
+    var query,
+        inKeys,
+        options,
+        currentSelectionLevel,
+        _args2 = arguments;
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) {
-        switch (_context.prev = _context.next) {
+        switch (_context2.prev = _context2.next) {
           case 0:
-            collectionName = _this.collectionName;
-            isPrepared = false;
-            _context.next = 4;
-            return new Promise(function (res, rej) {
-              var targets = [];
+            query = _args2.length > 0 && _args2[0] !== undefined ? _args2[0] : '';
+            inKeys = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : [];
+            options = _args2.length > 2 && _args2[2] !== undefined ? _args2[2] : {
+              highlights: true
+            };
 
-              _this.lf[collectionName].iterate(function (value, key) {
-                if (Array.isArray(inKeys) && inKeys.length) {
-                  targets.push(value);
-                } else {
-                  if (!value.___prepared___) {
-                    targets.push(value);
-                  } else {
-                    isPrepared = true;
-                    var si = (0, _fuzzysort.single)(query, value.___prepared___);
+            if (query) {
+              _context2.next = 5;
+              break;
+            }
 
-                    if (si) {
-                      if (si.score > -200) {
-                        if (options.highlights) {
-                          value.__highlights = (0, _fuzzysort.highlight)(si, '<strong>', '</strong>');
-                        }
+            return _context2.abrupt("return", _logger["default"].error.call(this, 'query in search is empty'));
 
-                        if (targets.push(value) > 100) return targets;
+          case 5:
+            if (!(_typeof(options) !== 'object')) {
+              _context2.next = 7;
+              break;
+            }
+
+            return _context2.abrupt("return", _logger["default"].error.call(this, 'no valid options'));
+
+          case 7:
+            this.buscar = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+              var collectionName, optionsFuzzy, results;
+              return _regeneratorRuntime().wrap(function _callee$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      console.time('buscar');
+                      collectionName = _this.collectionName;
+
+                      if (!(!!_this.cache[collectionName] && _this.time)) {
+                        _context.next = 6;
+                        break;
                       }
-                    }
+
+                      clearTimeout(_this.time);
+                      _context.next = 11;
+                      break;
+
+                    case 6:
+                      _this.cache[collectionName] = [];
+                      console.time('cargando_cache');
+                      _context.next = 10;
+                      return new Promise(function (res, rej) {
+                        _this.lf[collectionName].iterate(function (value, key) {
+                          if (!value.___prepared___) {
+                            value.___prepared___ = (0, _fuzzysort.prepare)((0, _StringInObject["default"])(value));
+                          }
+
+                          _this.cache[collectionName].push(value);
+                        }).then(function () {
+                          res(true);
+                        })["catch"](function (e) {
+                          rej(e);
+                        });
+                      });
+
+                    case 10:
+                      console.timeEnd('cargando_cache');
+
+                    case 11:
+                      _this.time = setTimeout(function () {
+                        delete _this.cache[collectionName];
+                        _this.time = 0;
+                      }, 1000 * 60 * 60);
+                      optionsFuzzy = {
+                        limit: 50,
+                        // don't return more results than you need!
+                        threshold: -10000,
+                        // don't return bad results
+                        key: Array.isArray(inKeys) && inKeys.length ? null : '___prepared___',
+                        keys: Array.isArray(inKeys) && inKeys.length ? inKeys : null
+                      };
+                      results = (0, _fuzzysort.go)(query, _this.cache[collectionName], optionsFuzzy);
+
+                      _logger["default"].log.call(_this, 'SEARCHS', results.length);
+
+                      console.timeEnd('buscar');
+
+                      _reset["default"].call(_this);
+
+                      return _context.abrupt("return", results.map(function (o) {
+                        return o.obj;
+                      }));
+
+                    case 18:
+                    case "end":
+                      return _context.stop();
                   }
                 }
-              }).then(function () {
-                res(targets);
-              })["catch"](function (e) {
-                return rej(e);
-              });
-            });
+              }, _callee);
+            })); // check for user errors
 
-          case 4:
-            targets = _context.sent;
-            optionsFuzzy = {
-              limit: 100,
-              // don't return more results than you need!
-              threshold: -10000,
-              // don't return bad results
-              key: Array.isArray(inKeys) && inKeys.length ? null : isPrepared ? '___prepared___' : null,
-              keys: Array.isArray(inKeys) && inKeys.length ? inKeys : null
-            };
-            results = (0, _fuzzysort.go)(query, targets, optionsFuzzy);
+            if (!(_typeof(options) == 'object' && options instanceof Array == false)) {
+              this.userErrors.push('Data passed to .search() must be an object. Not an array, string, number or boolean. The object must contain a "highlights" property set to true or false, e.g. { highlights: true }');
+            } else {
+              if (!options.hasOwnProperty('highlights')) {
+                this.userErrors.push('Object passed to search() method must contain a "highlights" property set to boolean true or false, e.g. { highlights: true }');
+              } else {
+                if (typeof options.highlights !== 'boolean') {
+                  this.userErrors.push('Property "highlights" passed into search() method must be assigned a boolean value (true or false). Not a string or integer.');
+                }
+              }
+            }
 
-            _reset["default"].call(_this);
+            currentSelectionLevel = _selectionLevel["default"].call(this);
 
-            _logger["default"].log.call(_this, 'SEARCHS', results.length);
+            if (!(currentSelectionLevel == 'collection')) {
+              _context2.next = 14;
+              break;
+            }
 
-            return _context.abrupt("return", results.map(function (o) {
-              return o.obj;
-            }));
+            return _context2.abrupt("return", this.buscar());
 
-          case 10:
+          case 14:
+            if (currentSelectionLevel == 'doc') {
+              this.userErrors.push('Function no avalible in doc');
+            }
+
+          case 15:
+            if (!this.userErrors.length) {
+              _context2.next = 18;
+              break;
+            }
+
+            _showUserErrors["default"].call(this);
+
+            return _context2.abrupt("return", null);
+
+          case 18:
           case "end":
-            return _context.stop();
+            return _context2.stop();
         }
       }
-    }, _callee);
-  })); // check for user errors
-
-  if (!(_typeof(options) == 'object' && options instanceof Array == false)) {
-    this.userErrors.push('Data passed to .search() must be an object. Not an array, string, number or boolean. The object must contain a "highlights" property set to true or false, e.g. { highlights: true }');
-  } else {
-    if (!options.hasOwnProperty('highlights')) {
-      this.userErrors.push('Object passed to search() method must contain a "highlights" property set to boolean true or false, e.g. { highlights: true }');
-    } else {
-      if (typeof options.highlights !== 'boolean') {
-        this.userErrors.push('Property "highlights" passed into search() method must be assigned a boolean value (true or false). Not a string or integer.');
-      }
-    }
-  }
-
-  var currentSelectionLevel = _selectionLevel["default"].call(this);
-
-  if (currentSelectionLevel == 'collection') {
-    return this.go();
-  } else if (currentSelectionLevel == 'doc') {
-    this.userErrors.push('Function no avalible in doc');
-  }
-
-  if (this.userErrors.length) {
-    _showUserErrors["default"].call(this);
-
-    return null;
-  }
+    }, _callee2, this);
+  }));
+  return _search.apply(this, arguments);
 }
 
 module.exports = exports.default;
 
-},{"../../api-utils/reset":3,"../../api-utils/selectionLevel":4,"../../api-utils/showUserErrors":5,"../../utils/logger":20,"fuzzysort":26}],11:[function(require,module,exports){
+},{"../../api-utils/StringInObject.js":2,"../../api-utils/reset.js":4,"../../api-utils/selectionLevel.js":5,"../../api-utils/showUserErrors.js":6,"../../utils/logger.js":22,"fuzzysort":24}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -816,17 +919,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = set;
 
-var _logger = _interopRequireDefault(require("../../utils/logger"));
+var _logger = _interopRequireDefault(require("../../utils/logger.js"));
 
-var _isSubset = _interopRequireDefault(require("../../utils/isSubset"));
+var _isSubset = _interopRequireDefault(require("../../utils/isSubset.js"));
 
-var _success = _interopRequireDefault(require("../../api-utils/success"));
+var _success = _interopRequireDefault(require("../../api-utils/success.js"));
 
-var _error = _interopRequireDefault(require("../../api-utils/error"));
+var _error = _interopRequireDefault(require("../../api-utils/error.js"));
 
-var _showUserErrors = _interopRequireDefault(require("../../api-utils/showUserErrors"));
+var _showUserErrors = _interopRequireDefault(require("../../api-utils/showUserErrors.js"));
 
-var _selectionLevel = _interopRequireDefault(require("../../api-utils/selectionLevel"));
+var _selectionLevel = _interopRequireDefault(require("../../api-utils/selectionLevel.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -956,7 +1059,7 @@ function set(newDocument) {
 
 module.exports = exports.default;
 
-},{"../../api-utils/error":2,"../../api-utils/selectionLevel":4,"../../api-utils/showUserErrors":5,"../../api-utils/success":6,"../../utils/isSubset":19,"../../utils/logger":20}],12:[function(require,module,exports){
+},{"../../api-utils/error.js":3,"../../api-utils/selectionLevel.js":5,"../../api-utils/showUserErrors.js":6,"../../api-utils/success.js":7,"../../utils/isSubset.js":21,"../../utils/logger.js":22}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -964,21 +1067,27 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = update;
 
-var _logger = _interopRequireDefault(require("../../utils/logger"));
+var _logger = _interopRequireDefault(require("../../utils/logger.js"));
 
-var _isSubset = _interopRequireDefault(require("../../utils/isSubset"));
+var _isSubset = _interopRequireDefault(require("../../utils/isSubset.js"));
 
-var _updateObject = _interopRequireDefault(require("../../utils/updateObject"));
+var _updateObject = _interopRequireDefault(require("../../utils/updateObject.js"));
 
-var _success = _interopRequireDefault(require("../../api-utils/success"));
+var _success = _interopRequireDefault(require("../../api-utils/success.js"));
 
-var _error = _interopRequireDefault(require("../../api-utils/error"));
+var _error = _interopRequireDefault(require("../../api-utils/error.js"));
 
-var _showUserErrors = _interopRequireDefault(require("../../api-utils/showUserErrors"));
+var _showUserErrors = _interopRequireDefault(require("../../api-utils/showUserErrors.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function update(docUpdates) {
   var _this = this;
@@ -995,7 +1104,8 @@ function update(docUpdates) {
           var newDocument = (0, _updateObject["default"])(value, docUpdates);
           docsToUpdate.push({
             key: key,
-            newDocument: newDocument
+            newDocument: newDocument,
+            oldDocument: oldDocument
           });
         }
       }).then(function () {
@@ -1009,6 +1119,8 @@ function update(docUpdates) {
       }).then(function () {
         docsToUpdate.forEach(function (docToUpdate, index) {
           _this.lf[collectionName].setItem(docToUpdate.key, docToUpdate.newDocument).then(function (value) {
+            _this.change(collectionName, 'UPDATE', _objectSpread({}, docToUpdate), docToUpdate.key);
+
             if (index === docsToUpdate.length - 1) {
               resolve(_success["default"].call(_this, "".concat(docsToUpdate.length, " Document").concat(docsToUpdate.length > 1 ? 's' : '', " in \"").concat(collectionName, "\" collection with ").concat(JSON.stringify(docSelectionCriteria), " updated."), docUpdates));
             }
@@ -1021,14 +1133,21 @@ function update(docUpdates) {
 
 
     _this.updateDocumentByKey = function () {
-      var newDocument = {};
+      var docToUpdate = {
+        key: docSelectionCriteria
+      };
 
       _this.lf[collectionName].getItem(docSelectionCriteria).then(function (value) {
-        newDocument = (0, _updateObject["default"])(value, docUpdates);
+        docToUpdate = {
+          oldDocument: value
+        };
+        docToUpdate.newDocument = (0, _updateObject["default"])(value, docUpdates);
 
-        _this.lf[collectionName].setItem(docSelectionCriteria, newDocument);
+        _this.lf[collectionName].setItem(docSelectionCriteria, docToUpdate.newDocument);
 
-        resolve(_success["default"].call(_this, "Document in \"".concat(collectionName, "\" collection with key ").concat(JSON.stringify(docSelectionCriteria), " updated."), newDocument));
+        _this.change(collectionName, 'UPDATE', docToUpdate, docToUpdate.key);
+
+        resolve(_success["default"].call(_this, "Document in \"".concat(collectionName, "\" collection with key ").concat(JSON.stringify(docSelectionCriteria), " updated."), docToUpdate.newDocument));
       })["catch"](function (err) {
         reject(_error["default"].call(_this, "No Document found in \"".concat(collectionName, "\" collection with key ").concat(JSON.stringify(docSelectionCriteria))));
       });
@@ -1055,7 +1174,7 @@ function update(docUpdates) {
 
 module.exports = exports.default;
 
-},{"../../api-utils/error":2,"../../api-utils/showUserErrors":5,"../../api-utils/success":6,"../../utils/isSubset":19,"../../utils/logger":20,"../../utils/updateObject":21}],13:[function(require,module,exports){
+},{"../../api-utils/error.js":3,"../../api-utils/showUserErrors.js":6,"../../api-utils/success.js":7,"../../utils/isSubset.js":21,"../../utils/logger.js":22,"../../utils/updateObject.js":23}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1083,7 +1202,7 @@ function contains(property, value) {
 
 module.exports = exports.default;
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1105,7 +1224,7 @@ function limit(limitBy) {
 
 module.exports = exports.default;
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1135,7 +1254,7 @@ function orderBy(property, direction) {
 
 module.exports = exports.default;
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1173,7 +1292,7 @@ function collection(collectionName) {
 
 module.exports = exports.default;
 
-},{"localforage":27}],17:[function(require,module,exports){
+},{"localforage":25}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1197,7 +1316,7 @@ function doc(docSelectionCriteria) {
 
 module.exports = exports.default;
 
-},{}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict"; // import api methods
 
 Object.defineProperty(exports, "__esModule", {
@@ -1205,84 +1324,121 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
-var _collection = _interopRequireDefault(require("./api/selectors/collection"));
+var _collection = _interopRequireDefault(require("./api/selectors/collection.js"));
 
-var _doc = _interopRequireDefault(require("./api/selectors/doc"));
+var _doc = _interopRequireDefault(require("./api/selectors/doc.js"));
 
-var _orderBy = _interopRequireDefault(require("./api/filters/orderBy"));
+var _orderBy = _interopRequireDefault(require("./api/filters/orderBy.js"));
 
-var _limit = _interopRequireDefault(require("./api/filters/limit"));
+var _limit = _interopRequireDefault(require("./api/filters/limit.js"));
 
-var _contains = _interopRequireDefault(require("./api/filters/contains"));
+var _contains = _interopRequireDefault(require("./api/filters/contains.js"));
 
-var _get = _interopRequireDefault(require("./api/actions/get"));
+var _get = _interopRequireDefault(require("./api/actions/get.js"));
 
-var _add = _interopRequireDefault(require("./api/actions/add"));
+var _add = _interopRequireDefault(require("./api/actions/add.js"));
 
-var _update = _interopRequireDefault(require("./api/actions/update"));
+var _update = _interopRequireDefault(require("./api/actions/update.js"));
 
-var _set = _interopRequireDefault(require("./api/actions/set"));
+var _set = _interopRequireDefault(require("./api/actions/set.js"));
 
-var _delete = _interopRequireDefault(require("./api/actions/delete"));
+var _delete = _interopRequireDefault(require("./api/actions/delete.js"));
 
-var _search = _interopRequireDefault(require("./api/actions/search"));
+var _search = _interopRequireDefault(require("./api/actions/search.js"));
+
+var _uid = _interopRequireDefault(require("./api-utils/uid.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 // Localbase
-var Localbase = /*#__PURE__*/_createClass(function Localbase(dbName) {
-  _classCallCheck(this, Localbase);
+var Localbase = /*#__PURE__*/function () {
+  function Localbase(dbName) {
+    _classCallCheck(this, Localbase);
 
-  // properties
-  this.dbName = dbName;
-  this.lf = {}; // where we store our localForage instances
+    // properties
+    this.dbName = dbName;
+    this.lf = {}; // where we store our localForage instances
 
-  this.collectionName = null;
-  this.orderByProperty = null;
-  this.orderByDirection = null;
-  this.limitBy = null;
-  this.docSelectionCriteria = null;
-  this.containsProperty = null;
-  this.containsValue = null;
-  this.containsExact = false;
-  this.containsSinError = false; // queues
+    this.collectionName = null;
+    this.orderByProperty = null;
+    this.orderByDirection = null;
+    this.limitBy = null;
+    this.docSelectionCriteria = null;
+    this.containsProperty = null;
+    this.containsValue = null;
+    this.containsExact = false;
+    this.containsSinError = false; // queues
 
-  this.deleteCollectionQueue = {
-    queue: [],
-    running: false
-  }; // config
+    this.deleteCollectionQueue = {
+      queue: [],
+      running: false
+    }; // config
 
-  this.config = {
-    debug: true
-  }; // user errors - e.g. wrong type or no value passed to a method
+    this.config = {
+      debug: true
+    }; // user errors - e.g. wrong type or no value passed to a method
 
-  this.userErrors = []; // api - selectors
+    this.userErrors = []; // api - selectors
 
-  this.collection = _collection["default"].bind(this);
-  this.doc = _doc["default"].bind(this); // api - filters
+    this.collection = _collection["default"].bind(this);
+    this.doc = _doc["default"].bind(this); // api - filters
 
-  this.orderBy = _orderBy["default"].bind(this);
-  this.limit = _limit["default"].bind(this);
-  this.contains = _contains["default"].bind(this); // api - actions
+    this.orderBy = _orderBy["default"].bind(this);
+    this.limit = _limit["default"].bind(this);
+    this.contains = _contains["default"].bind(this); // api - actions
 
-  this.get = _get["default"].bind(this);
-  this.add = _add["default"].bind(this);
-  this.update = _update["default"].bind(this);
-  this.set = _set["default"].bind(this);
-  this["delete"] = _delete["default"].bind(this);
-  this.search = _search["default"].bind(this);
-});
+    this.get = _get["default"].bind(this);
+    this.add = _add["default"].bind(this);
+    this.update = _update["default"].bind(this);
+    this.set = _set["default"].bind(this);
+    this["delete"] = _delete["default"].bind(this);
+    this.cache = {};
+    this.time = 0;
+    this.search = _search["default"].bind(this); //util - uid
+
+    this.uid = _uid["default"].bind(this);
+  }
+
+  _createClass(Localbase, [{
+    key: "change",
+    value: function change(collection, action, data, key) {
+      Localbase.onChange({
+        database: this.dbName,
+        collection: collection,
+        action: action,
+        data: data,
+        key: key
+      });
+
+      if (!!key) {
+        Localbase.onChangeDoc({
+          key: key,
+          action: action,
+          data: data
+        });
+      }
+    }
+  }], [{
+    key: "onChange",
+    value: function onChange(movimiento) {}
+  }, {
+    key: "onChangeDoc",
+    value: function onChangeDoc(movimiento) {}
+  }]);
+
+  return Localbase;
+}();
 
 exports["default"] = Localbase;
 module.exports = exports.default;
 
-},{"./api/actions/add":7,"./api/actions/delete":8,"./api/actions/get":9,"./api/actions/search":10,"./api/actions/set":11,"./api/actions/update":12,"./api/filters/contains":13,"./api/filters/limit":14,"./api/filters/orderBy":15,"./api/selectors/collection":16,"./api/selectors/doc":17}],19:[function(require,module,exports){
+},{"./api-utils/uid.js":8,"./api/actions/add.js":9,"./api/actions/delete.js":10,"./api/actions/get.js":11,"./api/actions/search.js":12,"./api/actions/set.js":13,"./api/actions/update.js":14,"./api/filters/contains.js":15,"./api/filters/limit.js":16,"./api/filters/orderBy.js":17,"./api/selectors/collection.js":18,"./api/selectors/doc.js":19}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1304,7 +1460,7 @@ function isSubset(superObj, subObj) {
 
 module.exports = exports.default;
 
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1346,7 +1502,7 @@ var _default = logger;
 exports["default"] = _default;
 module.exports = exports.default;
 
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1373,133 +1529,7 @@ function updateObject(obj
 
 module.exports = exports.default;
 
-},{}],22:[function(require,module,exports){
-/**
- * cuid.js
- * Collision-resistant UID generator for browsers and node.
- * Sequential for fast db lookups and recency sorting.
- * Safe for element IDs and server-side lookups.
- *
- * Extracted from CLCTR
- *
- * Copyright (c) Eric Elliott 2012
- * MIT License
- */
-
-var fingerprint = require('./lib/fingerprint.js');
-var pad = require('./lib/pad.js');
-var getRandomValue = require('./lib/getRandomValue.js');
-
-var c = 0,
-  blockSize = 4,
-  base = 36,
-  discreteValues = Math.pow(base, blockSize);
-
-function randomBlock () {
-  return pad((getRandomValue() *
-    discreteValues << 0)
-    .toString(base), blockSize);
-}
-
-function safeCounter () {
-  c = c < discreteValues ? c : 0;
-  c++; // this is not subliminal
-  return c - 1;
-}
-
-function cuid () {
-  // Starting with a lowercase letter makes
-  // it HTML element ID friendly.
-  var letter = 'c', // hard-coded allows for sequential access
-
-    // timestamp
-    // warning: this exposes the exact date and time
-    // that the uid was created.
-    timestamp = (new Date().getTime()).toString(base),
-
-    // Prevent same-machine collisions.
-    counter = pad(safeCounter().toString(base), blockSize),
-
-    // A few chars to generate distinct ids for different
-    // clients (so different computers are far less
-    // likely to generate the same id)
-    print = fingerprint(),
-
-    // Grab some more chars from Math.random()
-    random = randomBlock() + randomBlock();
-
-  return letter + timestamp + counter + print + random;
-}
-
-cuid.slug = function slug () {
-  var date = new Date().getTime().toString(36),
-    counter = safeCounter().toString(36).slice(-4),
-    print = fingerprint().slice(0, 1) +
-      fingerprint().slice(-1),
-    random = randomBlock().slice(-2);
-
-  return date.slice(-2) +
-    counter + print + random;
-};
-
-cuid.isCuid = function isCuid (stringToCheck) {
-  if (typeof stringToCheck !== 'string') return false;
-  if (stringToCheck.startsWith('c')) return true;
-  return false;
-};
-
-cuid.isSlug = function isSlug (stringToCheck) {
-  if (typeof stringToCheck !== 'string') return false;
-  var stringLength = stringToCheck.length;
-  if (stringLength >= 7 && stringLength <= 10) return true;
-  return false;
-};
-
-cuid.fingerprint = fingerprint;
-
-module.exports = cuid;
-
-},{"./lib/fingerprint.js":23,"./lib/getRandomValue.js":24,"./lib/pad.js":25}],23:[function(require,module,exports){
-var pad = require('./pad.js');
-
-var env = typeof window === 'object' ? window : self;
-var globalCount = Object.keys(env).length;
-var mimeTypesLength = navigator.mimeTypes ? navigator.mimeTypes.length : 0;
-var clientId = pad((mimeTypesLength +
-  navigator.userAgent.length).toString(36) +
-  globalCount.toString(36), 4);
-
-module.exports = function fingerprint () {
-  return clientId;
-};
-
-},{"./pad.js":25}],24:[function(require,module,exports){
-
-var getRandomValue;
-
-var crypto = typeof window !== 'undefined' &&
-  (window.crypto || window.msCrypto) ||
-  typeof self !== 'undefined' &&
-  self.crypto;
-
-if (crypto) {
-    var lim = Math.pow(2, 32) - 1;
-    getRandomValue = function () {
-        return Math.abs(crypto.getRandomValues(new Uint32Array(1))[0] / lim);
-    };
-} else {
-    getRandomValue = Math.random;
-}
-
-module.exports = getRandomValue;
-
-},{}],25:[function(require,module,exports){
-module.exports = function pad (num, size) {
-  var s = '000000000' + num;
-  return s.substr(s.length - size);
-};
-
-},{}],26:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 // https://github.com/farzher/fuzzysort v2.0.0
 /*
   SublimeText-like Fuzzy Search
@@ -2057,7 +2087,7 @@ module.exports = function pad (num, size) {
 // TODO: (like sublime) backslash === forwardslash
 // TODO: (perf) prepareSearch seems slow
 
-},{}],27:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 (function (global){(function (){
 /*!
     localForage -- Offline Storage, Improved
@@ -4877,5 +4907,868 @@ module.exports = localforage_js;
 });
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}]},{},[1])(1)
+},{}],26:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "NIL", {
+  enumerable: true,
+  get: function () {
+    return _nil.default;
+  }
+});
+Object.defineProperty(exports, "parse", {
+  enumerable: true,
+  get: function () {
+    return _parse.default;
+  }
+});
+Object.defineProperty(exports, "stringify", {
+  enumerable: true,
+  get: function () {
+    return _stringify.default;
+  }
+});
+Object.defineProperty(exports, "v1", {
+  enumerable: true,
+  get: function () {
+    return _v.default;
+  }
+});
+Object.defineProperty(exports, "v3", {
+  enumerable: true,
+  get: function () {
+    return _v2.default;
+  }
+});
+Object.defineProperty(exports, "v4", {
+  enumerable: true,
+  get: function () {
+    return _v3.default;
+  }
+});
+Object.defineProperty(exports, "v5", {
+  enumerable: true,
+  get: function () {
+    return _v4.default;
+  }
+});
+Object.defineProperty(exports, "validate", {
+  enumerable: true,
+  get: function () {
+    return _validate.default;
+  }
+});
+Object.defineProperty(exports, "version", {
+  enumerable: true,
+  get: function () {
+    return _version.default;
+  }
+});
+
+var _v = _interopRequireDefault(require("./v1.js"));
+
+var _v2 = _interopRequireDefault(require("./v3.js"));
+
+var _v3 = _interopRequireDefault(require("./v4.js"));
+
+var _v4 = _interopRequireDefault(require("./v5.js"));
+
+var _nil = _interopRequireDefault(require("./nil.js"));
+
+var _version = _interopRequireDefault(require("./version.js"));
+
+var _validate = _interopRequireDefault(require("./validate.js"));
+
+var _stringify = _interopRequireDefault(require("./stringify.js"));
+
+var _parse = _interopRequireDefault(require("./parse.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+},{"./nil.js":29,"./parse.js":30,"./stringify.js":34,"./v1.js":35,"./v3.js":36,"./v4.js":38,"./v5.js":39,"./validate.js":40,"./version.js":41}],27:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+/*
+ * Browser-compatible JavaScript MD5
+ *
+ * Modification of JavaScript MD5
+ * https://github.com/blueimp/JavaScript-MD5
+ *
+ * Copyright 2011, Sebastian Tschan
+ * https://blueimp.net
+ *
+ * Licensed under the MIT license:
+ * https://opensource.org/licenses/MIT
+ *
+ * Based on
+ * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
+ * Digest Algorithm, as defined in RFC 1321.
+ * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
+ * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+ * Distributed under the BSD License
+ * See http://pajhome.org.uk/crypt/md5 for more info.
+ */
+function md5(bytes) {
+  if (typeof bytes === 'string') {
+    const msg = unescape(encodeURIComponent(bytes)); // UTF8 escape
+
+    bytes = new Uint8Array(msg.length);
+
+    for (let i = 0; i < msg.length; ++i) {
+      bytes[i] = msg.charCodeAt(i);
+    }
+  }
+
+  return md5ToHexEncodedArray(wordsToMd5(bytesToWords(bytes), bytes.length * 8));
+}
+/*
+ * Convert an array of little-endian words to an array of bytes
+ */
+
+
+function md5ToHexEncodedArray(input) {
+  const output = [];
+  const length32 = input.length * 32;
+  const hexTab = '0123456789abcdef';
+
+  for (let i = 0; i < length32; i += 8) {
+    const x = input[i >> 5] >>> i % 32 & 0xff;
+    const hex = parseInt(hexTab.charAt(x >>> 4 & 0x0f) + hexTab.charAt(x & 0x0f), 16);
+    output.push(hex);
+  }
+
+  return output;
+}
+/**
+ * Calculate output length with padding and bit length
+ */
+
+
+function getOutputLength(inputLength8) {
+  return (inputLength8 + 64 >>> 9 << 4) + 14 + 1;
+}
+/*
+ * Calculate the MD5 of an array of little-endian words, and a bit length.
+ */
+
+
+function wordsToMd5(x, len) {
+  /* append padding */
+  x[len >> 5] |= 0x80 << len % 32;
+  x[getOutputLength(len) - 1] = len;
+  let a = 1732584193;
+  let b = -271733879;
+  let c = -1732584194;
+  let d = 271733878;
+
+  for (let i = 0; i < x.length; i += 16) {
+    const olda = a;
+    const oldb = b;
+    const oldc = c;
+    const oldd = d;
+    a = md5ff(a, b, c, d, x[i], 7, -680876936);
+    d = md5ff(d, a, b, c, x[i + 1], 12, -389564586);
+    c = md5ff(c, d, a, b, x[i + 2], 17, 606105819);
+    b = md5ff(b, c, d, a, x[i + 3], 22, -1044525330);
+    a = md5ff(a, b, c, d, x[i + 4], 7, -176418897);
+    d = md5ff(d, a, b, c, x[i + 5], 12, 1200080426);
+    c = md5ff(c, d, a, b, x[i + 6], 17, -1473231341);
+    b = md5ff(b, c, d, a, x[i + 7], 22, -45705983);
+    a = md5ff(a, b, c, d, x[i + 8], 7, 1770035416);
+    d = md5ff(d, a, b, c, x[i + 9], 12, -1958414417);
+    c = md5ff(c, d, a, b, x[i + 10], 17, -42063);
+    b = md5ff(b, c, d, a, x[i + 11], 22, -1990404162);
+    a = md5ff(a, b, c, d, x[i + 12], 7, 1804603682);
+    d = md5ff(d, a, b, c, x[i + 13], 12, -40341101);
+    c = md5ff(c, d, a, b, x[i + 14], 17, -1502002290);
+    b = md5ff(b, c, d, a, x[i + 15], 22, 1236535329);
+    a = md5gg(a, b, c, d, x[i + 1], 5, -165796510);
+    d = md5gg(d, a, b, c, x[i + 6], 9, -1069501632);
+    c = md5gg(c, d, a, b, x[i + 11], 14, 643717713);
+    b = md5gg(b, c, d, a, x[i], 20, -373897302);
+    a = md5gg(a, b, c, d, x[i + 5], 5, -701558691);
+    d = md5gg(d, a, b, c, x[i + 10], 9, 38016083);
+    c = md5gg(c, d, a, b, x[i + 15], 14, -660478335);
+    b = md5gg(b, c, d, a, x[i + 4], 20, -405537848);
+    a = md5gg(a, b, c, d, x[i + 9], 5, 568446438);
+    d = md5gg(d, a, b, c, x[i + 14], 9, -1019803690);
+    c = md5gg(c, d, a, b, x[i + 3], 14, -187363961);
+    b = md5gg(b, c, d, a, x[i + 8], 20, 1163531501);
+    a = md5gg(a, b, c, d, x[i + 13], 5, -1444681467);
+    d = md5gg(d, a, b, c, x[i + 2], 9, -51403784);
+    c = md5gg(c, d, a, b, x[i + 7], 14, 1735328473);
+    b = md5gg(b, c, d, a, x[i + 12], 20, -1926607734);
+    a = md5hh(a, b, c, d, x[i + 5], 4, -378558);
+    d = md5hh(d, a, b, c, x[i + 8], 11, -2022574463);
+    c = md5hh(c, d, a, b, x[i + 11], 16, 1839030562);
+    b = md5hh(b, c, d, a, x[i + 14], 23, -35309556);
+    a = md5hh(a, b, c, d, x[i + 1], 4, -1530992060);
+    d = md5hh(d, a, b, c, x[i + 4], 11, 1272893353);
+    c = md5hh(c, d, a, b, x[i + 7], 16, -155497632);
+    b = md5hh(b, c, d, a, x[i + 10], 23, -1094730640);
+    a = md5hh(a, b, c, d, x[i + 13], 4, 681279174);
+    d = md5hh(d, a, b, c, x[i], 11, -358537222);
+    c = md5hh(c, d, a, b, x[i + 3], 16, -722521979);
+    b = md5hh(b, c, d, a, x[i + 6], 23, 76029189);
+    a = md5hh(a, b, c, d, x[i + 9], 4, -640364487);
+    d = md5hh(d, a, b, c, x[i + 12], 11, -421815835);
+    c = md5hh(c, d, a, b, x[i + 15], 16, 530742520);
+    b = md5hh(b, c, d, a, x[i + 2], 23, -995338651);
+    a = md5ii(a, b, c, d, x[i], 6, -198630844);
+    d = md5ii(d, a, b, c, x[i + 7], 10, 1126891415);
+    c = md5ii(c, d, a, b, x[i + 14], 15, -1416354905);
+    b = md5ii(b, c, d, a, x[i + 5], 21, -57434055);
+    a = md5ii(a, b, c, d, x[i + 12], 6, 1700485571);
+    d = md5ii(d, a, b, c, x[i + 3], 10, -1894986606);
+    c = md5ii(c, d, a, b, x[i + 10], 15, -1051523);
+    b = md5ii(b, c, d, a, x[i + 1], 21, -2054922799);
+    a = md5ii(a, b, c, d, x[i + 8], 6, 1873313359);
+    d = md5ii(d, a, b, c, x[i + 15], 10, -30611744);
+    c = md5ii(c, d, a, b, x[i + 6], 15, -1560198380);
+    b = md5ii(b, c, d, a, x[i + 13], 21, 1309151649);
+    a = md5ii(a, b, c, d, x[i + 4], 6, -145523070);
+    d = md5ii(d, a, b, c, x[i + 11], 10, -1120210379);
+    c = md5ii(c, d, a, b, x[i + 2], 15, 718787259);
+    b = md5ii(b, c, d, a, x[i + 9], 21, -343485551);
+    a = safeAdd(a, olda);
+    b = safeAdd(b, oldb);
+    c = safeAdd(c, oldc);
+    d = safeAdd(d, oldd);
+  }
+
+  return [a, b, c, d];
+}
+/*
+ * Convert an array bytes to an array of little-endian words
+ * Characters >255 have their high-byte silently ignored.
+ */
+
+
+function bytesToWords(input) {
+  if (input.length === 0) {
+    return [];
+  }
+
+  const length8 = input.length * 8;
+  const output = new Uint32Array(getOutputLength(length8));
+
+  for (let i = 0; i < length8; i += 8) {
+    output[i >> 5] |= (input[i / 8] & 0xff) << i % 32;
+  }
+
+  return output;
+}
+/*
+ * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+ * to work around bugs in some JS interpreters.
+ */
+
+
+function safeAdd(x, y) {
+  const lsw = (x & 0xffff) + (y & 0xffff);
+  const msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+  return msw << 16 | lsw & 0xffff;
+}
+/*
+ * Bitwise rotate a 32-bit number to the left.
+ */
+
+
+function bitRotateLeft(num, cnt) {
+  return num << cnt | num >>> 32 - cnt;
+}
+/*
+ * These functions implement the four basic operations the algorithm uses.
+ */
+
+
+function md5cmn(q, a, b, x, s, t) {
+  return safeAdd(bitRotateLeft(safeAdd(safeAdd(a, q), safeAdd(x, t)), s), b);
+}
+
+function md5ff(a, b, c, d, x, s, t) {
+  return md5cmn(b & c | ~b & d, a, b, x, s, t);
+}
+
+function md5gg(a, b, c, d, x, s, t) {
+  return md5cmn(b & d | c & ~d, a, b, x, s, t);
+}
+
+function md5hh(a, b, c, d, x, s, t) {
+  return md5cmn(b ^ c ^ d, a, b, x, s, t);
+}
+
+function md5ii(a, b, c, d, x, s, t) {
+  return md5cmn(c ^ (b | ~d), a, b, x, s, t);
+}
+
+var _default = md5;
+exports.default = _default;
+},{}],28:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+const randomUUID = typeof crypto !== 'undefined' && crypto.randomUUID && crypto.randomUUID.bind(crypto);
+var _default = {
+  randomUUID
+};
+exports.default = _default;
+},{}],29:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = '00000000-0000-0000-0000-000000000000';
+exports.default = _default;
+},{}],30:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _validate = _interopRequireDefault(require("./validate.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function parse(uuid) {
+  if (!(0, _validate.default)(uuid)) {
+    throw TypeError('Invalid UUID');
+  }
+
+  let v;
+  const arr = new Uint8Array(16); // Parse ########-....-....-....-............
+
+  arr[0] = (v = parseInt(uuid.slice(0, 8), 16)) >>> 24;
+  arr[1] = v >>> 16 & 0xff;
+  arr[2] = v >>> 8 & 0xff;
+  arr[3] = v & 0xff; // Parse ........-####-....-....-............
+
+  arr[4] = (v = parseInt(uuid.slice(9, 13), 16)) >>> 8;
+  arr[5] = v & 0xff; // Parse ........-....-####-....-............
+
+  arr[6] = (v = parseInt(uuid.slice(14, 18), 16)) >>> 8;
+  arr[7] = v & 0xff; // Parse ........-....-....-####-............
+
+  arr[8] = (v = parseInt(uuid.slice(19, 23), 16)) >>> 8;
+  arr[9] = v & 0xff; // Parse ........-....-....-....-############
+  // (Use "/" to avoid 32-bit truncation when bit-shifting high-order bytes)
+
+  arr[10] = (v = parseInt(uuid.slice(24, 36), 16)) / 0x10000000000 & 0xff;
+  arr[11] = v / 0x100000000 & 0xff;
+  arr[12] = v >>> 24 & 0xff;
+  arr[13] = v >>> 16 & 0xff;
+  arr[14] = v >>> 8 & 0xff;
+  arr[15] = v & 0xff;
+  return arr;
+}
+
+var _default = parse;
+exports.default = _default;
+},{"./validate.js":40}],31:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
+exports.default = _default;
+},{}],32:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = rng;
+// Unique ID creation requires a high quality random # generator. In the browser we therefore
+// require the crypto API and do not support built-in fallback to lower quality random number
+// generators (like Math.random()).
+let getRandomValues;
+const rnds8 = new Uint8Array(16);
+
+function rng() {
+  // lazy load so that environments that need to polyfill have a chance to do so
+  if (!getRandomValues) {
+    // getRandomValues needs to be invoked in a context where "this" is a Crypto implementation.
+    getRandomValues = typeof crypto !== 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto);
+
+    if (!getRandomValues) {
+      throw new Error('crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported');
+    }
+  }
+
+  return getRandomValues(rnds8);
+}
+},{}],33:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+// Adapted from Chris Veness' SHA1 code at
+// http://www.movable-type.co.uk/scripts/sha1.html
+function f(s, x, y, z) {
+  switch (s) {
+    case 0:
+      return x & y ^ ~x & z;
+
+    case 1:
+      return x ^ y ^ z;
+
+    case 2:
+      return x & y ^ x & z ^ y & z;
+
+    case 3:
+      return x ^ y ^ z;
+  }
+}
+
+function ROTL(x, n) {
+  return x << n | x >>> 32 - n;
+}
+
+function sha1(bytes) {
+  const K = [0x5a827999, 0x6ed9eba1, 0x8f1bbcdc, 0xca62c1d6];
+  const H = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0];
+
+  if (typeof bytes === 'string') {
+    const msg = unescape(encodeURIComponent(bytes)); // UTF8 escape
+
+    bytes = [];
+
+    for (let i = 0; i < msg.length; ++i) {
+      bytes.push(msg.charCodeAt(i));
+    }
+  } else if (!Array.isArray(bytes)) {
+    // Convert Array-like to Array
+    bytes = Array.prototype.slice.call(bytes);
+  }
+
+  bytes.push(0x80);
+  const l = bytes.length / 4 + 2;
+  const N = Math.ceil(l / 16);
+  const M = new Array(N);
+
+  for (let i = 0; i < N; ++i) {
+    const arr = new Uint32Array(16);
+
+    for (let j = 0; j < 16; ++j) {
+      arr[j] = bytes[i * 64 + j * 4] << 24 | bytes[i * 64 + j * 4 + 1] << 16 | bytes[i * 64 + j * 4 + 2] << 8 | bytes[i * 64 + j * 4 + 3];
+    }
+
+    M[i] = arr;
+  }
+
+  M[N - 1][14] = (bytes.length - 1) * 8 / Math.pow(2, 32);
+  M[N - 1][14] = Math.floor(M[N - 1][14]);
+  M[N - 1][15] = (bytes.length - 1) * 8 & 0xffffffff;
+
+  for (let i = 0; i < N; ++i) {
+    const W = new Uint32Array(80);
+
+    for (let t = 0; t < 16; ++t) {
+      W[t] = M[i][t];
+    }
+
+    for (let t = 16; t < 80; ++t) {
+      W[t] = ROTL(W[t - 3] ^ W[t - 8] ^ W[t - 14] ^ W[t - 16], 1);
+    }
+
+    let a = H[0];
+    let b = H[1];
+    let c = H[2];
+    let d = H[3];
+    let e = H[4];
+
+    for (let t = 0; t < 80; ++t) {
+      const s = Math.floor(t / 20);
+      const T = ROTL(a, 5) + f(s, b, c, d) + e + K[s] + W[t] >>> 0;
+      e = d;
+      d = c;
+      c = ROTL(b, 30) >>> 0;
+      b = a;
+      a = T;
+    }
+
+    H[0] = H[0] + a >>> 0;
+    H[1] = H[1] + b >>> 0;
+    H[2] = H[2] + c >>> 0;
+    H[3] = H[3] + d >>> 0;
+    H[4] = H[4] + e >>> 0;
+  }
+
+  return [H[0] >> 24 & 0xff, H[0] >> 16 & 0xff, H[0] >> 8 & 0xff, H[0] & 0xff, H[1] >> 24 & 0xff, H[1] >> 16 & 0xff, H[1] >> 8 & 0xff, H[1] & 0xff, H[2] >> 24 & 0xff, H[2] >> 16 & 0xff, H[2] >> 8 & 0xff, H[2] & 0xff, H[3] >> 24 & 0xff, H[3] >> 16 & 0xff, H[3] >> 8 & 0xff, H[3] & 0xff, H[4] >> 24 & 0xff, H[4] >> 16 & 0xff, H[4] >> 8 & 0xff, H[4] & 0xff];
+}
+
+var _default = sha1;
+exports.default = _default;
+},{}],34:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+exports.unsafeStringify = unsafeStringify;
+
+var _validate = _interopRequireDefault(require("./validate.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+const byteToHex = [];
+
+for (let i = 0; i < 256; ++i) {
+  byteToHex.push((i + 0x100).toString(16).slice(1));
+}
+
+function unsafeStringify(arr, offset = 0) {
+  // Note: Be careful editing this code!  It's been tuned for performance
+  // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
+  return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + '-' + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + '-' + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + '-' + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + '-' + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
+}
+
+function stringify(arr, offset = 0) {
+  const uuid = unsafeStringify(arr, offset); // Consistency check for valid UUID.  If this throws, it's likely due to one
+  // of the following:
+  // - One or more input array values don't map to a hex octet (leading to
+  // "undefined" in the uuid)
+  // - Invalid input values for the RFC `version` or `variant` fields
+
+  if (!(0, _validate.default)(uuid)) {
+    throw TypeError('Stringified UUID is invalid');
+  }
+
+  return uuid;
+}
+
+var _default = stringify;
+exports.default = _default;
+},{"./validate.js":40}],35:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _rng = _interopRequireDefault(require("./rng.js"));
+
+var _stringify = require("./stringify.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// **`v1()` - Generate time-based UUID**
+//
+// Inspired by https://github.com/LiosK/UUID.js
+// and http://docs.python.org/library/uuid.html
+let _nodeId;
+
+let _clockseq; // Previous uuid creation time
+
+
+let _lastMSecs = 0;
+let _lastNSecs = 0; // See https://github.com/uuidjs/uuid for API details
+
+function v1(options, buf, offset) {
+  let i = buf && offset || 0;
+  const b = buf || new Array(16);
+  options = options || {};
+  let node = options.node || _nodeId;
+  let clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq; // node and clockseq need to be initialized to random values if they're not
+  // specified.  We do this lazily to minimize issues related to insufficient
+  // system entropy.  See #189
+
+  if (node == null || clockseq == null) {
+    const seedBytes = options.random || (options.rng || _rng.default)();
+
+    if (node == null) {
+      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+      node = _nodeId = [seedBytes[0] | 0x01, seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]];
+    }
+
+    if (clockseq == null) {
+      // Per 4.2.2, randomize (14 bit) clockseq
+      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
+    }
+  } // UUID timestamps are 100 nano-second units since the Gregorian epoch,
+  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
+  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
+  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
+
+
+  let msecs = options.msecs !== undefined ? options.msecs : Date.now(); // Per 4.2.1.2, use count of uuid's generated during the current clock
+  // cycle to simulate higher resolution clock
+
+  let nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1; // Time since last uuid creation (in msecs)
+
+  const dt = msecs - _lastMSecs + (nsecs - _lastNSecs) / 10000; // Per 4.2.1.2, Bump clockseq on clock regression
+
+  if (dt < 0 && options.clockseq === undefined) {
+    clockseq = clockseq + 1 & 0x3fff;
+  } // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
+  // time interval
+
+
+  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
+    nsecs = 0;
+  } // Per 4.2.1.2 Throw error if too many uuids are requested
+
+
+  if (nsecs >= 10000) {
+    throw new Error("uuid.v1(): Can't create more than 10M uuids/sec");
+  }
+
+  _lastMSecs = msecs;
+  _lastNSecs = nsecs;
+  _clockseq = clockseq; // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
+
+  msecs += 12219292800000; // `time_low`
+
+  const tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
+  b[i++] = tl >>> 24 & 0xff;
+  b[i++] = tl >>> 16 & 0xff;
+  b[i++] = tl >>> 8 & 0xff;
+  b[i++] = tl & 0xff; // `time_mid`
+
+  const tmh = msecs / 0x100000000 * 10000 & 0xfffffff;
+  b[i++] = tmh >>> 8 & 0xff;
+  b[i++] = tmh & 0xff; // `time_high_and_version`
+
+  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
+
+  b[i++] = tmh >>> 16 & 0xff; // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
+
+  b[i++] = clockseq >>> 8 | 0x80; // `clock_seq_low`
+
+  b[i++] = clockseq & 0xff; // `node`
+
+  for (let n = 0; n < 6; ++n) {
+    b[i + n] = node[n];
+  }
+
+  return buf || (0, _stringify.unsafeStringify)(b);
+}
+
+var _default = v1;
+exports.default = _default;
+},{"./rng.js":32,"./stringify.js":34}],36:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _v = _interopRequireDefault(require("./v35.js"));
+
+var _md = _interopRequireDefault(require("./md5.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const v3 = (0, _v.default)('v3', 0x30, _md.default);
+var _default = v3;
+exports.default = _default;
+},{"./md5.js":27,"./v35.js":37}],37:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.URL = exports.DNS = void 0;
+exports.default = v35;
+
+var _stringify = require("./stringify.js");
+
+var _parse = _interopRequireDefault(require("./parse.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function stringToBytes(str) {
+  str = unescape(encodeURIComponent(str)); // UTF8 escape
+
+  const bytes = [];
+
+  for (let i = 0; i < str.length; ++i) {
+    bytes.push(str.charCodeAt(i));
+  }
+
+  return bytes;
+}
+
+const DNS = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+exports.DNS = DNS;
+const URL = '6ba7b811-9dad-11d1-80b4-00c04fd430c8';
+exports.URL = URL;
+
+function v35(name, version, hashfunc) {
+  function generateUUID(value, namespace, buf, offset) {
+    var _namespace;
+
+    if (typeof value === 'string') {
+      value = stringToBytes(value);
+    }
+
+    if (typeof namespace === 'string') {
+      namespace = (0, _parse.default)(namespace);
+    }
+
+    if (((_namespace = namespace) === null || _namespace === void 0 ? void 0 : _namespace.length) !== 16) {
+      throw TypeError('Namespace must be array-like (16 iterable integer values, 0-255)');
+    } // Compute hash of namespace and value, Per 4.3
+    // Future: Use spread syntax when supported on all platforms, e.g. `bytes =
+    // hashfunc([...namespace, ... value])`
+
+
+    let bytes = new Uint8Array(16 + value.length);
+    bytes.set(namespace);
+    bytes.set(value, namespace.length);
+    bytes = hashfunc(bytes);
+    bytes[6] = bytes[6] & 0x0f | version;
+    bytes[8] = bytes[8] & 0x3f | 0x80;
+
+    if (buf) {
+      offset = offset || 0;
+
+      for (let i = 0; i < 16; ++i) {
+        buf[offset + i] = bytes[i];
+      }
+
+      return buf;
+    }
+
+    return (0, _stringify.unsafeStringify)(bytes);
+  } // Function#name is not settable on some platforms (#270)
+
+
+  try {
+    generateUUID.name = name; // eslint-disable-next-line no-empty
+  } catch (err) {} // For CommonJS default export support
+
+
+  generateUUID.DNS = DNS;
+  generateUUID.URL = URL;
+  return generateUUID;
+}
+},{"./parse.js":30,"./stringify.js":34}],38:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _native = _interopRequireDefault(require("./native.js"));
+
+var _rng = _interopRequireDefault(require("./rng.js"));
+
+var _stringify = require("./stringify.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function v4(options, buf, offset) {
+  if (_native.default.randomUUID && !buf && !options) {
+    return _native.default.randomUUID();
+  }
+
+  options = options || {};
+
+  const rnds = options.random || (options.rng || _rng.default)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+
+
+  rnds[6] = rnds[6] & 0x0f | 0x40;
+  rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
+
+  if (buf) {
+    offset = offset || 0;
+
+    for (let i = 0; i < 16; ++i) {
+      buf[offset + i] = rnds[i];
+    }
+
+    return buf;
+  }
+
+  return (0, _stringify.unsafeStringify)(rnds);
+}
+
+var _default = v4;
+exports.default = _default;
+},{"./native.js":28,"./rng.js":32,"./stringify.js":34}],39:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _v = _interopRequireDefault(require("./v35.js"));
+
+var _sha = _interopRequireDefault(require("./sha1.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const v5 = (0, _v.default)('v5', 0x50, _sha.default);
+var _default = v5;
+exports.default = _default;
+},{"./sha1.js":33,"./v35.js":37}],40:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _regex = _interopRequireDefault(require("./regex.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function validate(uuid) {
+  return typeof uuid === 'string' && _regex.default.test(uuid);
+}
+
+var _default = validate;
+exports.default = _default;
+},{"./regex.js":31}],41:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _validate = _interopRequireDefault(require("./validate.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function version(uuid) {
+  if (!(0, _validate.default)(uuid)) {
+    throw TypeError('Invalid UUID');
+  }
+
+  return parseInt(uuid.slice(14, 15), 16);
+}
+
+var _default = version;
+exports.default = _default;
+},{"./validate.js":40}]},{},[1])(1)
 });

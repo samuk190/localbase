@@ -1,9 +1,9 @@
-import logger from '../../utils/logger'
-import isSubset from '../../utils/isSubset'
-import success from '../../api-utils/success'
-import error from '../../api-utils/error'
-import showUserErrors from '../../api-utils/showUserErrors'
-import selectionLevel from '../../api-utils/selectionLevel'
+import logger from '../../utils/logger.js'
+import isSubset from '../../utils/isSubset.js'
+import success from '../../api-utils/success.js'
+import error from '../../api-utils/error.js'
+import showUserErrors from '../../api-utils/showUserErrors.js'
+import selectionLevel from '../../api-utils/selectionLevel.js'
 
 export default function set(newDocument, options = { keys: false }) {
 
