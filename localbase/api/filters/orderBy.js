@@ -1,4 +1,4 @@
-export default function orderBy(property, direction) {
+export default function orderBy(property, direction ) {
   if (!property) {
     this.userErrors.push("No field name specified in orderBy() method. Use a string e.g. 'name'")
   }
