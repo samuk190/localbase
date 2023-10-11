@@ -17,7 +17,6 @@ import deleteIt from './api/actions/delete.js'
 import search from './api/actions/search.js'
 import uid from './api-utils/uid.js'
 
-
 // Localbase
 export default class Localbase {
   constructor(dbName) {
@@ -81,8 +80,7 @@ export default class Localbase {
       Localbase.onChangeDoc({ key, action, data });
     }
   }
-  static onChange(movimiento){
-    
-  }
+
+  static onChange(movimiento){}
   static onChangeDoc(movimiento){}
 }
