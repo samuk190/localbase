@@ -9,7 +9,7 @@ You can create as many databases as you like.
 Databases are organised into Collections and Documents (just like Firebase Cloud Firestore).
 
 - **Databases** contain **Collections** (e.g. `users`)
-- **Collections** contain **Documents** (e.g. `{ id: 1, name: 'Bill', age: 47 }`
+- **Collections** contain **Documents** (e.g. `{ id: 1, name: 'Bill', age: 47 }`)
 
 Localbase is built on top of [LocalForage](https://github.com/localForage/localForage).
 
@@ -33,6 +33,7 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
   - [Order a collection](#order-a-collection)
   - [Limit a collection](#limit-a-collection)
   - [Constains a collection](#Contains-a-collection)
+  - [Where a collection](#Where-a-collection)
   - [Get a document](#get-a-document)
 - [Deleting Data](#deleting-data)
   - [Delete a document](#delete-a-document)
@@ -46,6 +47,9 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
 - [Promises](#promises)
   - [Add Document then do something](#add-document-then-do-something)
   - [Update Document then do something](#update-document-then-do-something)
+    -[increment value in property](#increment-value-in-property)
+    -[arrayunion in property](#array-union-in-property)
+    -[arrayremove in property](#array-remove-in-property)
   - [Set Document then do something](#set-document-then-do-something)
   - [Delete Document then do something](#delete-document-then-do-something)
   - [Delete Collection then do something](#delete-collection-then-do-something)
@@ -53,6 +57,9 @@ Localbase is built on top of [LocalForage](https://github.com/localForage/localF
 - [Async / Await](#async--await)
   - [Add Documents (with Async Await)](#add-documents-with-async-await)
   - [Update Document (with Async Await)](#update-document-with-async-await)
+    -[increment value in property](#increment-value-in-property)
+    -[arrayunion in property](#array-union-in-property)
+    -[arrayremove in property](#array-remove-in-property)
   - [Set Document (with Async Await)](#set-document-with-async-await)
   - [Get Collection & Catch Errors (with Async Await)](#get-collection--catch-errors-with-async-await)
 - [Configuration](#configuration)
@@ -263,6 +270,7 @@ db.collection('users')
 ```
 
 ## search in collection
+search is built on top of [Fuzzysort](https://github.com/farzher/fuzzysort).
 
 Get all items from a collection. The collection will be returned in an array.
 
@@ -533,6 +541,30 @@ db.collection('users')
 // into the update() method
 ```
 
+#### increment value in property
+use Localbase.increment static method
+```javascript
+  // increment a 
+  await db.collection('test').doc('abc').update({valor: Localbase.increment(500)});
+
+  // decrement
+  await db.collection('test').where({ nombre:'hello 2' }).update({valor: Localbase.increment(-500)});
+
+```
+#### array union in property
+use Localbase.arrayUnion static method
+```javascript
+  await db.collection('test').doc('abc').update({valor: Localbase.arrayUnion({like:true})});
+  await db.collection('test').where({ nombre:'hello 2' }).update({valor: Localbase.arrayUnion({like:false})});
+```
+
+#### array remove in property
+use Localbase.arrayRemove static method
+```javascript
+  await db.collection('test').doc('abc').update({valor: Localbase.arrayRemove({like:true})});
+  await db.collection('test').where({ nombre:'hello 2' }).update({valor: Localbase.arrayRemove({like:false})});
+```
+
 ### Set Document then do something
 
 ```javascript
@@ -743,6 +775,15 @@ try{
   //        { id: 4, name: 'fernando', lastname:'castillo', age: 34 },
   //    ... more
   //  ]
+```
+### Where a collection
+```javascript
+  // getting
+  await db.collection('test').where({ nombre:'hello 0' }).get();
+
+  // updated
+  await db.collection('test').where({ nombre:'hello 1' }).update({valor: Localbase.increment(500)});
+  
 ```
 
 ## Configuration

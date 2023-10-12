@@ -7,4 +7,5 @@ export default function reset() {
   this.userErrors = []
   this.containsProperty = null
   this.containsValue = null
+  this.whereArguments = []
 }

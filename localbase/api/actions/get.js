@@ -3,6 +3,7 @@ import logger from "../../utils/logger.js"
 import reset from '../../api-utils/reset.js'
 import selectionLevel from '../../api-utils/selectionLevel.js'
 import showUserErrors from '../../api-utils/showUserErrors.js'
+import cumpleCriterios from '../../api-utils/cumpleCriterio.js'
 import { single } from 'fuzzysort'
 
 export default function get(options = { keys: false }) {
@@ -16,6 +17,9 @@ export default function get(options = { keys: false }) {
     let containsValue = this.containsValue
     let containsExact = this.containsExact
     let containsSinError = this.containsSinError
+    let whereArguments = this.whereArguments
+    const cuantosWhere = whereArguments.length
+    if(cuantosWhere > 10 ) throw new Error('No se pueden usar mas de 10 where en una consulta')
 
     let collection = []
     let logMessage
@@ -71,7 +75,16 @@ export default function get(options = { keys: false }) {
         } catch (error) {
           this.userErrors.push(`Constain():${error.message}`)
         }
-      }else{
+      }else if(typeof value === 'object' && cuantosWhere){
+        cumpleCriterios.call(this,value) && collection.push(collectionItem)
+        if(limitBy){
+          if(collection.length > (limitBy + 10 )) {
+            logMessage += `, limited to contains is ${ limitBy } `
+            return collection
+          }
+        }
+      }
+      else {
         collection.push(collectionItem)
       }
 
