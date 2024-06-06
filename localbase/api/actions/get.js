@@ -11,6 +11,7 @@ export default function get(options = { keys: false }) {
     let collectionName = this.collectionName
     let orderByProperty = this.orderByProperty
     let orderByDirection = this.orderByDirection
+    let colSelectionCriteria = options.filter
     let limitBy = this.limitBy
 
     let collection = []
@@ -25,7 +26,14 @@ export default function get(options = { keys: false }) {
           data: value
         }
       }
-      collection.push(collectionItem)
+      if (colSelectionCriteria) {
+        if (isSubset(value, colSelectionCriteria)) {
+          collection.push(collectionItem)
+        }
+      }
+      else {
+        collection.push(collectionItem)
+      }
     }).then(() => {
       let logMessage = `Got "${ collectionName }" collection`
       // orderBy
