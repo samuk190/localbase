@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/samuk190/localbase.git"
+    "url": "git+https://github.com/dannyconnell/localbase.git"
   },
   "keywords": [
     "database",
