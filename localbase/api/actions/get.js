@@ -41,11 +41,13 @@ export default function get(options = { keys: false }) {
         logMessage += `, ordered by "${ orderByProperty }"`
         if (!options.keys) {
           collection.sort((a, b) => {
+            if (!a.hasOwnProperty(orderByProperty) || !b.hasOwnProperty(orderByProperty)) return 0
             return a[orderByProperty].toString().localeCompare(b[orderByProperty].toString())
           })
         }
         else {
           collection.sort((a, b) => {
+            if (!a.hasOwnProperty(orderByProperty) || !b.hasOwnProperty(orderByProperty)) return 0
             return a.data[orderByProperty].toString().localeCompare(b.data[orderByProperty].toString())
           })
         }
