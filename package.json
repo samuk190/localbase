@@ -1,7 +1,7 @@
 {
   "name": "localbase",
-  "version": "0.7.5",
-  "description": "A Firebase-Style Database ... Offline!",
+  "version": "0.7.6",
+  "description": "A Firebase-Style Database ... Offline!" ,
   "main": "index.js",
   "scripts": {
     "bundle-dev": "browserify --standalone Localbase index.js -t babelify -t [ envify --NODE_ENV development ] > dist/localbase.dev.js",
