@@ -1,6 +1,6 @@
 # Localbase <!-- omit in toc -->
 
-A Firebase-Style Database ... Offline!
+A Firebase-Style Database ... Offline! originally made by dannyconnell
 
 Localbase gives you an offline database with the simplicity & power of Firebase, all stored in the user's browser (in an IndexedDB database).
 
@@ -149,7 +149,7 @@ export default {
 
 ## Quick Start
 
-Get started by adding a document to a collection. Just specify the collection name with the `collection` method (the collection will be created automatically) then specify the document you want to add with the `add` method: 
+Get started by adding a document to a collection. Just specify the collection name with the `collection` method (the collection will be created automatically) then specify the document you want to add with the `add` method:
 ```javascript
 db.collection('users').add({
   id: 1,
@@ -200,7 +200,7 @@ db.collection('users').doc({ id: 1 }).update({
 //  ]
 ```
 
-**Note:** if more than one document is matched by your criteria e.g `.doc({ gender: 'male' })` then **all** matched documents will be updated. 
+**Note:** if more than one document is matched by your criteria e.g `.doc({ gender: 'male' })` then **all** matched documents will be updated.
 
 ### Set a document (overwrite)
 
@@ -208,7 +208,7 @@ Overwrite an existing document. This will completely overwrite the selected docu
 
 ```javascript
 db.collection('users').doc({ id: 2 }).set({
-  id: 4, 
+  id: 4,
   name: 'Pauline',
   age: 27
 })
@@ -219,7 +219,7 @@ db.collection('users').doc({ id: 2 }).set({
 //  ]
 ```
 
-**Note:** if more than one document is matched by your criteria e.g `.doc({ gender: 'male' })` then **all** matched documents will be overwritten. 
+**Note:** if more than one document is matched by your criteria e.g `.doc({ gender: 'male' })` then **all** matched documents will be overwritten.
 
 ### Set a collection (overwrite)
 
@@ -234,7 +234,7 @@ db.collection('users')
       age: 48
     },
     {
-      id: 2, 
+      id: 2,
       name: 'Paul',
       age: 28
     }
@@ -330,7 +330,7 @@ db.collection('users').doc({ id: 1 }).delete()
 //  ]
 ```
 
-**Note:** if more than one document is matched by your criteria e.g `.doc({ gender: 'male' })` then **all** matched documents will be deleted. 
+**Note:** if more than one document is matched by your criteria e.g `.doc({ gender: 'male' })` then **all** matched documents will be deleted.
 
 ### Delete a collection
 Delete a collection and all documents contained in it.
@@ -391,7 +391,7 @@ Or, you can just use the `set` method:
 
 ```javascript
 db.collection('users').doc('mykey-1').set({
-  id: 1, 
+  id: 1,
   name: 'Bill',
   age: 47
 })
@@ -415,7 +415,7 @@ db.collection('users')
       _key: 'mykey-1'
     },
     {
-      id: 2, 
+      id: 2,
       name: 'Paul',
       age: 28,
       _key: 'mykey-2'
@@ -439,7 +439,7 @@ db.collection('users').doc('mykey-1').update({
 
 // set document by key
 db.collection('users').doc('mykey-2').set({
-  id: 4, 
+  id: 4,
   name: 'Pauline',
   age: 27
 })
@@ -494,8 +494,8 @@ db.collection('users')
     console.log('There was an error, do something else.')
   })
 
-// you can test the error by passing a 
-// string, number or boolean into the 
+// you can test the error by passing a
+// string, number or boolean into the
 // .add() method, instead of an object
 ```
 
@@ -513,7 +513,7 @@ db.collection('users')
   .catch(error => {
     console.log('There was an error, do something else.')
   })
-  
+
 // you can test the error by passing nothing
 // into the update() method
 ```
@@ -524,7 +524,7 @@ db.collection('users')
 db.collection('users')
   .doc({ id: 1 })
   .set({
-    id: 1, 
+    id: 1,
     name: 'Pauline',
     age: 27
   })
@@ -567,7 +567,7 @@ db.collection('users')
   .catch(error => {
     console.log('There was an error, do something else')
   })
-  
+
 // you can test the error by passing nothing
 // into the collection() method
 ```
@@ -582,7 +582,7 @@ db.delete()
   .catch(error => {
     console.log('There was an error, do something else.')
   })
-  
+
 // note: sometimes when you delete a
 // database, the change won't show up
 // in Chrome Dev tools til you reload
@@ -634,7 +634,7 @@ async function setUser() {
   let result = await db.collection('users')
     .doc({ id: 2 })
     .set({
-      id: 4, 
+      id: 4,
       name: 'Pauline',
       age: 27
     })
