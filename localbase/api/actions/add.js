@@ -1,4 +1,4 @@
-let UUID = require('ordered-uuid')
+import UUID from 'ordered-uuid'
 import success from '../../api-utils/success'
 import error from '../../api-utils/error'
 import showUserErrors from '../../api-utils/showUserErrors'
