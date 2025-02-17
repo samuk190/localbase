@@ -9,6 +9,8 @@ import limit from './api/filters/limit'
 
 import get from './api/actions/get'
 import add from './api/actions/add'
+import addFile from './api/actions/addFile'
+import getFile from './api/actions/getFile'
 import update from './api/actions/update'
 import set from './api/actions/set'
 import deleteIt from './api/actions/delete'
@@ -50,6 +52,7 @@ export default class Localbase {
 
     // api - actions
     this.get = get.bind(this)
+    this.getFile = getFile.bind(this)
     this.add = add.bind(this)
     this.update = update.bind(this)
     this.set = set.bind(this)

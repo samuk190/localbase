@@ -6,7 +6,6 @@ import showUserErrors from '../../api-utils/showUserErrors'
 
 export default function get(options = { keys: false }) {
 
-  // get collection
   this.getCollection = () => {
     let collectionName = this.collectionName
     let orderByProperty = this.orderByProperty

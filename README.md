@@ -165,11 +165,40 @@ db.collection('users').get().then(users => {
   console.log(users)
 })
 
-//  [
-//    { id: 1, name: 'Bill', age: 47 },
-//    { id: 2, name: 'Paul', age: 34 }
-//  ]
 ```
+
+Add File (NEW) ,
+```javascript
+const file = new Blob(['Hello, world!'], { type: 'text/plain' })
+
+db.addFile(file, 'nameFile', 'txt')
+  .then(response => console.log('Success:', response))
+  .catch(err => console.error('Error:', err))
+
+```
+
+Get File (NEW) simulating to download on browser
+```javascript
+db.collection('users').getFile({ })
+  .then(response => {
+    if (response.file) {
+      console.log('Retrieved file:', response)
+
+
+      const a = document.createElement('a')
+      const url = URL.createObjectURL(response.file)
+      a.href = url
+      a.download = `${response.name}${response.extension}`
+      document.body.appendChild(a)
+      a.click()
+      URL.revokeObjectURL(url)
+    } else {
+      console.log('Retrieved document:', response)
+    }
+  })
+  .catch(err => console.error('Error:', err))
+```
+
 
 ## Adding Data
 
