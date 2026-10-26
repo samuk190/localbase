@@ -7,12 +7,17 @@ import doc from './api/selectors/doc'
 import orderBy from './api/filters/orderBy'
 import limit from './api/filters/limit'
 import where from './api/filters/where'
+import offset from './api/filters/offset'
 
 import get from './api/actions/get'
 import add from './api/actions/add'
 import update from './api/actions/update'
 import set from './api/actions/set'
 import deleteIt from './api/actions/delete'
+import count from './api/actions/count'
+import paginate from './api/actions/paginate'
+import exists from './api/actions/exists'
+import upsert from './api/actions/upsert'
 import AsyncLock from './utils/asyncLock'
 
 // Localbase
@@ -52,6 +57,8 @@ export default class Localbase {
     // api - filters
     this.orderBy = orderBy.bind(this)
     this.limit = limit.bind(this)
+    this.offset = offset.bind(this)
+    this.skip = offset.bind(this)
     this.where = where.bind(this)
 
     // api - actions
@@ -60,6 +67,10 @@ export default class Localbase {
     this.update = update.bind(this)
     this.set = set.bind(this)
     this.delete = deleteIt.bind(this)
+    this.count = count.bind(this)
+    this.paginate = paginate.bind(this)
+    this.exists = exists.bind(this)
+    this.upsert = upsert.bind(this)
 
   }
 }
