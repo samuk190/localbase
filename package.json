@@ -5,6 +5,13 @@
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "index.d.ts",
+  "files": [
+    "dist",
+    "localbase",
+    "index.js",
+    "index.d.ts",
+    "README.md"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
