@@ -36,6 +36,9 @@ export default function add(data, keyProvided) {
       }
 
       await this.lf[collectionName].setItem(key, data)
+      if (this.syncChannel) {
+        this.syncChannel.broadcast(`collection:${collectionName}:change`, { action: 'add', key, data })
+      }
       reset.call(this)
       return success.call(
         this,
