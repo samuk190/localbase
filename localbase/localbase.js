@@ -19,6 +19,9 @@ import paginate from './api/actions/paginate'
 import exists from './api/actions/exists'
 import upsert from './api/actions/upsert'
 import onSnapshot from './api/actions/onSnapshot'
+import exportData from './api/actions/export'
+import importData from './api/actions/import'
+import { getVersion, version } from './api/actions/version'
 import AsyncLock from './utils/asyncLock'
 import EventEmitter from './utils/eventEmitter'
 import SyncChannel from './utils/syncChannel'
@@ -77,6 +80,10 @@ export default class Localbase {
     this.exists = exists.bind(this)
     this.upsert = upsert.bind(this)
     this.onSnapshot = onSnapshot.bind(this)
+    this.export = exportData.bind(this)
+    this.import = importData.bind(this)
+    this.version = version.bind(this)
+    this.getVersion = getVersion.bind(this)
 
   }
 }

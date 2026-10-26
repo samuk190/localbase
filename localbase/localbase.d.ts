@@ -38,6 +38,10 @@ export default class Localbase {
     exists: () => Promise<boolean>;
     upsert: (data: any) => Promise<any>;
     onSnapshot: (callback: (snapshot: any, change?: any) => void) => () => void;
+    export: (options?: { format?: 'json' | 'csv'; download?: boolean; filename?: string; pretty?: boolean; keys?: boolean; raw?: boolean }) => Promise<any>;
+    import: (payload: any, options?: { overwrite?: boolean }) => Promise<any>;
+    version: (targetVersion: number, migrationFn?: (db: this) => Promise<void> | void) => Promise<number>;
+    getVersion: () => Promise<number>;
 }
 import collection from "./api/selectors/collection";
 import doc from "./api/selectors/doc";
