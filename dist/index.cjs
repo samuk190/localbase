@@ -11,6 +11,7 @@ function collection(collectionName, options = {}) {
     return this
   } else {
     this.collectionName = collectionName;
+    this.docSelectionCriteria = null;
 
     if (!this.collectionOptions) {
       this.collectionOptions = {};
@@ -1451,6 +1452,263 @@ function onSnapshot(callback) {
 }
 
 /**
+ * Lightweight JSON to CSV and CSV to JSON converter.
+ */
+function jsonToCsv(data) {
+  if (!Array.isArray(data) || !data.length) {
+    return ''
+  }
+
+  // Extract all unique headers across all objects
+  const headers = Array.from(
+    new Set(
+      data.reduce((keys, obj) => {
+        if (obj && typeof obj === 'object') {
+          return keys.concat(Object.keys(obj))
+        }
+        return keys
+      }, [])
+    )
+  );
+
+  const escapeField = (val) => {
+    if (val === null || val === undefined) return ''
+    if (typeof val === 'object') {
+      val = JSON.stringify(val);
+    }
+    const str = String(val);
+    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+      return `"${str.replace(/"/g, '""')}"`
+    }
+    return str
+  };
+
+  const csvRows = [headers.map(escapeField).join(',')];
+
+  for (const item of data) {
+    const row = headers.map((header) => escapeField(item ? item[header] : ''));
+    csvRows.push(row.join(','));
+  }
+
+  return csvRows.join('\n')
+}
+
+function csvToJson(csvString) {
+  if (!csvString || typeof csvString !== 'string') return []
+
+  const lines = csvString.trim().split(/\r?\n/);
+  if (lines.length < 2) return []
+
+  // Parse header
+  const parseRow = (row) => {
+    const entries = [];
+    let current = '';
+    let insideQuotes = false;
+
+    for (let i = 0; i < row.length; i++) {
+      const char = row[i];
+      if (char === '"' && (i === 0 || row[i - 1] !== '\\')) {
+        if (insideQuotes && row[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else {
+          insideQuotes = !insideQuotes;
+        }
+      } else if (char === ',' && !insideQuotes) {
+        entries.push(current);
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    entries.push(current);
+    return entries
+  };
+
+  const headers = parseRow(lines[0]);
+  const result = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const values = parseRow(lines[i]);
+    const obj = {};
+    headers.forEach((header, index) => {
+      let val = values[index] !== undefined ? values[index] : '';
+      // Attempt numeric parse
+      if (val !== '' && !isNaN(val)) {
+        val = Number(val);
+      } else if (val === 'true') {
+        val = true;
+      } else if (val === 'false') {
+        val = false;
+      }
+      obj[header] = val;
+    });
+    result.push(obj);
+  }
+
+  return result
+}
+
+async function exportData(options = { format: 'json' }) {
+  const collectionName = this.collectionName;
+  const format = options.format || 'json';
+
+  // Helper to trigger browser download
+  const triggerDownload = (content, filename, mimeType) => {
+    if (typeof document !== 'undefined' && document.createElement) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  // 1. Single Collection Export
+  if (collectionName) {
+    const docs = await this.collection(collectionName).get({ keys: options.keys || false });
+    reset.call(this);
+
+    if (format === 'csv') {
+      const csvStr = jsonToCsv(docs);
+      if (options.download) {
+        triggerDownload(csvStr, options.filename || `${collectionName}.csv`, 'text/csv');
+      }
+      return csvStr
+    }
+
+    // Default JSON
+    const jsonStr = options.pretty ? JSON.stringify(docs, null, 2) : JSON.stringify(docs);
+    if (options.download) {
+      triggerDownload(jsonStr, options.filename || `${collectionName}.json`, 'application/json');
+    }
+    return options.raw ? docs : jsonStr
+  }
+
+  // 2. Full Database Export
+  const dbDump = {};
+  const collectionNames = Object.keys(this.lf).filter(
+    (name) => name !== '__localbase_metadata__'
+  );
+
+  for (const col of collectionNames) {
+    dbDump[col] = await this.collection(col).get({ keys: options.keys || false });
+  }
+
+  reset.call(this);
+
+  const jsonStr = options.pretty ? JSON.stringify(dbDump, null, 2) : JSON.stringify(dbDump);
+  if (options.download) {
+    triggerDownload(jsonStr, options.filename || `${this.dbName}_backup.json`, 'application/json');
+  }
+
+  return options.raw ? dbDump : jsonStr
+}
+
+async function importData(payload, options = { overwrite: false }) {
+  const collectionName = this.collectionName;
+
+  let parsedData = payload;
+  if (typeof payload === 'string') {
+    const trimmed = payload.trim();
+    if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+      parsedData = JSON.parse(trimmed);
+    } else {
+      // CSV format
+      parsedData = csvToJson(trimmed);
+    }
+  }
+
+  // 1. Single Collection Import
+  if (collectionName) {
+    if (!Array.isArray(parsedData)) {
+      throw new Error(`Data imported into collection "${collectionName}" must be an array of documents.`)
+    }
+
+    if (options.overwrite) {
+      await this.collection(collectionName).delete();
+    }
+
+    let importedCount = 0;
+    for (const item of parsedData) {
+      const key = item._key || item.key || (item.id !== undefined ? String(item.id) : generateKey());
+      const docData = { ...item };
+      delete docData._key;
+      delete docData.key;
+      await this.collection(collectionName).doc(key).set(docData);
+      importedCount++;
+    }
+
+    reset.call(this);
+    return { collection: collectionName, imported: importedCount }
+  }
+
+  // 2. Full Database Import
+  if (typeof parsedData !== 'object' || Array.isArray(parsedData) || parsedData === null) {
+    throw new Error('Full database import requires an object with collection names as keys.')
+  }
+
+  const results = {};
+  for (const col of Object.keys(parsedData)) {
+    const colData = parsedData[col];
+    if (Array.isArray(colData)) {
+      if (options.overwrite) {
+        await this.collection(col).delete();
+      }
+      for (const item of colData) {
+        const key = item._key || item.key || (item.id !== undefined ? String(item.id) : generateKey());
+        const docData = { ...item };
+        delete docData._key;
+        delete docData.key;
+        await this.collection(col).doc(key).set(docData);
+      }
+      results[col] = colData.length;
+    }
+  }
+
+  reset.call(this);
+  return results
+}
+
+async function getVersion() {
+  const metaStore = this.lf['__localbase_metadata__'] || localForage.createInstance({
+    driver: localForage.INDEXEDDB,
+    name: this.dbName,
+    storeName: '__localbase_metadata__'
+  });
+  const currentVersion = (await metaStore.getItem('__db_version__')) || 1;
+  return currentVersion
+}
+
+async function version(targetVersion, migrationFn) {
+  if (typeof targetVersion !== 'number' || targetVersion < 1) {
+    throw new Error('Target version passed to db.version() must be a positive integer.')
+  }
+
+  const metaStore = this.lf['__localbase_metadata__'] || localForage.createInstance({
+    driver: localForage.INDEXEDDB,
+    name: this.dbName,
+    storeName: '__localbase_metadata__'
+  });
+  this.lf['__localbase_metadata__'] = metaStore;
+
+  const currentVersion = (await metaStore.getItem('__db_version__')) || 1;
+
+  if (currentVersion < targetVersion) {
+    if (typeof migrationFn === 'function') {
+      await migrationFn(this);
+    }
+    await metaStore.setItem('__db_version__', targetVersion);
+  }
+
+  return targetVersion
+}
+
+/**
  * Lightweight per-key asynchronous lock to serialize concurrent read-modify-write
  * operations on the same document key, preventing race condition data overwrites.
  */
@@ -1629,6 +1887,10 @@ class Localbase {
     this.exists = exists.bind(this);
     this.upsert = upsert.bind(this);
     this.onSnapshot = onSnapshot.bind(this);
+    this.export = exportData.bind(this);
+    this.import = importData.bind(this);
+    this.version = version.bind(this);
+    this.getVersion = getVersion.bind(this);
 
   }
 }

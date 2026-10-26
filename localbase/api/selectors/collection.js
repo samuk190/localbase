@@ -9,6 +9,7 @@ export default function collection(collectionName, options = {}) {
     return this
   } else {
     this.collectionName = collectionName
+    this.docSelectionCriteria = null
 
     if (!this.collectionOptions) {
       this.collectionOptions = {}
