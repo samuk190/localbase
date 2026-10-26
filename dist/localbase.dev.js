@@ -2827,44 +2827,58 @@
 	var localforageExports = requireLocalforage();
 	var localForage = /*@__PURE__*/getDefaultExportFromCjs(localforageExports);
 
-	function collection(collectionName) {
+	function collection(collectionName, options = {}) {
 	  if (!collectionName) {
 	    this.userErrors.push('No collection name specified in collection() method.');
 	    return this
-	  }
-	  else if (typeof collectionName !== 'string') {
+	  } else if (typeof collectionName !== 'string') {
 	    this.userErrors.push('Collection name in collection() method must be a string and not an object, number or boolean.');
 	    return this
-	  }
-	  else {
+	  } else {
 	    this.collectionName = collectionName;
+
+	    if (!this.collectionOptions) {
+	      this.collectionOptions = {};
+	    }
+	    if (options && typeof options === 'object') {
+	      this.collectionOptions[collectionName] = options;
+	    }
 
 	    let dbName = this.dbName;
 
-	    // if we've not created a localForage instance 
+	    // if we've not created a localForage instance
 	    // for this collection, create one
 	    if (!(collectionName in this.lf)) {
 	      this.lf[collectionName] = localForage.createInstance({
-	        driver      : localForage.INDEXEDDB,
-	        name        : dbName,
-	        storeName   : collectionName
+	        driver: localForage.INDEXEDDB,
+	        name: dbName,
+	        storeName: collectionName
 	      });
 	    }
+
+	    // Ensure metadata store exists
+	    if (!('__localbase_metadata__' in this.lf)) {
+	      this.lf['__localbase_metadata__'] = localForage.createInstance({
+	        driver: localForage.INDEXEDDB,
+	        name: dbName,
+	        storeName: '__localbase_metadata__'
+	      });
+	    }
+
 	    return this
 	  }
-
 	}
 
 	function doc(docSelectionCriteria) {
-	  if (!docSelectionCriteria) {
-	    this.userErrors.push('No document criteria specified in doc() method. Use a string (with a key) or an object (with criteria) e.g. { id: 1 }');
+	  if (docSelectionCriteria === null || docSelectionCriteria === undefined) {
+	    this.userErrors.push('No document criteria specified in doc() method. Use a string/number (key) or an object (criteria) e.g. { id: 1 }');
+	    return this
 	  }
-	  else if (typeof docSelectionCriteria !== 'string' && typeof docSelectionCriteria !== 'object') {
-	    this.userErrors.push('Document criteria specified in doc() method must not be a number or boolean. Use a string (with a key) or an object (with criteria) e.g. { id: 1 }');
+	  if (typeof docSelectionCriteria !== 'string' && typeof docSelectionCriteria !== 'number' && typeof docSelectionCriteria !== 'object') {
+	    this.userErrors.push('Document criteria specified in doc() method must be a string, number, or object.');
+	    return this
 	  }
-	  else {
-	    this.docSelectionCriteria = docSelectionCriteria;
-	  }
+	  this.docSelectionCriteria = docSelectionCriteria;
 	  return this
 	}
 
@@ -2958,6 +2972,15 @@
 	  }
 
 	  this.queryFilters.push({ field, operator, value });
+	  return this
+	}
+
+	function offset(skipCount) {
+	  if (typeof skipCount !== 'number' || skipCount < 0) {
+	    this.userErrors.push('Parameter passed to .offset() / .skip() must be a non-negative number, e.g. 10');
+	    return this
+	  }
+	  this.offsetBy = Math.floor(skipCount);
 	  return this
 	}
 
@@ -3147,7 +3170,7 @@
 	  })
 	}
 
-	function compareValues(a, b) {
+	function compareValues$1(a, b) {
 	  if (a === b) return 0
 	  if (a === undefined || a === null) return 1
 	  if (b === undefined || b === null) return -1
@@ -3213,7 +3236,7 @@
 	            for (const clause of orderByClauses) {
 	              const valA = a[clause.property];
 	              const valB = b[clause.property];
-	              const diff = compareValues(valA, valB);
+	              const diff = compareValues$1(valA, valB);
 	              if (diff !== 0) {
 	                return clause.direction === 'desc' ? -diff : diff
 	              }
@@ -3391,46 +3414,47 @@
 	  // check for user errors
 	  if (!data) {
 	    this.userErrors.push('No data specified in add() method. You must use an object, e.g { id: 1, name: "Bill", age: 47 }');
-	  }
-	  else if (!(typeof data == 'object' && data instanceof Array == false)) {
+	  } else if (!(typeof data === 'object' && !(data instanceof Array))) {
 	    this.userErrors.push('Data passed to .add() must be an object. Not an array, string, number or boolean.');
 	  }
 
 	  // no user errors, do the add
 	  if (!this.userErrors.length) {
-	    let collectionName = this.collectionName;
-	  
-	    return new Promise((resolve, reject) => {
+	    const collectionName = this.collectionName;
+	    const isAutoIncrement =
+	      (this.collectionOptions && this.collectionOptions[collectionName] && this.collectionOptions[collectionName].autoIncrement) ||
+	      (this.config && this.config.autoIncrement);
+
+	    const perform = async () => {
 	      let key = null;
 
-	      // if no key provided, generate random, ordered key
-	      if (!keyProvided) {
+	      if (keyProvided) {
+	        key = keyProvided;
+	      } else if (isAutoIncrement) {
+	        const metaStore = this.lf['__localbase_metadata__'];
+	        const seqKey = `seq:${collectionName}`;
+	        let currentSeq = (await metaStore.getItem(seqKey)) || 0;
+	        currentSeq += 1;
+	        await metaStore.setItem(seqKey, currentSeq);
+	        key = currentSeq;
+	      } else {
 	        key = UUID.generate();
 	      }
-	      else {
-	        key = keyProvided;
-	      }
 
-	      return this.lf[collectionName].setItem(key, data).then(() => {
-	        resolve(
-	          success.call(
-	            this,
-	            `Document added to "${ collectionName }" collection.`,
-	            { key, data }
-	          )
-	        );
-	      }).catch(err => {
-	        reject(
-	          error.call(
-	            this,
-	            `Could not add Document to ${ collectionName } collection.`
-	          )
-	        );
-	      })
-	    })
-	  }
-	  else {
+	      await this.lf[collectionName].setItem(key, data);
+	      reset.call(this);
+	      return success.call(
+	        this,
+	        `Document added to "${collectionName}" collection.`,
+	        { key, data }
+	      )
+	    };
+
+	    const lockKey = `${collectionName}:add`;
+	    return this.lock ? this.lock.acquire(lockKey, perform) : perform()
+	  } else {
 	    showUserErrors.call(this);
+	    return Promise.reject(error.call(this, 'Invalid arguments passed to .add()'))
 	  }
 	}
 
@@ -3946,6 +3970,216 @@
 
 	}
 
+	function count() {
+	  const collectionName = this.collectionName;
+	  const queryFilters = this.queryFilters || [];
+
+	  if (!collectionName) {
+	    this.userErrors.push('No collection name specified before calling .count()');
+	    showUserErrors.call(this);
+	    return Promise.reject(new Error('No collection specified'))
+	  }
+
+	  // Fast-path: O(1) count if no filters applied
+	  if (!queryFilters.length) {
+	    return this.lf[collectionName].length().then(len => {
+	      reset.call(this);
+	      return len
+	    })
+	  }
+
+	  // Filtered count without accumulating records into memory
+	  let total = 0;
+	  return this.lf[collectionName]
+	    .iterate((value) => {
+	      if (matchesAllFilters(value, queryFilters)) {
+	        total++;
+	      }
+	    })
+	    .then(() => {
+	      reset.call(this);
+	      return total
+	    })
+	}
+
+	function compareValues(a, b) {
+	  if (a === b) return 0
+	  if (a === undefined || a === null) return 1
+	  if (b === undefined || b === null) return -1
+	  if (typeof a === 'number' && typeof b === 'number') return a - b
+	  if (a instanceof Date && b instanceof Date) return a.getTime() - b.getTime()
+	  return a.toString().localeCompare(b.toString())
+	}
+
+	async function paginate(options = { page: 1, limit: 10 }) {
+	  const collectionName = this.collectionName;
+	  const queryFilters = [...(this.queryFilters || [])];
+	  const orderByClauses = [...(this.orderByClauses || [])];
+
+	  const page = Math.max(1, parseInt(options.page || 1, 10));
+	  const limit = Math.max(1, parseInt(options.limit || options.pageSize || 10, 10));
+	  const skip = (page - 1) * limit;
+
+	  if (!collectionName) {
+	    this.userErrors.push('No collection name specified before calling .paginate()');
+	    showUserErrors.call(this);
+	    return Promise.reject(new Error('No collection specified'))
+	  }
+
+	  let totalRows = 0;
+	  let matchedRows = [];
+
+	  await this.lf[collectionName].iterate((value, key) => {
+	    if (matchesAllFilters(value, queryFilters)) {
+	      totalRows++;
+	      matchedRows.push(options.keys ? { key, data: value } : value);
+	    }
+	  });
+
+	  // Sort if order clauses defined
+	  if (orderByClauses.length) {
+	    matchedRows.sort((itemA, itemB) => {
+	      const a = options.keys ? itemA.data : itemA;
+	      const b = options.keys ? itemB.data : itemB;
+
+	      for (const clause of orderByClauses) {
+	        const valA = a[clause.property];
+	        const valB = b[clause.property];
+	        const diff = compareValues(valA, valB);
+	        if (diff !== 0) {
+	          return clause.direction === 'desc' ? -diff : diff
+	        }
+	      }
+	      return 0
+	    });
+	  }
+
+	  const rows = matchedRows.slice(skip, skip + limit);
+	  const totalPages = Math.ceil(totalRows / limit);
+
+	  reset.call(this);
+
+	  return {
+	    total_rows: totalRows,
+	    row_limit: limit,
+	    total_page: totalPages,
+	    current_page: page,
+	    rows: rows
+	  }
+	}
+
+	function exists() {
+	  const collectionName = this.collectionName;
+	  const docSelectionCriteria = this.docSelectionCriteria;
+
+	  if (!collectionName || !docSelectionCriteria) {
+	    this.userErrors.push('Both collection and doc criteria must be specified before calling .exists()');
+	    showUserErrors.call(this);
+	    return Promise.reject(new Error('Invalid selection for .exists()'))
+	  }
+
+	  if (typeof docSelectionCriteria === 'string') {
+	    return this.lf[collectionName].getItem(docSelectionCriteria).then(val => {
+	      reset.call(this);
+	      return val !== null && val !== undefined
+	    })
+	  }
+
+	  // Object criteria search
+	  let found = false;
+	  return this.lf[collectionName]
+	    .iterate(val => {
+	      if (isSubset(val, docSelectionCriteria)) {
+	        found = true;
+	        return true // Stop iteration early
+	      }
+	    })
+	    .then(() => {
+	      reset.call(this);
+	      return found
+	    })
+	}
+
+	function upsert(data) {
+	  const collectionName = this.collectionName;
+	  const docSelectionCriteria = this.docSelectionCriteria;
+	  const lf = this.lf;
+
+	  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+	    this.userErrors.push('Data passed to .upsert() must be an object, e.g. { name: "Bill", age: 47 }');
+	    showUserErrors.call(this);
+	    return Promise.reject(error.call(this, 'Invalid arguments passed to .upsert()'))
+	  }
+
+	  if (!collectionName || !docSelectionCriteria) {
+	    this.userErrors.push('Both collection and doc criteria must be specified before calling .upsert()');
+	    showUserErrors.call(this);
+	    return Promise.reject(error.call(this, 'Invalid selection for .upsert()'))
+	  }
+
+	  const lockKey = typeof docSelectionCriteria === 'string'
+	    ? `${collectionName}:${docSelectionCriteria}`
+	    : `${collectionName}:criteria:${JSON.stringify(docSelectionCriteria)}`;
+
+	  const perform = async () => {
+	    try {
+	      if (typeof docSelectionCriteria === 'string') {
+	        const key = docSelectionCriteria;
+	        const existing = await lf[collectionName].getItem(key);
+
+	        let finalDoc;
+	        let actionMessage;
+	        if (existing !== null && existing !== undefined) {
+	          finalDoc = updateObject(existing, data);
+	          actionMessage = `Document in "${collectionName}" with key "${key}" was updated via upsert.`;
+	        } else {
+	          finalDoc = data;
+	          actionMessage = `Document in "${collectionName}" with key "${key}" was inserted via upsert.`;
+	        }
+
+	        await lf[collectionName].setItem(key, finalDoc);
+	        reset.call(this);
+	        return success.call(this, actionMessage, { key, data: finalDoc })
+	      } else {
+	        // Criteria-based upsert
+	        let matchedKey = null;
+	        let matchedDoc = null;
+
+	        await lf[collectionName].iterate((value, key) => {
+	          if (isSubset(value, docSelectionCriteria)) {
+	            matchedKey = key;
+	            matchedDoc = value;
+	            return true // Stop iteration
+	          }
+	        });
+
+	        let finalKey;
+	        let finalDoc;
+	        let actionMessage;
+
+	        if (matchedKey) {
+	          finalKey = matchedKey;
+	          finalDoc = updateObject(matchedDoc, data);
+	          actionMessage = `Document in "${collectionName}" matching criteria was updated via upsert.`;
+	        } else {
+	          finalKey = generateKey();
+	          finalDoc = { ...docSelectionCriteria, ...data };
+	          actionMessage = `New document created in "${collectionName}" via upsert.`;
+	        }
+
+	        await lf[collectionName].setItem(finalKey, finalDoc);
+	        reset.call(this);
+	        return success.call(this, actionMessage, { key: finalKey, data: finalDoc })
+	      }
+	    } catch (err) {
+	      reset.call(this);
+	      throw error.call(this, `Upsert failed in "${collectionName}": ${err.message || err}`)
+	    }
+	  };
+
+	  return this.lock ? this.lock.acquire(lockKey, perform) : perform()
+	}
+
 	/**
 	 * Lightweight per-key asynchronous lock to serialize concurrent read-modify-write
 	 * operations on the same document key, preventing race condition data overwrites.
@@ -4013,6 +4247,8 @@
 	    // api - filters
 	    this.orderBy = orderBy.bind(this);
 	    this.limit = limit.bind(this);
+	    this.offset = offset.bind(this);
+	    this.skip = offset.bind(this);
 	    this.where = where.bind(this);
 
 	    // api - actions
@@ -4021,6 +4257,10 @@
 	    this.update = update.bind(this);
 	    this.set = set.bind(this);
 	    this.delete = deleteIt.bind(this);
+	    this.count = count.bind(this);
+	    this.paginate = paginate.bind(this);
+	    this.exists = exists.bind(this);
+	    this.upsert = upsert.bind(this);
 
 	  }
 	}

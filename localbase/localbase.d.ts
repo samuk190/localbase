@@ -19,12 +19,24 @@ export default class Localbase {
     doc: typeof doc;
     orderBy: typeof orderBy;
     limit: typeof limit;
+    offset: (skipCount: number) => this;
+    skip: (skipCount: number) => this;
     where: typeof where;
     get: typeof get;
     add: typeof add;
     update: typeof update;
     set: typeof set;
     delete: typeof deleteIt;
+    count: () => Promise<number>;
+    paginate: (options?: { page?: number; limit?: number; pageSize?: number }) => Promise<{
+        total_rows: number;
+        row_limit: number;
+        total_page: number;
+        current_page: number;
+        rows: any[];
+    }>;
+    exists: () => Promise<boolean>;
+    upsert: (data: any) => Promise<any>;
 }
 import collection from "./api/selectors/collection";
 import doc from "./api/selectors/doc";

@@ -1,12 +1,12 @@
 export default function doc(docSelectionCriteria) {
-  if (!docSelectionCriteria) {
-    this.userErrors.push('No document criteria specified in doc() method. Use a string (with a key) or an object (with criteria) e.g. { id: 1 }')
+  if (docSelectionCriteria === null || docSelectionCriteria === undefined) {
+    this.userErrors.push('No document criteria specified in doc() method. Use a string/number (key) or an object (criteria) e.g. { id: 1 }')
+    return this
   }
-  else if (typeof docSelectionCriteria !== 'string' && typeof docSelectionCriteria !== 'object') {
-    this.userErrors.push('Document criteria specified in doc() method must not be a number or boolean. Use a string (with a key) or an object (with criteria) e.g. { id: 1 }')
+  if (typeof docSelectionCriteria !== 'string' && typeof docSelectionCriteria !== 'number' && typeof docSelectionCriteria !== 'object') {
+    this.userErrors.push('Document criteria specified in doc() method must be a string, number, or object.')
+    return this
   }
-  else {
-    this.docSelectionCriteria = docSelectionCriteria
-  }
+  this.docSelectionCriteria = docSelectionCriteria
   return this
 }
