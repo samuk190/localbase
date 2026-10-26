@@ -12,6 +12,7 @@ import add from './api/actions/add'
 import update from './api/actions/update'
 import set from './api/actions/set'
 import deleteIt from './api/actions/delete'
+import AsyncLock from './utils/asyncLock'
 
 // Localbase
 export default class Localbase {
@@ -27,6 +28,7 @@ export default class Localbase {
     this.docSelectionCriteria = null
 
     // queues
+    this.lock = new AsyncLock()
     this.deleteCollectionQueue = {
       queue: [],
       running: false
