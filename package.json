@@ -1,6 +1,6 @@
 {
   "name": "localbase",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "A Firebase-Style Database ... Offline!",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
