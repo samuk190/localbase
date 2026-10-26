@@ -2993,6 +2993,13 @@
 	  });
 	}
 
+	function isDevMode() {
+	  if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV) {
+	    return process.env.NODE_ENV === 'development'
+	  }
+	  return true
+	}
+
 	let logger = {
 	  baseStyle: `
     padding: 2px 5px;
@@ -3006,25 +3013,24 @@
 	    warn: '#f39c12'
 	  },
 	  log(message, secondary) {
-	    if (process.env.NODE_ENV == 'development' && this.config.debug) {
-	      let style = logger.baseStyle + `background-color: ${ logger.colors.log }`;
-	      if (secondary) {
+	    if (this.config && this.config.debug && isDevMode()) {
+	      let style = logger.baseStyle + `background-color: ${logger.colors.log}`;
+	      if (secondary !== undefined) {
 	        console.log('%clocalbase', style, message, secondary);
-	      }
-	      else {
+	      } else {
 	        console.log('%clocalbase', style, message);
 	      }
 	    }
 	  },
 	  error(message, secondary) {
-	    if (process.env.NODE_ENV == 'development' && this.config.debug) {
-	      let style = logger.baseStyle + `background-color: ${ logger.colors.error }`;
+	    if (this.config && this.config.debug && isDevMode()) {
+	      let style = logger.baseStyle + `background-color: ${logger.colors.error}`;
 	      console.error('%clocalbase', style, message);
 	    }
-	  },  
+	  },
 	  warn(message, secondary) {
-	    if (process.env.NODE_ENV == 'development' && this.config.debug) {
-	      let style = logger.baseStyle + `background-color: ${ logger.colors.warn }`;
+	    if (this.config && this.config.debug && isDevMode()) {
+	      let style = logger.baseStyle + `background-color: ${logger.colors.warn}`;
 	      console.warn('%clocalbase', style, message);
 	    }
 	  }
@@ -3442,6 +3448,9 @@
 	      }
 
 	      await this.lf[collectionName].setItem(key, data);
+	      if (this.syncChannel) {
+	        this.syncChannel.broadcast(`collection:${collectionName}:change`, { action: 'add', key, data });
+	      }
 	      reset.call(this);
 	      return success.call(
 	        this,
@@ -3556,6 +3565,9 @@
 	            return Promise.all(
 	              docsToUpdate.map(docToUpdate => lf[collectionName].setItem(docToUpdate.key, docToUpdate.newDocument))
 	            ).then(() => {
+	              if (this.syncChannel) {
+	                this.syncChannel.broadcast(`collection:${collectionName}:change`, { action: 'update', criteria: docSelectionCriteria, docUpdates });
+	              }
 	              reset.call(this);
 	              resolve(
 	                success.call(
@@ -3590,6 +3602,9 @@
 	            }
 	            const newDocument = updateObject(value, docUpdates);
 	            return lf[collectionName].setItem(docSelectionCriteria, newDocument).then(() => {
+	              if (this.syncChannel) {
+	                this.syncChannel.broadcast(`collection:${collectionName}:change`, { action: 'update', key: docSelectionCriteria, docUpdates });
+	              }
 	              reset.call(this);
 	              resolve(
 	                success.call(
@@ -4138,6 +4153,9 @@
 	        }
 
 	        await lf[collectionName].setItem(key, finalDoc);
+	        if (this.syncChannel) {
+	          this.syncChannel.broadcast(`collection:${collectionName}:change`, { action: 'upsert', key, data: finalDoc });
+	        }
 	        reset.call(this);
 	        return success.call(this, actionMessage, { key, data: finalDoc })
 	      } else {
@@ -4168,6 +4186,9 @@
 	        }
 
 	        await lf[collectionName].setItem(finalKey, finalDoc);
+	        if (this.syncChannel) {
+	          this.syncChannel.broadcast(`collection:${collectionName}:change`, { action: 'upsert', key: finalKey, data: finalDoc });
+	        }
 	        reset.call(this);
 	        return success.call(this, actionMessage, { key: finalKey, data: finalDoc })
 	      }
@@ -4178,6 +4199,80 @@
 	  };
 
 	  return this.lock ? this.lock.acquire(lockKey, perform) : perform()
+	}
+
+	function onSnapshot(callback) {
+	  if (typeof callback !== 'function') {
+	    this.userErrors.push('Callback passed to .onSnapshot() must be a function.');
+	    showUserErrors.call(this);
+	    return () => {}
+	  }
+
+	  const currentSelectionLevel = selectionLevel.call(this);
+	  const collectionName = this.collectionName;
+	  const docSelectionCriteria = this.docSelectionCriteria;
+	  const queryFilters = [...(this.queryFilters || [])];
+	  const orderByClauses = [...(this.orderByClauses || [])];
+	  const limitBy = this.limitBy;
+
+	  if (!collectionName) {
+	    this.userErrors.push('No collection specified before calling .onSnapshot()');
+	    showUserErrors.call(this);
+	    return () => {}
+	  }
+
+	  let isSubscribed = true;
+
+	  // Helper to re-fetch snapshot
+	  const fetchAndNotify = async (changeEvent = null) => {
+	    if (!isSubscribed) return
+
+	    try {
+	      if (currentSelectionLevel === 'doc') {
+	        const query = this.collection(collectionName).doc(docSelectionCriteria);
+	        const doc = await query.get();
+	        if (isSubscribed) {
+	          callback(doc, changeEvent);
+	        }
+	      } else {
+	        // Collection level query
+	        const query = this.collection(collectionName);
+	        for (const f of queryFilters) {
+	          query.where(f.field, f.operator, f.value);
+	        }
+	        for (const o of orderByClauses) {
+	          query.orderBy(o.property, o.direction);
+	        }
+	        if (limitBy) {
+	          query.limit(limitBy);
+	        }
+	        const collection = await query.get();
+	        if (isSubscribed) {
+	          callback(collection, changeEvent);
+	        }
+	      }
+	    } catch (err) {
+	      console.error(`Error in onSnapshot listener for "${collectionName}":`, err);
+	    }
+	  };
+
+	  // 1. Initial snapshot fetch
+	  fetchAndNotify({ action: 'initial' });
+
+	  // 2. Subscribe to mutation events
+	  const eventName = `collection:${collectionName}:change`;
+	  const unsubscribeEvent = this.events.on(eventName, (change) => {
+	    fetchAndNotify(change);
+	  });
+
+	  // Clean current builder state
+	  reset.call(this);
+
+	  // 3. Return unsubscribe function
+	  return () => {
+	    isSubscribed = false;
+	    unsubscribeEvent();
+	  }
 	}
 
 	/**
@@ -4210,6 +4305,101 @@
 	  }
 	}
 
+	class EventEmitter {
+	  constructor() {
+	    this.events = new Map();
+	  }
+
+	  on(eventName, listener) {
+	    if (!this.events.has(eventName)) {
+	      this.events.set(eventName, new Set());
+	    }
+	    this.events.get(eventName).add(listener);
+
+	    // Unsubscribe helper
+	    return () => {
+	      this.off(eventName, listener);
+	    }
+	  }
+
+	  off(eventName, listener) {
+	    if (this.events.has(eventName)) {
+	      this.events.get(eventName).delete(listener);
+	      if (this.events.get(eventName).size === 0) {
+	        this.events.delete(eventName);
+	      }
+	    }
+	  }
+
+	  emit(eventName, ...args) {
+	    if (this.events.has(eventName)) {
+	      for (const listener of this.events.get(eventName)) {
+	        try {
+	          listener(...args);
+	        } catch (err) {
+	          console.error(`Error in event listener for "${eventName}":`, err);
+	        }
+	      }
+	    }
+	  }
+
+	  removeAllListeners(eventName) {
+	    if (eventName) {
+	      this.events.delete(eventName);
+	    } else {
+	      this.events.clear();
+	    }
+	  }
+	}
+
+	class SyncChannel {
+	  constructor(dbName, eventEmitter) {
+	    this.dbName = dbName;
+	    this.emitter = eventEmitter;
+	    this.channel = null;
+
+	    if (typeof BroadcastChannel !== 'undefined') {
+	      try {
+	        this.channel = new BroadcastChannel(`localbase_sync_${dbName}`);
+	        this.channel.onmessage = (event) => {
+	          const payload = event.data;
+	          if (payload && payload.db === this.dbName) {
+	            this.emitter.emit(payload.event, payload.data, true /* fromRemote */);
+	          }
+	        };
+	      } catch (e) {
+	        // BroadcastChannel unavailable
+	      }
+	    }
+	  }
+
+	  broadcast(eventName, data) {
+	    // 1. Emit locally
+	    this.emitter.emit(eventName, data, false /* fromRemote */);
+
+	    // 2. Broadcast across tabs/windows
+	    if (this.channel) {
+	      try {
+	        this.channel.postMessage({
+	          db: this.dbName,
+	          event: eventName,
+	          data: data,
+	          timestamp: Date.now()
+	        });
+	      } catch (e) {
+	        // Ignore serialization failure
+	      }
+	    }
+	  }
+
+	  close() {
+	    if (this.channel) {
+	      this.channel.close();
+	      this.channel = null;
+	    }
+	  }
+	}
+
 	// Localbase
 	class Localbase {
 	  constructor(dbName) {
@@ -4227,6 +4417,8 @@
 
 	    // queues
 	    this.lock = new AsyncLock();
+	    this.events = new EventEmitter();
+	    this.syncChannel = new SyncChannel(this.dbName, this.events);
 	    this.deleteCollectionQueue = {
 	      queue: [],
 	      running: false
@@ -4261,6 +4453,7 @@
 	    this.paginate = paginate.bind(this);
 	    this.exists = exists.bind(this);
 	    this.upsert = upsert.bind(this);
+	    this.onSnapshot = onSnapshot.bind(this);
 
 	  }
 	}

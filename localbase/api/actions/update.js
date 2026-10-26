@@ -51,6 +51,9 @@ export default function update(docUpdates) {
             return Promise.all(
               docsToUpdate.map(docToUpdate => lf[collectionName].setItem(docToUpdate.key, docToUpdate.newDocument))
             ).then(() => {
+              if (this.syncChannel) {
+                this.syncChannel.broadcast(`collection:${collectionName}:change`, { action: 'update', criteria: docSelectionCriteria, docUpdates })
+              }
               reset.call(this)
               resolve(
                 success.call(
@@ -85,6 +88,9 @@ export default function update(docUpdates) {
             }
             const newDocument = updateObject(value, docUpdates)
             return lf[collectionName].setItem(docSelectionCriteria, newDocument).then(() => {
+              if (this.syncChannel) {
+                this.syncChannel.broadcast(`collection:${collectionName}:change`, { action: 'update', key: docSelectionCriteria, docUpdates })
+              }
               reset.call(this)
               resolve(
                 success.call(

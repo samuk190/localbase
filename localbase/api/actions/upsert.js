@@ -44,6 +44,9 @@ export default function upsert(data) {
         }
 
         await lf[collectionName].setItem(key, finalDoc)
+        if (this.syncChannel) {
+          this.syncChannel.broadcast(`collection:${collectionName}:change`, { action: 'upsert', key, data: finalDoc })
+        }
         reset.call(this)
         return success.call(this, actionMessage, { key, data: finalDoc })
       } else {
@@ -74,6 +77,9 @@ export default function upsert(data) {
         }
 
         await lf[collectionName].setItem(finalKey, finalDoc)
+        if (this.syncChannel) {
+          this.syncChannel.broadcast(`collection:${collectionName}:change`, { action: 'upsert', key: finalKey, data: finalDoc })
+        }
         reset.call(this)
         return success.call(this, actionMessage, { key: finalKey, data: finalDoc })
       }

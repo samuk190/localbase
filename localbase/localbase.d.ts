@@ -37,6 +37,7 @@ export default class Localbase {
     }>;
     exists: () => Promise<boolean>;
     upsert: (data: any) => Promise<any>;
+    onSnapshot: (callback: (snapshot: any, change?: any) => void) => () => void;
 }
 import collection from "./api/selectors/collection";
 import doc from "./api/selectors/doc";

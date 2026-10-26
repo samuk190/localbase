@@ -18,7 +18,10 @@ import count from './api/actions/count'
 import paginate from './api/actions/paginate'
 import exists from './api/actions/exists'
 import upsert from './api/actions/upsert'
+import onSnapshot from './api/actions/onSnapshot'
 import AsyncLock from './utils/asyncLock'
+import EventEmitter from './utils/eventEmitter'
+import SyncChannel from './utils/syncChannel'
 
 // Localbase
 export default class Localbase {
@@ -37,6 +40,8 @@ export default class Localbase {
 
     // queues
     this.lock = new AsyncLock()
+    this.events = new EventEmitter()
+    this.syncChannel = new SyncChannel(this.dbName, this.events)
     this.deleteCollectionQueue = {
       queue: [],
       running: false
@@ -71,6 +76,7 @@ export default class Localbase {
     this.paginate = paginate.bind(this)
     this.exists = exists.bind(this)
     this.upsert = upsert.bind(this)
+    this.onSnapshot = onSnapshot.bind(this)
 
   }
 }
