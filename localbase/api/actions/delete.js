@@ -1,3 +1,4 @@
+import reset from '../../api-utils/reset'
 import isSubset from '../../utils/isSubset'
 import logger from "../../utils/logger"
 import selectionLevel from '../../api-utils/selectionLevel'
@@ -102,25 +103,25 @@ export default function deleteIt() {
             logger.warn.call(this, `Multiple documents (${ keysForDeletion.length }) with ${ JSON.stringify(docSelectionCriteria) } found.`)
           }
         }).then(() => {
-          keysForDeletion.forEach((key, index) => {
-            this.lf[collectionName].removeItem(key).then(() => {
-              if (index === (keysForDeletion.length - 1)) {
-                resolve(
-                  success.call(
-                    this,
-                    `${ keysForDeletion.length } Document${ keysForDeletion.length > 1 ? 's' : '' } with ${ JSON.stringify(docSelectionCriteria) } deleted.`,
-                    { keys: keysForDeletion }
-                  )
-                )
-              }
-            }).catch(err => {
-              reject(
-                error.call(
-                  this,
-                  `Could not delete ${ keysForDeletion.length } Documents in ${ collectionName } Collection.`
-                )
+          return Promise.all(
+            keysForDeletion.map(key => this.lf[collectionName].removeItem(key))
+          ).then(() => {
+            reset.call(this)
+            resolve(
+              success.call(
+                this,
+                `${ keysForDeletion.length } Document${ keysForDeletion.length > 1 ? 's' : '' } with ${ JSON.stringify(docSelectionCriteria) } deleted.`,
+                { keys: keysForDeletion }
               )
-            })
+            )
+          }).catch(err => {
+            reset.call(this)
+            reject(
+              error.call(
+                this,
+                `Could not delete ${ keysForDeletion.length } Documents in ${ collectionName } Collection: ${ err.message || err }`
+              )
+            )
           })
         })
       }
@@ -130,6 +131,7 @@ export default function deleteIt() {
         this.lf[collectionName].getItem(docSelectionCriteria).then(value => {
           if (value) {
             this.lf[collectionName].removeItem(docSelectionCriteria).then(() => {
+              reset.call(this)
               resolve(
                 success.call(
                   this,
@@ -138,6 +140,7 @@ export default function deleteIt() {
                 )
               )
             }).catch(function(err) {
+              reset.call(this)
               reject(
                 error.call(
                   this,
@@ -147,6 +150,7 @@ export default function deleteIt() {
             });
           }
           else {
+            reset.call(this)
             reject(
               error.call(
                 this,

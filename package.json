@@ -1,27 +1,37 @@
 {
   "name": "localbase",
-  "version": "0.7.6",
-  "description": "A Firebase-Style Database ... Offline!" ,
-  "main": "index.js",
+  "version": "0.7.7",
+  "description": "A Firebase-Style Database ... Offline!",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./index.d.ts"
+    }
+  },
   "scripts": {
-    "bundle-dev": "browserify --standalone Localbase index.js -t babelify -t [ envify --NODE_ENV development ] > dist/localbase.dev.js",
-    "bundle-prod": "browserify -p [ tinyify --no-flat ] --standalone Localbase index.js -t babelify -t [ envify --NODE_ENV production ] > dist/localbase.min.js",
-    "bundle": "npm run bundle-dev && npm run bundle-prod",
-    "deploy": "npm run bundle && npm publish"
+    "build": "rollup -c",
+    "bundle": "npm run build",
+    "bundle-dev": "rollup -c",
+    "bundle-prod": "rollup -c",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "author": "Danny Connell",
   "license": "MIT",
   "dependencies": {
-    "localforage": "^1.7.4",
-    "ordered-uuid": "^1.1.0"
+    "localforage": "^1.7.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.6",
-    "@babel/preset-env": "^7.11.5",
-    "babel-plugin-add-module-exports": "^1.0.2",
-    "babelify": "^10.0.0",
-    "envify": "^4.1.0",
-    "tinyify": "^3.0.0"
+    "@rollup/plugin-commonjs": "^29.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-terser": "^1.0.2",
+    "fake-indexeddb": "^6.2.6",
+    "rollup": "^4.65.0",
+    "vitest": "^1.6.1"
   },
   "repository": {
     "type": "git",
