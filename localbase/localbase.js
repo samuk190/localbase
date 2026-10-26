@@ -6,6 +6,7 @@ import doc from './api/selectors/doc'
 
 import orderBy from './api/filters/orderBy'
 import limit from './api/filters/limit'
+import where from './api/filters/where'
 
 import get from './api/actions/get'
 import add from './api/actions/add'
@@ -24,6 +25,8 @@ export default class Localbase {
     this.collectionName = null
     this.orderByProperty = null
     this.orderByDirection = null
+    this.orderByClauses = []
+    this.queryFilters = []
     this.limitBy = null
     this.docSelectionCriteria = null
 
@@ -49,6 +52,7 @@ export default class Localbase {
     // api - filters
     this.orderBy = orderBy.bind(this)
     this.limit = limit.bind(this)
+    this.where = where.bind(this)
 
     // api - actions
     this.get = get.bind(this)

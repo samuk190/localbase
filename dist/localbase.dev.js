@@ -2868,24 +2868,50 @@
 	  return this
 	}
 
-	function orderBy(property, direction) {
-	  if (!property) {
+	function orderBy(...args) {
+	  if (!this.orderByClauses) {
+	    this.orderByClauses = [];
+	  }
+
+	  if (!args.length) {
 	    this.userErrors.push("No field name specified in orderBy() method. Use a string e.g. 'name'");
+	    return this
 	  }
-	  else if (typeof property !== 'string') {
-	    this.userErrors.push("First parameter in orderBy() method must be a string (a field name) e.g. 'name'");
-	  }
-	  else {
-	    this.orderByProperty = property;
-	  }
-	  if (direction) {
-	    if (direction !== 'asc' && direction !== 'desc') {
-	      this.userErrors.push("Second parameter in orderBy() method must be a string set to 'asc' or 'desc'.");
+
+	  // Support orderBy(['l_name', 'f_name'])
+	  if (Array.isArray(args[0])) {
+	    for (const prop of args[0]) {
+	      if (typeof prop === 'string') {
+	        this.orderByClauses.push({ property: prop, direction: 'asc' });
+	      }
 	    }
-	    else {
-	      this.orderByDirection = direction;
-	    }
+	    return this
 	  }
+
+	  // Support orderBy('l_name', 'f_name') where second param is another field (Issue #15)
+	  // vs orderBy('name', 'desc')
+	  const [first, second] = args;
+	  if (typeof first !== 'string') {
+	    this.userErrors.push("Property in orderBy() method must be a string, e.g. 'name'");
+	    return this
+	  }
+
+	  if (second === 'asc' || second === 'desc') {
+	    this.orderByProperty = first;
+	    this.orderByDirection = second;
+	    this.orderByClauses.push({ property: first, direction: second });
+	  } else if (typeof second === 'string') {
+	    // Both are fields with default 'asc'
+	    this.orderByProperty = first;
+	    this.orderByDirection = 'asc';
+	    this.orderByClauses.push({ property: first, direction: 'asc' });
+	    this.orderByClauses.push({ property: second, direction: 'asc' });
+	  } else {
+	    this.orderByProperty = first;
+	    this.orderByDirection = 'asc';
+	    this.orderByClauses.push({ property: first, direction: 'asc' });
+	  }
+
 	  return this
 	}
 
@@ -2899,6 +2925,39 @@
 	  else {
 	    this.limitBy = limitBy;
 	  }
+	  return this
+	}
+
+	function where(field, operator, value) {
+	  if (!field || typeof field !== 'string') {
+	    this.userErrors.push('First parameter in where() method must be a string field name, e.g. "age"');
+	    return this
+	  }
+
+	  // Shorthand where('name', 'Bill') -> where('name', '==', 'Bill')
+	  if (value === undefined && operator !== undefined) {
+	    value = operator;
+	    operator = '==';
+	  }
+
+	  const validOperators = [
+	    '==', '===', '!=', '<>', '>', '>=', '<', '<=',
+	    'gt', 'gte', 'lt', 'lte',
+	    'in', 'not-in', 'array-contains', 'array-contains-any', 'between'
+	  ];
+
+	  if (!validOperators.includes(operator)) {
+	    this.userErrors.push(
+	      `Invalid operator "${operator}" in where() method. Supported operators: ${validOperators.join(', ')}`
+	    );
+	    return this
+	  }
+
+	  if (!this.queryFilters) {
+	    this.queryFilters = [];
+	  }
+
+	  this.queryFilters.push({ field, operator, value });
 	  return this
 	}
 
@@ -2952,6 +3011,8 @@
 	  this.collectionName = null;
 	  this.orderByProperty = null;
 	  this.orderByDirection = null;
+	  this.orderByClauses = [];
+	  this.queryFilters = [];
 	  this.limitBy = null;
 	  this.docSelectionCriteria = null;
 	  this.userErrors = [];
@@ -2972,68 +3033,206 @@
 	  reset.call(this);
 	}
 
+	function getNestedValue(obj, path) {
+	  if (!obj || typeof obj !== 'object') return undefined
+	  if (!path.includes('.')) return obj[path]
+	  const keys = path.split('.');
+	  let current = obj;
+	  for (const key of keys) {
+	    if (current === null || current === undefined || typeof current !== 'object') {
+	      return undefined
+	    }
+	    current = current[key];
+	  }
+	  return current
+	}
+
+	function evaluateCondition(recordValue, operator, targetValue) {
+	  switch (operator) {
+	    case '==':
+	    case '===':
+	      if (recordValue instanceof Date && targetValue instanceof Date) {
+	        return recordValue.getTime() === targetValue.getTime()
+	      }
+	      return recordValue === targetValue
+
+	    case '!=':
+	    case '<>':
+	      if (recordValue instanceof Date && targetValue instanceof Date) {
+	        return recordValue.getTime() !== targetValue.getTime()
+	      }
+	      return recordValue !== targetValue
+
+	    case '>':
+	    case 'gt':
+	      if (recordValue instanceof Date && targetValue instanceof Date) {
+	        return recordValue.getTime() > targetValue.getTime()
+	      }
+	      return recordValue > targetValue
+
+	    case '>=':
+	    case 'gte':
+	      if (recordValue instanceof Date && targetValue instanceof Date) {
+	        return recordValue.getTime() >= targetValue.getTime()
+	      }
+	      return recordValue >= targetValue
+
+	    case '<':
+	    case 'lt':
+	      if (recordValue instanceof Date && targetValue instanceof Date) {
+	        return recordValue.getTime() < targetValue.getTime()
+	      }
+	      return recordValue < targetValue
+
+	    case '<=':
+	    case 'lte':
+	      if (recordValue instanceof Date && targetValue instanceof Date) {
+	        return recordValue.getTime() <= targetValue.getTime()
+	      }
+	      return recordValue <= targetValue
+
+	    case 'in':
+	      if (!Array.isArray(targetValue)) return false
+	      return targetValue.some(t => {
+	        if (recordValue instanceof Date && t instanceof Date) {
+	          return recordValue.getTime() === t.getTime()
+	        }
+	        return recordValue === t
+	      })
+
+	    case 'not-in':
+	      if (!Array.isArray(targetValue)) return true
+	      return !targetValue.some(t => {
+	        if (recordValue instanceof Date && t instanceof Date) {
+	          return recordValue.getTime() === t.getTime()
+	        }
+	        return recordValue === t
+	      })
+
+	    case 'array-contains':
+	      if (!Array.isArray(recordValue)) return false
+	      return recordValue.some(item => {
+	        if (item instanceof Date && targetValue instanceof Date) {
+	          return item.getTime() === targetValue.getTime()
+	        }
+	        return item === targetValue
+	      })
+
+	    case 'array-contains-any':
+	      if (!Array.isArray(recordValue) || !Array.isArray(targetValue)) return false
+	      return targetValue.some(target => recordValue.includes(target))
+
+	    case 'between':
+	      if (!Array.isArray(targetValue) || targetValue.length !== 2) return false
+	      const [min, max] = targetValue;
+	      if (recordValue instanceof Date) {
+	        const val = recordValue.getTime();
+	        const minVal = min instanceof Date ? min.getTime() : min;
+	        const maxVal = max instanceof Date ? max.getTime() : max;
+	        return val >= minVal && val <= maxVal
+	      }
+	      return recordValue >= min && recordValue <= max
+
+	    default:
+	      return false
+	  }
+	}
+
+	function matchesAllFilters(record, filters) {
+	  if (!filters || !filters.length) return true
+
+	  return filters.every(filter => {
+	    const recordValue = getNestedValue(record, filter.field);
+	    return evaluateCondition(recordValue, filter.operator, filter.value)
+	  })
+	}
+
+	function compareValues(a, b) {
+	  if (a === b) return 0
+	  if (a === undefined || a === null) return 1
+	  if (b === undefined || b === null) return -1
+	  if (typeof a === 'number' && typeof b === 'number') {
+	    return a - b
+	  }
+	  if (a instanceof Date && b instanceof Date) {
+	    return a.getTime() - b.getTime()
+	  }
+	  return a.toString().localeCompare(b.toString())
+	}
+
 	function get(options = { keys: false }) {
+	  if (options && typeof options === 'object' && !Array.isArray(options)) {
+	    if (!options.hasOwnProperty('keys')) {
+	      options.keys = false;
+	    }
+	  }
 
 	  // get collection
 	  this.getCollection = () => {
 	    let collectionName = this.collectionName;
-	    let orderByProperty = this.orderByProperty;
-	    let orderByDirection = this.orderByDirection;
+	    let orderByClauses = this.orderByClauses || [];
+	    let queryFilters = this.queryFilters || [];
 	    let colSelectionCriteria = options.filter;
 	    let limitBy = this.limitBy;
 
+	    // Fallback to legacy single orderByProperty if orderByClauses empty
+	    if (!orderByClauses.length && this.orderByProperty) {
+	      orderByClauses.push({
+	        property: this.orderByProperty,
+	        direction: this.orderByDirection || 'asc'
+	      });
+	    }
+
 	    let collection = [];
-	    return this.lf[collectionName].iterate((value, key) => {
-	      let collectionItem = {};
-	      if (!options.keys) {
-	        collectionItem = value;
-	      }
-	      else {
-	        collectionItem = {
-	          key: key,
-	          data: value
-	        };
-	      }
-	      if (colSelectionCriteria) {
-	        if (isSubset(value, colSelectionCriteria)) {
-	          collection.push(collectionItem);
+	    return this.lf[collectionName]
+	      .iterate((value, key) => {
+	        let collectionItem = options.keys ? { key, data: value } : value;
+
+	        // 1. Check legacy filter
+	        if (colSelectionCriteria && !isSubset(value, colSelectionCriteria)) {
+	          return
 	        }
-	      }
-	      else {
+
+	        // 2. Check modern query filters (.where())
+	        if (queryFilters.length && !matchesAllFilters(value, queryFilters)) {
+	          return
+	        }
+
 	        collection.push(collectionItem);
-	      }
-	    }).then(() => {
-	      let logMessage = `Got "${ collectionName }" collection`;
-	      // orderBy
-	      if (orderByProperty) {
-	        logMessage += `, ordered by "${ orderByProperty }"`;
-	        if (!options.keys) {
-	          collection.sort((a, b) => {
-	            if (!a.hasOwnProperty(orderByProperty) || !b.hasOwnProperty(orderByProperty)) return 0
-	            return a[orderByProperty].toString().localeCompare(b[orderByProperty].toString())
+	      })
+	      .then(() => {
+	        let logMessage = `Got "${collectionName}" collection`;
+
+	        // Sort collection using multi-clause comparator
+	        if (orderByClauses.length) {
+	          logMessage += `, ordered by ${orderByClauses.map(c => `"${c.property}" (${c.direction})`).join(', ')}`;
+	          collection.sort((itemA, itemB) => {
+	            const a = options.keys ? itemA.data : itemA;
+	            const b = options.keys ? itemB.data : itemB;
+
+	            for (const clause of orderByClauses) {
+	              const valA = a[clause.property];
+	              const valB = b[clause.property];
+	              const diff = compareValues(valA, valB);
+	              if (diff !== 0) {
+	                return clause.direction === 'desc' ? -diff : diff
+	              }
+	            }
+	            return 0
 	          });
 	        }
-	        else {
-	          collection.sort((a, b) => {
-	            if (!a.hasOwnProperty(orderByProperty) || !b.hasOwnProperty(orderByProperty)) return 0
-	            return a.data[orderByProperty].toString().localeCompare(b.data[orderByProperty].toString())
-	          });
+
+	        // limit
+	        if (limitBy) {
+	          logMessage += `, limited to ${limitBy}`;
+	          collection = collection.slice(0, limitBy);
 	        }
-	      }
-	      if (orderByDirection == 'desc') {
-	        logMessage += ` (descending)`;
-	        collection.reverse();
-	      }
-	      // limit
-	      if (limitBy) {
-	        logMessage += `, limited to ${ limitBy }`;
-	        collection = collection.splice(0,limitBy);
-	      }
-	      logMessage += `:`;
-	      logger.log.call(this, logMessage, collection);
-	      reset.call(this);
-	      return collection
-	    })
+
+	        logMessage += `:`;
+	        logger.log.call(this, logMessage, collection);
+	        reset.call(this);
+	        return collection
+	      })
 	  };
 
 	  // get document
@@ -3042,83 +3241,101 @@
 	    let docSelectionCriteria = this.docSelectionCriteria;
 
 	    let collection = [];
-	    let document = {};
+	    let document = null;
 
 	    // get document by criteria
 	    this.getDocumentByCriteria = () => {
-	      return this.lf[collectionName].iterate((value, key) => {
-	        if (isSubset(value, docSelectionCriteria)) {
-	          collection.push(value);
-	        }
-	      }).then(() => {
-	        if (!collection.length) {
-	          logger.error.call(this, `Could not find Document in "${ collectionName }" collection with criteria: ${ JSON.stringify(docSelectionCriteria)}`);
-	        }
-	        else {
-	          document = collection[0];
-	          logger.log.call(this, `Got Document with ${ JSON.stringify(docSelectionCriteria) }:`, document);
-	          reset.call(this);
-	          return document
-	        }
-	      })
+	      return this.lf[collectionName]
+	        .iterate((value, key) => {
+	          if (isSubset(value, docSelectionCriteria)) {
+	            collection.push(options.keys ? { key, data: value } : value);
+	          }
+	        })
+	        .then(() => {
+	          if (!collection.length) {
+	            logger.error.call(
+	              this,
+	              `Could not find Document in "${collectionName}" collection with criteria: ${JSON.stringify(docSelectionCriteria)}`
+	            );
+	            reset.call(this);
+	            if (this.config && this.config.rejectOnNotFound) {
+	              return Promise.reject(new Error(`Document not found in "${collectionName}"`))
+	            }
+	            return null
+	          } else {
+	            document = collection[0];
+	            logger.log.call(this, `Got Document with ${JSON.stringify(docSelectionCriteria)}:`, document);
+	            reset.call(this);
+	            return document
+	          }
+	        })
 	    };
 
 	    // get document by key
 	    this.getDocumentByKey = () => {
-	      return this.lf[collectionName].getItem(docSelectionCriteria).then((value) => {
-	        document = value;
-	        if (document) {
-	          logger.log.call(this, `Got Document with key ${ JSON.stringify(docSelectionCriteria) }:`, document);
-	        }
-	        else {
-	          logger.error.call(this, `Could not find Document in "${ collectionName }" collection with Key: ${ JSON.stringify(docSelectionCriteria)}`);
-	        }
-	        reset.call(this);
-	        return document
-	      }).catch(err => {
-	        logger.error.call(this, `Could not find Document in "${ collectionName }" collection with Key: ${ JSON.stringify(docSelectionCriteria)}`);
-	        reset.call(this);
-	      });
+	      return this.lf[collectionName]
+	        .getItem(docSelectionCriteria)
+	        .then(value => {
+	          if (value !== null && value !== undefined) {
+	            document = options.keys ? { key: docSelectionCriteria, data: value } : value;
+	            logger.log.call(this, `Got Document with key ${JSON.stringify(docSelectionCriteria)}:`, document);
+	            reset.call(this);
+	            return document
+	          } else {
+	            logger.error.call(
+	              this,
+	              `Could not find Document in "${collectionName}" collection with Key: ${JSON.stringify(docSelectionCriteria)}`
+	            );
+	            reset.call(this);
+	            if (this.config && this.config.rejectOnNotFound) {
+	              return Promise.reject(new Error(`Document not found with key "${docSelectionCriteria}"`))
+	            }
+	            return null
+	          }
+	        })
+	        .catch(err => {
+	          logger.error.call(
+	            this,
+	            `Could not find Document in "${collectionName}" collection with Key: ${JSON.stringify(docSelectionCriteria)}`
+	          );
+	          reset.call(this);
+	          if (this.config && this.config.rejectOnNotFound) {
+	            throw err
+	          }
+	          return null
+	        })
 	    };
 
-	    if (typeof docSelectionCriteria == 'object') {
+	    if (typeof docSelectionCriteria === 'object') {
 	      return this.getDocumentByCriteria()
-	    }
-	    else {
+	    } else {
 	      return this.getDocumentByKey()
 	    }
 	  };
 
 	  // check for user errors
-	  if (!(typeof options == 'object' && options instanceof Array == false)) {
-	    this.userErrors.push('Data passed to .get() must be an object. Not an array, string, number or boolean. The object must contain a "keys" property set to true or false, e.g. { keys: true }');
-	  }
-	  else {
-	    if (!options.hasOwnProperty('keys')) {
-	      this.userErrors.push('Object passed to get() method must contain a "keys" property set to boolean true or false, e.g. { keys: true }');
-	    }
-	    else {
-	      if (typeof options.keys !== 'boolean') {
-	        this.userErrors.push('Property "keys" passed into get() method must be assigned a boolean value (true or false). Not a string or integer.');
-	      }
+	  if (!(typeof options === 'object' && !Array.isArray(options))) {
+	    this.userErrors.push(
+	      'Data passed to .get() must be an object. Not an array, string, number or boolean. The object must contain a "keys" property set to true or false, e.g. { keys: true }'
+	    );
+	  } else {
+	    if (typeof options.keys !== 'boolean') {
+	      this.userErrors.push('Property "keys" passed into get() method must be assigned a boolean value (true or false).');
 	    }
 	  }
 
 	  if (!this.userErrors.length) {
 	    let currentSelectionLevel = selectionLevel.call(this);
 
-	    if (currentSelectionLevel == 'collection') {
+	    if (currentSelectionLevel === 'collection') {
 	      return this.getCollection()
-	    }
-	    else if (currentSelectionLevel == 'doc') {
+	    } else if (currentSelectionLevel === 'doc') {
 	      return this.getDocument()
 	    }
-	  }
-	  else {
+	  } else {
 	    showUserErrors.call(this);
 	    return null
 	  }
-
 	}
 
 	/**
@@ -3769,6 +3986,8 @@
 	    this.collectionName = null;
 	    this.orderByProperty = null;
 	    this.orderByDirection = null;
+	    this.orderByClauses = [];
+	    this.queryFilters = [];
 	    this.limitBy = null;
 	    this.docSelectionCriteria = null;
 
@@ -3794,6 +4013,7 @@
 	    // api - filters
 	    this.orderBy = orderBy.bind(this);
 	    this.limit = limit.bind(this);
+	    this.where = where.bind(this);
 
 	    // api - actions
 	    this.get = get.bind(this);

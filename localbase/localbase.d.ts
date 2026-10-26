@@ -19,6 +19,7 @@ export default class Localbase {
     doc: typeof doc;
     orderBy: typeof orderBy;
     limit: typeof limit;
+    where: typeof where;
     get: typeof get;
     add: typeof add;
     update: typeof update;
@@ -29,6 +30,7 @@ import collection from "./api/selectors/collection";
 import doc from "./api/selectors/doc";
 import orderBy from "./api/filters/orderBy";
 import limit from "./api/filters/limit";
+import where from "./api/filters/where";
 import get from "./api/actions/get";
 import add from "./api/actions/add";
 import update from "./api/actions/update";
