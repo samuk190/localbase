@@ -16,6 +16,7 @@ describe('Real-Time Watcher (onSnapshot) & Media Storage (Issues #71, #48, #62, 
     const snapshots = []
     const unsubscribe = db.collection('messages')
       .where('room', '==', 'general')
+      .orderBy('text', 'asc')
       .onSnapshot((docs) => {
         snapshots.push(docs.map(d => d.text))
       })
